@@ -17,16 +17,18 @@ const (
 )
 
 type Client struct {
-	conn     *websocket.Conn
-	instance *Instance
-	id       string
-	name     string
-	iconUrl  string
-	state    ClientState
-	table    *Table
-	seat     int
-	isTurn   bool
-	write    func(msg []byte) error
+	conn       *websocket.Conn
+	instance   *Instance
+	id         string
+	name       string
+	iconUrl    string
+	state      ClientState
+	table      *Table
+	seat       int
+	isTurn     bool
+	write      func(msg []byte) error
+	writeError func(msg string) error
+	writeOk    func() error
 }
 
 func NewClient(conn *websocket.Conn) *Client {
@@ -41,6 +43,12 @@ func NewClient(conn *websocket.Conn) *Client {
 		seat:     0,
 		isTurn:   false,
 		write: func(msg []byte) error {
+			return errors.New("Client uninitialized")
+		},
+		writeError: func(msg string) error {
+			return errors.New("Client uninitialized")
+		},
+		writeOk: func() error {
 			return errors.New("Client uninitialized")
 		},
 	}

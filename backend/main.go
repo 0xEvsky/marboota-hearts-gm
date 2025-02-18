@@ -19,6 +19,15 @@ func NewServer() *Server {
 	}
 }
 
+func (s *Server) getInstanceById(id string) *Instance {
+	for _, instance := range s.instances {
+		if instance.id == id {
+			return instance
+		}
+	}
+	return nil
+}
+
 var upgrader = websocket.Upgrader{} // use default options
 
 func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +41,12 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	var newClient = NewClient(c)
 	newClient.write = func(msg []byte) error {
 		return c.WriteMessage(websocket.TextMessage, msg)
+	}
+	newClient.writeError = func(msg string) error {
+		return c.WriteMessage(websocket.TextMessage, toJson(map[string]string{"ACTION": "ERROR", "MESSAGE": msg}))
+	}
+	newClient.writeOk = func() error {
+		return c.WriteMessage(websocket.TextMessage, toJson(map[string]string{"ACTION": "OK"}))
 	}
 
 	// TODO: MUTEX

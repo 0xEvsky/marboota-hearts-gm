@@ -9,16 +9,16 @@ type Instance struct {
 }
 
 func joinInstance(c *Client, id string) *Instance {
-	if instance := isInstanceExists(id); instance != nil {
+	if instance := server.getInstanceById(id); instance != nil {
 		instance.clients = append(instance.clients, c)
 		log.Println("Joined existing instance, id: " + id)
 		return instance
 	}
 
-	return NewInstance(id, c)
+	return NewInstance(c, id)
 }
 
-func NewInstance(id string, c *Client) *Instance {
+func NewInstance(c *Client, id string) *Instance {
 	var newInstance = Instance{
 		id:      id,
 		clients: []*Client{c},
@@ -29,10 +29,10 @@ func NewInstance(id string, c *Client) *Instance {
 	return &newInstance
 }
 
-func isInstanceExists(id string) *Instance {
-	for _, instance := range server.instances {
-		if instance.id == id {
-			return instance
+func (i *Instance) getClientById(id string) *Client {
+	for _, client := range i.clients {
+		if client.id == id {
+			return client
 		}
 	}
 	return nil
