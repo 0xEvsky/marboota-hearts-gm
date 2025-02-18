@@ -15,17 +15,18 @@ func joinInstance(c *Client, id string) *Instance {
 		return instance
 	}
 
-	var newInstance = NewInstance(id, c)
-	log.Println("New instance created, id: " + id)
-	return newInstance
+	return NewInstance(id, c)
 }
 
 func NewInstance(id string, c *Client) *Instance {
-	return &Instance{
+	var newInstance = Instance{
 		id:      id,
 		clients: []*Client{c},
 		table:   NewTable(),
 	}
+	server.instances = append(server.instances, &newInstance)
+	log.Println("New instance created, id: " + id)
+	return &newInstance
 }
 
 func isInstanceExists(id string) *Instance {
