@@ -15,6 +15,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       packages: write
     env:
         GOARCH: amd64
