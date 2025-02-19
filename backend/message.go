@@ -22,7 +22,26 @@ func msgHandler(c *Client, rawMsg []byte) {
 			return
 		}
 
-		// TODO: check if all required fields are present
+		if msg["INSTANCEID"] == nil {
+			c.writeError("Missing field: INSTANCEID")
+			log.Println("Authentication request with missing 'instance ID' rejected")
+			return
+		}
+		if msg["USERID"] == nil {
+			c.writeError("Missing field: USERID")
+			log.Println("Authentication request with missing 'user ID' rejected")
+			return
+		}
+		if msg["USERNAME"] == nil {
+			c.writeError("Missing field: USERNAME")
+			log.Println("Authentication request with missing 'username' rejected")
+			return
+		}
+		if msg["ICONURL"] == nil {
+			c.writeError("Missing field: ICONURL")
+			log.Println("Authentication request with missing 'icon URL' rejected")
+			return
+		}
 
 		var instance = server.getInstanceById(msg["INSTANCEID"].(string))
 
