@@ -76,6 +76,7 @@ func main() {
 	const PORT = "3000"
 	const HOST = "localhost"
 
+	// TODO: auth route
 	http.HandleFunc("/ws", server.wsHandler)
 
 	log.Printf("Server is up and listening on port: %s\n", PORT)
