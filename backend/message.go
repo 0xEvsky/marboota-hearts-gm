@@ -42,6 +42,8 @@ func msgHandler(c *Client, rawMsg []byte) {
 		c.iconUrl = msg["ICONURL"].(string)
 		c.state = ClientIdle
 
+		c.broadcastToInstance(map[string]string{"ACTION": "JOIN", "USERID": c.id, "USERNAME": c.name, "ICONURL": c.iconUrl})
+
 		c.writeOk()
 		log.Println("Client authenticated")
 	default:

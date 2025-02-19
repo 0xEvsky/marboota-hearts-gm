@@ -27,6 +27,7 @@ type Client struct {
 	seat       int
 	isTurn     bool
 	write      func(msg []byte) error
+	writeJson  func(msg map[string]string) error
 	writeError func(msg string) error
 	writeOk    func() error
 }
@@ -45,6 +46,9 @@ func NewClient(conn *websocket.Conn) *Client {
 		write: func(msg []byte) error {
 			return errors.New("Client uninitialized")
 		},
+		writeJson: func(msg map[string]string) error {
+			return errors.New("Client uninitialized")
+		},
 		writeError: func(msg string) error {
 			return errors.New("Client uninitialized")
 		},
@@ -52,4 +56,19 @@ func NewClient(conn *websocket.Conn) *Client {
 			return errors.New("Client uninitialized")
 		},
 	}
+}
+
+func (c *Client) broadcastToInstance(msg map[string]string) error {
+	if c.instance == nil {
+		return errors.New("Client not authenticated")
+	}
+
+	for _, client := range c.instance.clients {
+		if client == c {
+			continue
+		}
+		client.writeJson(msg)
+	}
+
+	return nil
 }

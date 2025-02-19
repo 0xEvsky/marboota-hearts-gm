@@ -39,8 +39,12 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("New client connected")
 	var newClient = NewClient(c)
+
 	newClient.write = func(msg []byte) error {
 		return c.WriteMessage(websocket.TextMessage, msg)
+	}
+	newClient.writeJson = func(msg map[string]string) error {
+		return c.WriteMessage(websocket.TextMessage, toJson(msg))
 	}
 	newClient.writeError = func(msg string) error {
 		return c.WriteMessage(websocket.TextMessage, toJson(map[string]string{"ACTION": "ERROR", "MESSAGE": msg}))
