@@ -9,23 +9,14 @@ import (
 
 type Server struct {
 	conns     map[*websocket.Conn]*Client
-	instances []*Instance
+	instances map[string]*Instance
 }
 
 func NewServer() *Server {
 	return &Server{
 		conns:     make(map[*websocket.Conn]*Client),
-		instances: []*Instance{},
+		instances: map[string]*Instance{},
 	}
-}
-
-func (s *Server) getInstanceById(id string) *Instance {
-	for _, instance := range s.instances {
-		if instance.id == id {
-			return instance
-		}
-	}
-	return nil
 }
 
 var upgrader = websocket.Upgrader{} // use default options
@@ -68,6 +59,8 @@ func (s *Server) read(ws *websocket.Conn) {
 			if s.conns[ws].isAuthed {
 				s.conns[ws].broadcastToInstance(map[string]string{"ACTION": "LEAVE", "USERID": s.conns[ws].id})
 			}
+			// TODO: Delete client
+			delete(s.conns[ws].instance.clients, s.conns[ws].id)
 			delete(s.conns, ws)
 			log.Println(err)
 			break

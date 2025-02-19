@@ -4,13 +4,13 @@ import "log"
 
 type Instance struct {
 	id      string
-	clients []*Client
+	clients map[string]*Client // key is userid
 	table   Table
 }
 
 func joinInstance(c *Client, id string) *Instance {
-	if instance := server.getInstanceById(id); instance != nil {
-		instance.clients = append(instance.clients, c)
+	if instance := server.instances[id]; instance != nil {
+		instance.clients[c.id] = c
 		log.Println("Joined existing instance")
 		return instance
 	}
@@ -21,19 +21,10 @@ func joinInstance(c *Client, id string) *Instance {
 func NewInstance(c *Client, id string) *Instance {
 	var newInstance = Instance{
 		id:      id,
-		clients: []*Client{c},
+		clients: map[string]*Client{id: c},
 		table:   NewTable(),
 	}
-	server.instances = append(server.instances, &newInstance)
+	server.instances[id] = &newInstance
 	log.Println("New instance created")
 	return &newInstance
-}
-
-func (i *Instance) getClientById(id string) *Client {
-	for _, client := range i.clients {
-		if client.id == id {
-			return client
-		}
-	}
-	return nil
 }

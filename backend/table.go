@@ -6,5 +6,8 @@ type Table struct {
 }
 
 func NewTable() Table {
-	return Table{}
+	return Table{
+		players:    [4]*Client{},
+		spectators: []*Client{},
+	}
 }
