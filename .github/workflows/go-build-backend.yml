@@ -1,0 +1,58 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: go-build-backend
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    env:
+        GOARCH: amd64
+        GOOS: linux
+        CGO_ENABLED: 0
+        REGISTRY: ghcr.io
+        IMAGE_NAME: backend
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        sparse-checkout: backend
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24'
+    
+    - name: Change directory
+      run: cd backend
+    
+    - name: Install dependencies
+      run: go get .
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        registry: 
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.IMAGE_NAME }}
+    
+    - name: Build and push
+      uses: docker/build-push-action@v6
+      with:
+            context: .
+            push: true
+            tags: ${{ steps.meta.outputs.tags }}
+            labels: ${{ steps.meta.outputs.labels }}
