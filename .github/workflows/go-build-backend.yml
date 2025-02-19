@@ -6,6 +6,8 @@ name: go-build-backend
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - backend/**
 
 jobs:
 
@@ -17,6 +19,10 @@ jobs:
         CGO_ENABLED: 0
         REGISTRY: ghcr.io
         IMAGE_NAME: backend
+    defaults:
+      run:
+        working-directory: ./backend
+  
     steps:
     - uses: actions/checkout@v4
       with:
@@ -26,9 +32,6 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.24'
-    
-    - name: Change directory
-      run: cd backend
     
     - name: Install dependencies
       run: go get .
