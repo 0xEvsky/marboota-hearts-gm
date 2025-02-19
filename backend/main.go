@@ -36,19 +36,6 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("New client connected")
 	var newClient = NewClient(c)
 
-	newClient.write = func(msg []byte) error {
-		return c.WriteMessage(websocket.TextMessage, msg)
-	}
-	newClient.writeJson = func(msg map[string]string) error {
-		return c.WriteMessage(websocket.TextMessage, toJson(msg))
-	}
-	newClient.writeError = func(msg string) error {
-		return c.WriteMessage(websocket.TextMessage, toJson(map[string]string{"ACTION": "ERROR", "MESSAGE": msg}))
-	}
-	newClient.writeOk = func() error {
-		return c.WriteMessage(websocket.TextMessage, toJson(map[string]string{"ACTION": "OK"}))
-	}
-
 	// TODO: MUTEX
 	s.conns[c] = newClient
 	// MUTEX
@@ -63,9 +50,8 @@ func (s *Server) read(ws *websocket.Conn) {
 		if err != nil {
 			if s.conns[ws].isAuthed {
 				s.conns[ws].broadcastToInstance(map[string]string{"ACTION": "LEAVE", "USERID": s.conns[ws].id})
+				delete(s.conns[ws].instance.clients, s.conns[ws].id)
 			}
-			// TODO: Delete client
-			delete(s.conns[ws].instance.clients, s.conns[ws].id)
 			delete(s.conns, ws)
 			log.Println(err)
 			break

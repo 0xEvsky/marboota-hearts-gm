@@ -10,13 +10,12 @@ func msgHandler(c *Client, rawMsg []byte) {
 	var msg map[string]any
 	err := json.Unmarshal(rawMsg, &msg)
 	if err != nil {
-		c.writeError("Invalid message: message may not be JSON")
+		c.writeError("Message may not be JSON")
 		log.Println(err)
 		return
 	}
 
-	switch msg["ACTION"] {
-	case "AUTH":
+	if msg["ACTION"] == "AUTH" {
 		if c.isAuthed {
 			c.writeError("Already authenticated")
 			log.Println("Duplicated authentication, skipping")
@@ -74,41 +73,57 @@ func msgHandler(c *Client, rawMsg []byte) {
 		}
 
 		log.Println("Client authenticated")
+		return
+	}
+
+	if !c.isAuthed {
+		c.writeError("Forbidden: Not authenticated")
+		log.Println("Unauthenticated SWITCH request rejected")
+		return
+	}
+
+	switch msg["ACTION"] {
+	case "SIT":
+		if c.table != nil {
+			c.writeError("Already seated")
+			log.Println("Seated SIT request rejected")
+			return
+		}
+
+		err := c.instance.table.seatPlayer(c)
+		if err != nil {
+			c.writeError("Table is full")
+			log.Println("Full table SIT request rejected")
+			return
+		}
+		c.writeOk()
+		c.broadcastToInstance(map[string]string{"ACTION": "SIT", "USERID": c.id, "SEAT": strconv.Itoa(c.seat)})
+		// TODO: If game was already running, show client their cards
+
+	case "UNSIT":
+		if c.table == nil {
+			c.writeError("Not seated")
+			log.Println("Unseated UNSIT request rejected")
+			return
+		}
+
+		c.table.unseatPlayer(c)
+		c.writeOk()
+		c.broadcastToInstance(map[string]string{"ACTION": "UNSIT", "USERID": c.id})
+
 	case "SWITCH":
-		if !c.isAuthed {
-			c.writeError("Forbidden: not authenticated")
-			log.Println("Unauthenticated SWITCH request rejected")
+		if c.table == nil {
+			c.writeError("Client is not seated")
+			log.Println("Unseated SWITCH request rejected")
 			return
 		}
 
-		if msg["SEAT"] == nil {
-			c.writeError("Missing field: SEAT")
-			log.Println("SWITCH request with missing 'seat' rejected")
-			return
-		}
-		var reqSeat, err = strconv.Atoi(msg["SEAT"].(string))
-		if err != nil || reqSeat < 0 || reqSeat > 4 {
-			c.writeError("Invalid field: SEAT number outside of range (0, 4)")
-			log.Println("SWITCH request with invalid 'seat' rejected")
-			return
-		}
+		// TODO: implement xd
 
-		if c.instance.table.players[reqSeat-1] != nil {
-			c.writeError("Invalid request: SEAT is taken")
-			log.Println("SWITCH request with taken 'seat' rejected")
-			return
-		}
-
-		if reqSeat > 0 {
-			c.table = &c.instance.table
-		} else {
-			c.table = nil
-		}
-
-		c.seat = reqSeat
 		c.writeOk()
 		c.broadcastToInstance(map[string]string{"ACTION": "SWITCH", "USERID": c.id, "SEAT": msg["SEAT"].(string)})
 		log.Println("Client switched seats")
+
 	default:
 		c.writeError("Unknown action")
 		log.Println("Unknown action skipped")
