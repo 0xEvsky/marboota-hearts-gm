@@ -23,6 +23,7 @@ var upgrader = websocket.Upgrader{} // use default options
 
 func (s *Server) authHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: handle auth
+	w.Write([]byte("W.I.P"))
 }
 
 func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
