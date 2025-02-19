@@ -1,4 +1,4 @@
-module github.com/OmarQurashi868/marboota
+module github.com/OmarQurashi868/marboota/backend
 
 go 1.24.0
 
