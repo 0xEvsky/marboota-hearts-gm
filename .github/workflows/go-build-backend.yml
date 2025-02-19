@@ -37,7 +37,7 @@ jobs:
       run: go get .
 
     - name: Build
-      run: go build -v ./...
+      run: go build ./...
 
     - name: Login to ghcr
       uses: docker/login-action@v3
@@ -55,7 +55,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v6
       with:
-            context: .
+            context: ./backend
             push: true
             tags: ${{ steps.meta.outputs.tags }}
             labels: ${{ steps.meta.outputs.labels }}
