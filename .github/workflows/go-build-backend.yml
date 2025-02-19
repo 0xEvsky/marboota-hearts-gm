@@ -8,11 +8,14 @@ on:
     branches: [ "main" ]
     paths:
       - backend/**
+  workflow_dispatch:
 
 jobs:
 
   build:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     env:
         GOARCH: amd64
         GOOS: linux
