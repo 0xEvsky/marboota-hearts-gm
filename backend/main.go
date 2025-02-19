@@ -15,7 +15,7 @@ type Server struct {
 func NewServer() *Server {
 	return &Server{
 		conns:     make(map[*websocket.Conn]*Client),
-		instances: map[string]*Instance{},
+		instances: make(map[string]*Instance),
 	}
 }
 

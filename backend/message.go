@@ -110,7 +110,9 @@ func msgHandler(c *Client, rawMsg []byte) {
 		c.broadcastToInstance(map[string]string{"ACTION": "SWITCH", "USERID": c.id, "SEAT": msg["SEAT"].(string)})
 		log.Println("Client switched seats")
 	default:
-
+		c.writeError("Unknown action")
+		log.Println("Unknown action skipped")
+		return
 	}
 }
 
