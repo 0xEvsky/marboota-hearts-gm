@@ -79,12 +79,12 @@ var server = NewServer()
 
 func main() {
 	const PORT = "3000"
-	const HOST = "localhost"
+	//const HOST = "localhost"
 
 	http.HandleFunc("/auth", server.authHandler)
 	http.HandleFunc("/ws", server.wsHandler)
 
 	log.Printf("Server is up and listening on port: %s\n", PORT)
-	err := http.ListenAndServe(HOST+":"+PORT, nil)
+	err := http.ListenAndServe(":"+PORT, nil)
 	log.Fatal(err)
 }
