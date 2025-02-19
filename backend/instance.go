@@ -11,7 +11,7 @@ type Instance struct {
 func joinInstance(c *Client, id string) *Instance {
 	if instance := server.getInstanceById(id); instance != nil {
 		instance.clients = append(instance.clients, c)
-		log.Println("Joined existing instance, id: " + id)
+		log.Println("Joined existing instance")
 		return instance
 	}
 
@@ -25,7 +25,7 @@ func NewInstance(c *Client, id string) *Instance {
 		table:   NewTable(),
 	}
 	server.instances = append(server.instances, &newInstance)
-	log.Println("New instance created, id: " + id)
+	log.Println("New instance created")
 	return &newInstance
 }
 

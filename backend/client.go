@@ -18,6 +18,7 @@ const (
 
 type Client struct {
 	conn       *websocket.Conn
+	isAuthed   bool
 	instance   *Instance
 	id         string
 	name       string
@@ -35,6 +36,7 @@ type Client struct {
 func NewClient(conn *websocket.Conn) *Client {
 	return &Client{
 		conn:     conn,
+		isAuthed: false,
 		instance: nil,
 		id:       "",
 		name:     "",
@@ -64,7 +66,7 @@ func (c *Client) broadcastToInstance(msg map[string]string) error {
 	}
 
 	for _, client := range c.instance.clients {
-		if client == c {
+		if !client.isAuthed || client == c {
 			continue
 		}
 		client.writeJson(msg)

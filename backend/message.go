@@ -16,7 +16,7 @@ func msgHandler(c *Client, rawMsg []byte) {
 
 	switch msg["ACTION"] {
 	case "AUTH":
-		if c.id != "" {
+		if c.isAuthed {
 			c.writeError("Already authenticated")
 			log.Println("Duplicated authentication, skipping")
 			return
@@ -41,10 +41,18 @@ func msgHandler(c *Client, rawMsg []byte) {
 		c.name = msg["USERNAME"].(string)
 		c.iconUrl = msg["ICONURL"].(string)
 		c.state = ClientIdle
-
-		c.broadcastToInstance(map[string]string{"ACTION": "JOIN", "USERID": c.id, "USERNAME": c.name, "ICONURL": c.iconUrl})
+		c.isAuthed = true
 
 		c.writeOk()
+
+		c.broadcastToInstance(map[string]string{"ACTION": "JOIN", "USERID": c.id, "USERNAME": c.name, "ICONURL": c.iconUrl})
+		for _, client := range c.instance.clients {
+			if !client.isAuthed || client == c {
+				continue
+			}
+			c.writeJson(map[string]string{"ACTION": "JOIN", "USERID": client.id, "USERNAME": client.name, "ICONURL": client.iconUrl})
+		}
+
 		log.Println("Client authenticated")
 	default:
 

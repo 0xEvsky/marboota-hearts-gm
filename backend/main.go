@@ -65,6 +65,9 @@ func (s *Server) read(ws *websocket.Conn) {
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
+			if s.conns[ws].isAuthed {
+				s.conns[ws].broadcastToInstance(map[string]string{"ACTION": "LEAVE", "USERID": s.conns[ws].id})
+			}
 			delete(s.conns, ws)
 			log.Println(err)
 			break
