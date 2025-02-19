@@ -21,6 +21,10 @@ func NewServer() *Server {
 
 var upgrader = websocket.Upgrader{} // use default options
 
+func (s *Server) authHandler(w http.ResponseWriter, r *http.Request) {
+	// TODO: handle auth
+}
+
 func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -76,7 +80,7 @@ func main() {
 	const PORT = "3000"
 	const HOST = "localhost"
 
-	// TODO: auth route
+	http.HandleFunc("/auth", server.authHandler)
 	http.HandleFunc("/ws", server.wsHandler)
 
 	log.Printf("Server is up and listening on port: %s\n", PORT)
