@@ -1,4 +1,4 @@
-# init
+# Model
 ### Server
 ### Instance
 ### Table

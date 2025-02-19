@@ -1,4 +1,4 @@
-# init
+# Protocol
 ### AUTH
 ### JOIN
 ### LEAVE
