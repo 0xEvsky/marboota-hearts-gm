@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://8xkf68liril2"]
 
-[ext_resource type="Texture2D" uid="uid://bpcg8rl35etlp" path="res://assets/kenney_ui-pack/PNG/Extra/Double/icon_repeat_light.png" id="1_lit6y"]
+[ext_resource type="Texture2D" uid="uid://c5v4tehjkap43" path="res://assets/kenney_ui-pack/PNG/Extra/Double/icon_repeat_light.png" id="1_lit6y"]
 
 [sub_resource type="Gradient" id="Gradient_j02bm"]
 offsets = PackedFloat32Array(0.0434783, 1)
@@ -8,6 +8,21 @@ colors = PackedColorArray(0.150075, 0.150075, 0.150075, 1, 0.424931, 0.424931, 0
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_jinx3"]
 gradient = SubResource("Gradient_j02bm")
+
+[sub_resource type="Animation" id="Animation_5kc0w"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-6.28319]
+}
 
 [sub_resource type="Animation" id="Animation_x2ysv"]
 resource_name = "spin"
@@ -23,21 +38,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [0.0, 6.28319]
-}
-
-[sub_resource type="Animation" id="Animation_5kc0w"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [-6.28319]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ldj1v"]
