@@ -1,6 +1,8 @@
 package main
 
-import "log"
+import (
+	"log"
+)
 
 type Instance struct {
 	id      string
@@ -15,16 +17,19 @@ func joinInstance(c *Client, id string) *Instance {
 		return instance
 	}
 
-	return NewInstance(c, id)
+	return newInstance(c, id)
 }
 
-func NewInstance(c *Client, id string) *Instance {
+func newInstance(c *Client, id string) *Instance {
 	var newInstance = Instance{
 		id:      id,
-		clients: map[string]*Client{id: c},
-		table:   NewTable(),
+		clients: map[string]*Client{c.id: c},
+		table:   newTable(),
 	}
+
+	// TODO: Investigate mutex
 	server.instances[id] = &newInstance
+
 	log.Println("New instance created")
 	return &newInstance
 }

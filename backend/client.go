@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -16,6 +17,7 @@ const (
 )
 
 type Client struct {
+	mu       sync.Mutex
 	conn     *websocket.Conn
 	isAuthed bool
 	instance *Instance
@@ -28,7 +30,7 @@ type Client struct {
 	isTurn   bool
 }
 
-func NewClient(conn *websocket.Conn) *Client {
+func newClient(conn *websocket.Conn) *Client {
 	return &Client{
 		conn:     conn,
 		isAuthed: false,
@@ -44,6 +46,9 @@ func NewClient(conn *websocket.Conn) *Client {
 }
 
 func (c *Client) write(msg []byte) error {
+	// TODO: Investigate mutex
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	return c.conn.WriteMessage(websocket.TextMessage, msg)
 }
 

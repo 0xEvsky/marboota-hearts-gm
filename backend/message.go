@@ -51,16 +51,17 @@ func msgHandler(c *Client, rawMsg []byte) {
 			return
 		}
 
-		if instance != nil {
-			c.instance = joinInstance(c, msg["INSTANCEID"].(string))
-		} else {
-			c.instance = NewInstance(c, msg["INSTANCEID"].(string))
-		}
 		c.id = msg["USERID"].(string)
 		c.name = msg["USERNAME"].(string)
 		c.iconUrl = msg["ICONURL"].(string)
 		c.state = ClientIdle
 		c.isAuthed = true
+
+		if instance != nil {
+			c.instance = joinInstance(c, msg["INSTANCEID"].(string))
+		} else {
+			c.instance = newInstance(c, msg["INSTANCEID"].(string))
+		}
 
 		c.writeOk()
 

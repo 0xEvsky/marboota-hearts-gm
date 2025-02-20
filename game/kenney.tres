@@ -1,0 +1,6 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://bsd6dtu3ucesk"]
+
+[ext_resource type="FontFile" uid="uid://du2r1hvg2djno" path="res://assets/kenney_ui-pack/Font/Kenney Future.ttf" id="1_2vsl8"]
+
+[resource]
+base_font = ExtResource("1_2vsl8")

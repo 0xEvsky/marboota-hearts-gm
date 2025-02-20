@@ -19,7 +19,7 @@ type Table struct {
 	turn       int
 }
 
-func NewTable() Table {
+func newTable() Table {
 	return Table{
 		players:    [4]*Client{},
 		spectators: []*Client{},

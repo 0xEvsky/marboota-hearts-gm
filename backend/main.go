@@ -3,16 +3,18 @@ package main
 import (
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
 
 type Server struct {
+	mu        sync.Mutex
 	conns     map[*websocket.Conn]*Client
-	instances map[string]*Instance
+	instances map[string]*Instance // key is instanceid
 }
 
-func NewServer() *Server {
+func newServer() *Server {
 	return &Server{
 		conns:     make(map[*websocket.Conn]*Client),
 		instances: make(map[string]*Instance),
@@ -34,11 +36,12 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("New client connected")
-	var newClient = NewClient(c)
+	var newClient = newClient(c)
 
-	// TODO: MUTEX
+	// TODO: Investigate mutex
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	s.conns[c] = newClient
-	// MUTEX
 
 	go s.read(c)
 }
@@ -46,11 +49,19 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) read(ws *websocket.Conn) {
 	defer ws.Close()
 	for {
+		// TODO: Investigate mutex
+		s.mu.Lock()
 		_, msg, err := ws.ReadMessage()
+		s.mu.Unlock()
 		if err != nil {
 			if s.conns[ws].isAuthed {
 				s.conns[ws].broadcastToInstance(map[string]string{"ACTION": "LEAVE", "USERID": s.conns[ws].id})
 				delete(s.conns[ws].instance.clients, s.conns[ws].id)
+
+				if len(s.conns[ws].instance.clients) == 0 {
+					delete(s.instances, s.conns[ws].instance.id)
+					log.Printf("Deleted empty instance")
+				}
 			}
 			delete(s.conns, ws)
 			log.Println(err)
@@ -61,7 +72,7 @@ func (s *Server) read(ws *websocket.Conn) {
 	}
 }
 
-var server = NewServer()
+var server = newServer()
 
 func main() {
 	const PORT = "3000"
