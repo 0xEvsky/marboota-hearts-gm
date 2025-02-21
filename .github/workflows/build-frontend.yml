@@ -41,7 +41,7 @@ jobs:
         use_preset_export_path: true
     
     - name: Move game to Svelcordot
-      run: mv ./game/build/* ./Svelcordot/static
+      run: mv ./game/build/marboota-game/* ./Svelcordot/static
 
     - name: Login to ghcr
       uses: docker/login-action@v3
