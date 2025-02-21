@@ -1,4 +1,5 @@
-FROM node:22-alpine3.20
+FROM node:20-alpine3.20
 
 COPY build /frontend
-CMD [ "node /frontend/index.js" ]
+EXPOSE 3000
+CMD [ "node", "/frontend/index.js" ]
