@@ -29,7 +29,11 @@ Requests to unsit from the game table, returning to the spectating benches.
 ```
 ### SWITCH
 Requests to switch teams at the game table, other team must have a spot open. Must be seated first.
-T.B.A
+```json
+{
+    "ACTION":"SWITCH"
+}
+```
 ## Server -> client messages
 ### OK
 Everything is A-OK 👍.
@@ -43,13 +47,13 @@ Error with message.
 ```json
 {
     "ACTION":"ERROR",
-    "MESSAGE":"Already seated"
+    "MESSAGE":"Your error message will be here"
 }
 ```
 ### JOIN
-This is sent to all other clients when a client authenticates introducing it with its information.
+Whenever a new client authenticates, this message is sent to all other clients in the same instance that were already connected to inform them of the new client.
 > [!NOTE]
-> Whenever a new client authenticates, the server sends them this message multiple times for each client that was already connected to the same instance. This is so the client can *catch-up* on who joined before it.
+> The server will also send multiple JOIN messages to the new client, informing it of the members that were already connected before (catch-up).
 ```json
 {
     "ACTION": "JOIN",
@@ -69,7 +73,7 @@ Sent to all clients in the instance when a client disconnects announcing its use
 ### SIT
 This is sent to all other clients in an instance when a client is successfully seated alongside its information.
 > [!NOTE]
-> This is catch-up sent like `JOIN`
+> This is catch-up sent just like `JOIN`
 ```json
 {
     "ACTION": "SIT",
@@ -79,8 +83,6 @@ This is sent to all other clients in an instance when a client is successfully s
 ```
 ### UNSIT
 This is sent to all other clients in an instance when a client is successfully unseated alongside its information.
-> [!NOTE]
-> This is catch-up sent like `JOIN`
 ```json
 {
     "ACTION": "UNSIT",

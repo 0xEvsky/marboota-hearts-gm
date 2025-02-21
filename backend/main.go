@@ -38,7 +38,6 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("New client connected")
 	var newClient = newClient(c)
 
-	// TODO: Investigate mutex
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.conns[c] = newClient
@@ -49,23 +48,27 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) read(ws *websocket.Conn) {
 	defer ws.Close()
 	for {
-		// TODO: Investigate mutex
-		s.mu.Lock()
-		_, msg, err := ws.ReadMessage()
-		s.mu.Unlock()
+		var msg = make(map[string]string)
+		err := ws.ReadJSON(&msg)
 		if err != nil {
-			if s.conns[ws].isAuthed {
-				s.conns[ws].broadcastToInstance(map[string]string{"ACTION": "LEAVE", "USERID": s.conns[ws].id})
-				delete(s.conns[ws].instance.clients, s.conns[ws].id)
+			if websocket.IsCloseError(err) || websocket.IsUnexpectedCloseError(err) {
+				if s.conns[ws].isAuthed {
+					s.conns[ws].broadcastToInstance(map[string]string{"ACTION": "LEAVE", "USERID": s.conns[ws].id})
+					delete(s.conns[ws].instance.clients, s.conns[ws].id)
 
-				if len(s.conns[ws].instance.clients) == 0 {
-					delete(s.instances, s.conns[ws].instance.id)
-					log.Printf("Deleted empty instance")
+					if len(s.conns[ws].instance.clients) == 0 {
+						delete(s.instances, s.conns[ws].instance.id)
+						log.Printf("Deleted empty instance")
+					}
 				}
+				delete(s.conns, ws)
+				log.Println(err)
+				break
 			}
-			delete(s.conns, ws)
+
+			ws.WriteJSON(map[string]string{"ACTION": "ERROR", "MESSAGE": err.Error()})
 			log.Println(err)
-			break
+			continue
 		}
 
 		msgHandler(s.conns[ws], msg)

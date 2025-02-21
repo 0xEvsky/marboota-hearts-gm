@@ -45,23 +45,18 @@ func newClient(conn *websocket.Conn) *Client {
 	}
 }
 
-func (c *Client) write(msg []byte) error {
-	// TODO: Investigate mutex
+func (c *Client) writeJson(msg map[string]string) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	return c.conn.WriteMessage(websocket.TextMessage, msg)
-}
-
-func (c *Client) writeJson(msg map[string]string) error {
-	return c.write(toJson(msg))
+	return c.conn.WriteJSON(msg)
 }
 
 func (c *Client) writeError(msg string) error {
-	return c.write(toJson(map[string]string{"ACTION": "ERROR", "MESSAGE": msg}))
+	return c.writeJson(map[string]string{"ACTION": "ERROR", "MESSAGE": msg})
 }
 
 func (c *Client) writeOk() error {
-	return c.write(toJson(map[string]string{"ACTION": "OK"}))
+	return c.writeJson(map[string]string{"ACTION": "OK"})
 }
 
 func (c *Client) broadcastToInstance(msg map[string]string) error {

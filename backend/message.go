@@ -6,15 +6,7 @@ import (
 	"strconv"
 )
 
-func msgHandler(c *Client, rawMsg []byte) {
-	var msg map[string]any
-	err := json.Unmarshal(rawMsg, &msg)
-	if err != nil {
-		c.writeError("Message may not be JSON")
-		log.Println(err)
-		return
-	}
-
+func msgHandler(c *Client, msg map[string]string) {
 	if msg["ACTION"] == "AUTH" {
 		if c.isAuthed {
 			c.writeError("Already authenticated")
@@ -22,45 +14,45 @@ func msgHandler(c *Client, rawMsg []byte) {
 			return
 		}
 
-		if msg["INSTANCEID"] == nil {
+		if msg["INSTANCEID"] == "" {
 			c.writeError("Missing field: INSTANCEID")
 			log.Println("Authentication request with missing 'instance ID' rejected")
 			return
 		}
-		if msg["USERID"] == nil {
+		if msg["USERID"] == "" {
 			c.writeError("Missing field: USERID")
 			log.Println("Authentication request with missing 'user ID' rejected")
 			return
 		}
-		if msg["USERNAME"] == nil {
+		if msg["USERNAME"] == "" {
 			c.writeError("Missing field: USERNAME")
 			log.Println("Authentication request with missing 'username' rejected")
 			return
 		}
-		if msg["ICONURL"] == nil {
+		if msg["ICONURL"] == "" {
 			c.writeError("Missing field: ICONURL")
 			log.Println("Authentication request with missing 'icon URL' rejected")
 			return
 		}
 
-		var instance = server.instances[msg["INSTANCEID"].(string)]
+		var instance = server.instances[msg["INSTANCEID"]]
 
-		if instance != nil && instance.clients[msg["USERID"].(string)] != nil {
+		if instance != nil && instance.clients[msg["USERID"]] != nil {
 			c.writeError("ID is already authenticated with different client")
 			log.Println("Failed authentication, user ID is already authenticated with different client")
 			return
 		}
 
-		c.id = msg["USERID"].(string)
-		c.name = msg["USERNAME"].(string)
-		c.iconUrl = msg["ICONURL"].(string)
+		c.id = msg["USERID"]
+		c.name = msg["USERNAME"]
+		c.iconUrl = msg["ICONURL"]
 		c.state = ClientIdle
 		c.isAuthed = true
 
 		if instance != nil {
-			c.instance = joinInstance(c, msg["INSTANCEID"].(string))
+			c.instance = joinInstance(c, msg["INSTANCEID"])
 		} else {
-			c.instance = newInstance(c, msg["INSTANCEID"].(string))
+			c.instance = newInstance(c, msg["INSTANCEID"])
 		}
 
 		c.writeOk()
@@ -122,12 +114,12 @@ func msgHandler(c *Client, rawMsg []byte) {
 		// TODO: implement xd
 
 		c.writeOk()
-		c.broadcastToInstance(map[string]string{"ACTION": "SWITCH", "USERID": c.id, "SEAT": msg["SEAT"].(string)})
+		c.broadcastToInstance(map[string]string{"ACTION": "SWITCH", "USERID": c.id, "SEAT": msg["SEAT"]})
 		log.Println("Client switched seats")
 
 	default:
-		c.writeError("Unknown action")
-		log.Println("Unknown action skipped")
+		c.writeError("Unknown or missing action")
+		log.Println("Unknown or missing action skipped")
 		return
 	}
 }
