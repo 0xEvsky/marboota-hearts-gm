@@ -33,7 +33,7 @@ jobs:
     
     - name: Build game
       id: build
-      uses: manleydev/build-godot-action@v1.4.1
+      uses: yeslayla/build-godot-action@v1.5.0
       with:
         name: marboota-game
         preset: marboota-game
