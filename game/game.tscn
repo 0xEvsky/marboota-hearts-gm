@@ -63,6 +63,7 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("1_bjwno")
 expand_mode = 2
+stretch_mode = 4
 
 [node name="LoadingCenter" type="CenterContainer" parent="UI/LoadingScreen"]
 layout_mode = 1
