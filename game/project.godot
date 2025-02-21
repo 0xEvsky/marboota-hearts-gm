@@ -22,7 +22,7 @@ window/size/viewport_height=720
 
 [gui]
 
-theme/custom_font="res://kenney.tres"
+theme/custom_font="res://assets/ui/basefont.tres"
 
 [rendering]
 

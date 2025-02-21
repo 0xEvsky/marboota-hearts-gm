@@ -1,0 +1,6 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://d22vtmrfmqyp0"]
+
+[ext_resource type="FontFile" uid="uid://cuu7qc0833hwr" path="res://assets/ui/SuperBoys-vmW67.ttf" id="1_ayev1"]
+
+[resource]
+base_font = ExtResource("1_ayev1")

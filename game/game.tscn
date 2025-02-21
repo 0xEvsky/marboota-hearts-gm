@@ -1,13 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://8xkf68liril2"]
+[gd_scene load_steps=6 format=3 uid="uid://8xkf68liril2"]
 
-[ext_resource type="Texture2D" uid="uid://c5v4tehjkap43" path="res://assets/kenney_ui-pack/PNG/Extra/Double/icon_repeat_light.png" id="1_lit6y"]
-
-[sub_resource type="Gradient" id="Gradient_j02bm"]
-offsets = PackedFloat32Array(0.0434783, 1)
-colors = PackedColorArray(0.150075, 0.150075, 0.150075, 1, 0.424931, 0.424931, 0.424931, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_jinx3"]
-gradient = SubResource("Gradient_j02bm")
+[ext_resource type="Texture2D" uid="uid://chnhuidtxoexr" path="res://assets/graphics/bg.jpg" id="1_bjwno"]
+[ext_resource type="Texture2D" uid="uid://xudi6b2awstb" path="res://assets/ui/icon_repeat_light.png" id="1_lit6y"]
 
 [sub_resource type="Animation" id="Animation_5kc0w"]
 length = 0.001
@@ -67,7 +61,8 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture = SubResource("GradientTexture1D_jinx3")
+texture = ExtResource("1_bjwno")
+expand_mode = 2
 
 [node name="LoadingCenter" type="CenterContainer" parent="UI/LoadingScreen"]
 layout_mode = 1
@@ -96,17 +91,17 @@ vertical_alignment = 1
 
 [node name="SpinnerControl" type="Control" parent="UI/LoadingScreen/LoadingCenter/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="LoadingSpinner" type="TextureRect" parent="UI/LoadingScreen/LoadingCenter/VBoxContainer/SpinnerControl"]
-layout_mode = 2
-offset_left = 154.0
-offset_top = -3.99997
-offset_right = 252.0
-offset_bottom = 82.0
+layout_mode = 1
+offset_left = -41.0
+offset_top = 1.0
+offset_right = 41.0
+offset_bottom = 73.0
 rotation = -6.28319
-pivot_offset = Vector2(49, 43)
+pivot_offset = Vector2(41, 36)
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("1_lit6y")
