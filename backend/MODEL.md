@@ -1,27 +1,55 @@
 # Model
 The various parts making up the server heirarchy.
-> Methods were omitted
 > Iota constant groups are basically enums
+> Methods were omitted
 ## Client
 ```go
 const (
 	ClientUnavailable ClientState = iota
 	ClientIdle
-	ClientWaiting
-	ClientPlaying
+	ClientSeated
 )
 
 type Client struct {
-	conn       *websocket.Conn
-	isAuthed   bool
-	instance   *Instance
-	id         string
-	name       string
-	iconUrl    string
-	state      ClientState
-	table      *Table
-	seat       int
-	isTurn     bool
+	mu       sync.Mutex
+	conn     *websocket.Conn
+	isAuthed bool
+	instance *Instance
+	id       string
+	name     string
+	iconUrl  string
+	state    ClientState
+	player   *Player
+}
+```
+## Player
+```go
+type PlayerState int
+
+const (
+	PlayerUnavailable PlayerState = iota
+	PlayerWaiting
+	PlayerReady
+	PlayerTrumping
+	PlayerPlaying
+)
+
+type Team int
+
+const (
+	TeamA Team = iota
+	TeamB
+)
+
+type Player struct {
+	client  *Client
+	state   PlayerState
+	hand    []string
+	seat    int
+	team    Team
+	score   int
+	partner *Player
+	isTurn  bool
 }
 ```
 ## Server
@@ -41,6 +69,8 @@ type Instance struct {
 ```
 ## Table
 ```go
+type TableState int
+
 const (
 	TableWaiting TableState = iota
 	TableTrumping
@@ -48,9 +78,8 @@ const (
 )
 
 type Table struct {
-	players    [4]*Client
-	spectators []*Client
-	state      TableState
-	turn       int
+	players [4]*Player
+	state   TableState
+	turn    int
 }
 ```

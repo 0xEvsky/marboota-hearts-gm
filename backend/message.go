@@ -8,36 +8,36 @@ import (
 func msgHandler(c *Client, msg map[string]string) {
 	if msg["ACTION"] == "AUTH" {
 		if c.isAuthed {
-			c.writeError("Already authenticated")
+			c.writeError(msg["REQUESTID"], "already authenticated")
 			log.Println("Duplicated authentication, skipping")
 			return
 		}
 
 		if msg["INSTANCEID"] == "" {
-			c.writeError("Missing field: INSTANCEID")
-			log.Println("Authentication request with missing 'instance ID' rejected")
+			c.writeError(msg["REQUESTID"], "missing field: INSTANCEID")
+			log.Println("Authentication request with missing 'instance ID' refused")
 			return
 		}
 		if msg["USERID"] == "" {
-			c.writeError("Missing field: USERID")
-			log.Println("Authentication request with missing 'user ID' rejected")
+			c.writeError(msg["REQUESTID"], "missing field: USERID")
+			log.Println("Authentication request with missing 'user ID' refused")
 			return
 		}
 		if msg["USERNAME"] == "" {
-			c.writeError("Missing field: USERNAME")
-			log.Println("Authentication request with missing 'username' rejected")
+			c.writeError(msg["REQUESTID"], "missing field: USERNAME")
+			log.Println("Authentication request with missing 'username' refused")
 			return
 		}
 		if msg["ICONURL"] == "" {
-			c.writeError("Missing field: ICONURL")
-			log.Println("Authentication request with missing 'icon URL' rejected")
+			c.writeError(msg["REQUESTID"], "missing field: ICONURL")
+			log.Println("Authentication request with missing 'icon URL' refused")
 			return
 		}
 
 		var instance = server.instances[msg["INSTANCEID"]]
 
 		if instance != nil && instance.clients[msg["USERID"]] != nil {
-			c.writeError("ID is already authenticated with different client")
+			c.writeError(msg["REQUESTID"], "ID is already authenticated with different client")
 			log.Println("Failed authentication, user ID is already authenticated with different client")
 			return
 		}
@@ -54,14 +54,19 @@ func msgHandler(c *Client, msg map[string]string) {
 			c.instance = newInstance(c, msg["INSTANCEID"])
 		}
 
-		c.writeOk()
+		c.writeOk(msg["REQUESTID"])
 
 		c.broadcastToInstance(map[string]string{"ACTION": "JOIN", "USERID": c.id, "USERNAME": c.name, "ICONURL": c.iconUrl})
 		for _, client := range c.instance.clients {
 			if !client.isAuthed || client == c {
 				continue
 			}
-			c.writeJson(map[string]string{"ACTION": "JOIN", "USERID": client.id, "USERNAME": client.name, "ICONURL": client.iconUrl, "SEAT": strconv.Itoa(client.seat)})
+			// Catch-up
+			c.writeJson(map[string]string{"ACTION": "JOIN", "USERID": client.id, "USERNAME": client.name, "ICONURL": client.iconUrl})
+			if client.state == ClientSeated {
+				// Seat catch-up
+				c.writeJson(map[string]string{"ACTION": "SIT", "USERID": c.id, "SEAT": strconv.Itoa(client.player.seat)})
+			}
 		}
 
 		log.Println("Client authenticated")
@@ -69,57 +74,52 @@ func msgHandler(c *Client, msg map[string]string) {
 	}
 
 	if !c.isAuthed {
-		c.writeError("Forbidden: Not authenticated")
-		log.Println("Unauthenticated request rejected")
+		c.writeError(msg["REQUESTID"], "not authenticated")
+		log.Println("Unauthenticated request refused")
 		return
 	}
 
 	switch msg["ACTION"] {
 	case "SIT":
-		if c.table != nil {
-			c.writeError("Already seated")
-			log.Println("Seated SIT request rejected")
+		var seat, err = strconv.Atoi(msg["SEAT"])
+		if err != nil || seat < 0 || seat > 4 {
+			c.writeError(msg["REQUESTID"], "invalid or missing seat (1-4)")
+			log.Println("SIT request with invalid or missing seat refused")
 			return
 		}
 
-		err := c.instance.table.seatPlayer(c)
-		if err != nil {
-			c.writeError("Table is full")
-			log.Println("Full table SIT request rejected")
-			return
+		if seat == 0 {
+			if c.state == ClientIdle {
+				c.writeOk(msg["REQUESTID"])
+				log.Println("Unseated SIT request (seat=0) skipped")
+				return
+			}
+
+			c.instance.table.unseatPlayer(c)
 		}
-		c.writeOk()
-		c.broadcastToInstance(map[string]string{"ACTION": "SIT", "USERID": c.id, "SEAT": strconv.Itoa(c.seat)})
+
+		if seat > 0 {
+			if c.state == ClientSeated && seat == c.player.seat {
+				c.writeError(msg["REQUESTID"], "already seated")
+				log.Println("Seated SIT request refused")
+				return
+			}
+
+			err = c.instance.table.seatPlayer(c, seat)
+			if err != nil {
+				c.writeError(msg["REQUESTID"], err.Error())
+				log.Println("SIT request with taken seat refused")
+				return
+			}
+		}
+
+		c.writeOk(msg["REQUESTID"])
+		c.broadcastToInstance(map[string]string{"ACTION": "SIT", "USERID": c.id, "SEAT": msg["SEAT"]})
 		log.Println("SIT request accepted")
-		// TODO: If game was already running, show client their cards
-
-	case "UNSIT":
-		if c.table == nil {
-			c.writeError("Not seated")
-			log.Println("Unseated UNSIT request rejected")
-			return
-		}
-
-		c.table.unseatPlayer(c)
-		c.writeOk()
-		c.broadcastToInstance(map[string]string{"ACTION": "UNSIT", "USERID": c.id})
-		log.Println("UNSIT request accepted")
-
-	case "SWITCH":
-		if c.table == nil {
-			c.writeError("Client is not seated")
-			log.Println("Unseated SWITCH request rejected")
-			return
-		}
-
-		// TODO: implement xd
-
-		c.writeOk()
-		c.broadcastToInstance(map[string]string{"ACTION": "SWITCH", "USERID": c.id, "SEAT": msg["SEAT"]})
-		log.Println("SWITCH request accepted")
+		// TODO: If game was already running, show player their hand
 
 	default:
-		c.writeError("Unknown or missing action")
+		c.writeError(msg["REQUESTID"], "unknown or missing action")
 		log.Println("Unknown or missing action skipped")
 		return
 	}

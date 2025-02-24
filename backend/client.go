@@ -12,8 +12,7 @@ type ClientState int
 const (
 	ClientUnavailable ClientState = iota
 	ClientIdle
-	ClientWaiting
-	ClientPlaying
+	ClientSeated
 )
 
 type Client struct {
@@ -25,23 +24,12 @@ type Client struct {
 	name     string
 	iconUrl  string
 	state    ClientState
-	table    *Table
-	seat     int
-	isTurn   bool
+	player   *Player
 }
 
 func newClient(conn *websocket.Conn) *Client {
 	return &Client{
-		conn:     conn,
-		isAuthed: false,
-		instance: nil,
-		id:       "",
-		name:     "",
-		iconUrl:  "",
-		state:    ClientUnavailable,
-		table:    nil,
-		seat:     0,
-		isTurn:   false,
+		conn: conn,
 	}
 }
 
@@ -51,12 +39,12 @@ func (c *Client) writeJson(msg map[string]string) error {
 	return c.conn.WriteJSON(msg)
 }
 
-func (c *Client) writeError(msg string) error {
-	return c.writeJson(map[string]string{"ACTION": "ERROR", "MESSAGE": msg})
+func (c *Client) writeError(requestId string, msg string) error {
+	return c.writeJson(map[string]string{"ACTION": "ERROR", "REQUESTID": requestId, "MESSAGE": msg})
 }
 
-func (c *Client) writeOk() error {
-	return c.writeJson(map[string]string{"ACTION": "OK"})
+func (c *Client) writeOk(requestId string) error {
+	return c.writeJson(map[string]string{"ACTION": "OK", "REQUESTID": requestId})
 }
 
 func (c *Client) broadcastToInstance(msg map[string]string) error {
