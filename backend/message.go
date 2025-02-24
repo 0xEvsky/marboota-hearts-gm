@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"strconv"
 )
@@ -71,7 +70,7 @@ func msgHandler(c *Client, msg map[string]string) {
 
 	if !c.isAuthed {
 		c.writeError("Forbidden: Not authenticated")
-		log.Println("Unauthenticated SWITCH request rejected")
+		log.Println("Unauthenticated request rejected")
 		return
 	}
 
@@ -91,6 +90,7 @@ func msgHandler(c *Client, msg map[string]string) {
 		}
 		c.writeOk()
 		c.broadcastToInstance(map[string]string{"ACTION": "SIT", "USERID": c.id, "SEAT": strconv.Itoa(c.seat)})
+		log.Println("SIT request accepted")
 		// TODO: If game was already running, show client their cards
 
 	case "UNSIT":
@@ -103,6 +103,7 @@ func msgHandler(c *Client, msg map[string]string) {
 		c.table.unseatPlayer(c)
 		c.writeOk()
 		c.broadcastToInstance(map[string]string{"ACTION": "UNSIT", "USERID": c.id})
+		log.Println("UNSIT request accepted")
 
 	case "SWITCH":
 		if c.table == nil {
@@ -115,20 +116,11 @@ func msgHandler(c *Client, msg map[string]string) {
 
 		c.writeOk()
 		c.broadcastToInstance(map[string]string{"ACTION": "SWITCH", "USERID": c.id, "SEAT": msg["SEAT"]})
-		log.Println("Client switched seats")
+		log.Println("SWITCH request accepted")
 
 	default:
 		c.writeError("Unknown or missing action")
 		log.Println("Unknown or missing action skipped")
 		return
 	}
-}
-
-func toJson(msg map[string]string) []byte {
-	r, err := json.Marshal(msg)
-	if err != nil {
-		log.Println(err)
-		return []byte("{\"ACTION\":\"ERROR\",\"MESSAGE\":\"Server error in JSON marshalling\"}")
-	}
-	return r
 }
