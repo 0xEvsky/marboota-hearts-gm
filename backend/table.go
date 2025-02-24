@@ -50,11 +50,9 @@ func newTable() Table {
 	var players = [4]*Player{}
 	for i := range players {
 		players[i] = &Player{
-			state:   PlayerUnavailable,
 			seat:    i + 1,
 			team:    Team(i % 2),
 			partner: players[(i+2)%4],
-			isTurn:  false,
 		}
 	}
 
