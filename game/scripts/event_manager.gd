@@ -6,32 +6,31 @@ signal LEAVE_received
 signal SIT_received
 signal UNSIT_received
 
-var request_queue = []
-var response_queue = []
+var _request_queue: Array[Dictionary] = []
+var _response_queue: Array[Dictionary] = []
 
 func _process(_delta: float) -> void:
-    if !response_queue.is_empty():
+    if !_response_queue.is_empty():
         _process_response_queue()
 
 func send_request(msg: Dictionary, on_success: Callable, on_error: Callable) -> void:
-    var message = msg
-    message["REQUESTID"] = "123" # TODO: Generate
-    request_queue.append({"message": message, "on_success": on_success, "on_error": on_error})
+    var request_id = _generate_request_id()
+    _request_queue.append({"message": msg, "request_id": request_id, "on_success": on_success, "on_error": on_error})
     NetworkManager._write_json(msg)
 
 func _handle_message(msg: Dictionary) -> void:
-    response_queue.append(msg)
+    _response_queue.append(msg)
     _process_response_queue()
 
 func _process_response_queue() -> void:
-    for res in response_queue:
-        if res["REQUESTID"] == request_queue.front()["REQUESTID"]:
+    for res in _response_queue:
+        if res["REQUESTID"] == _request_queue.front()["request_id"]:
             if res["ACTION"] == "OK":
-                request_queue.front()["on_success"].call()
+                _request_queue.front()["on_success"].call()
             elif res["ACTION"] == "ERROR":
-                request_queue.front()["on_error"].call(res["MESSAGE"])
-            request_queue.pop_front()
-            response_queue.erase(res)
+                _request_queue.front()["on_error"].call(res["MESSAGE"])
+            _request_queue.pop_front()
+            _response_queue.erase(res)
             break
 
 func _dispatch(action: String) -> void:
@@ -46,3 +45,9 @@ func _dispatch(action: String) -> void:
             UNSIT_received.emit()
         _:
             print("Invalid action")
+
+func _generate_request_id() -> String:
+    return "request" + "-" + NetworkManager.user_id + "-" + str(RandomNumberGenerator.new().randi())
+
+func sit_request(seat: int) -> Dictionary:
+    return {"ACTION": "SIT", "SEAT": str(seat)}

@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://8xkf68liril2"]
+[gd_scene load_steps=7 format=3 uid="uid://8xkf68liril2"]
 
 [ext_resource type="Texture2D" uid="uid://chnhuidtxoexr" path="res://assets/graphics/bg.jpg" id="1_bjwno"]
 [ext_resource type="Texture2D" uid="uid://xudi6b2awstb" path="res://assets/ui/icon_repeat_light.png" id="1_lit6y"]
+[ext_resource type="PackedScene" uid="uid://chi8vcmil521h" path="res://debug_panel.tscn" id="3_udsek"]
 
 [sub_resource type="Animation" id="Animation_5kc0w"]
 length = 0.001
@@ -112,3 +113,5 @@ libraries = {
 "": SubResource("AnimationLibrary_ldj1v")
 }
 autoplay = "spin"
+
+[node name="DebugPanel" parent="UI" instance=ExtResource("3_udsek")]

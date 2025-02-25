@@ -11,6 +11,8 @@ var _socket = WebSocketPeer.new()
 var authenticated = false
 var _auth_requested
 
+signal AUTH_accepted
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -48,6 +50,7 @@ func _handle_auth() -> void:
 	
 	if msg["ACTION"] == "OK":
 		authenticated = true
+		AUTH_accepted.emit()
 		print("Authenticated!")
 	else:
 		# TODO: handle error
