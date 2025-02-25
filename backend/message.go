@@ -1,11 +1,19 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"strconv"
 )
 
-func msgHandler(c *Client, msg map[string]string) {
+func msgHandler(c *Client, rawMsg []byte) {
+	var msg map[string]string
+	err := json.Unmarshal(rawMsg, &msg)
+	if err != nil {
+		c.writeError(msg["REQUESTID"], err.Error())
+		log.Println(err)
+	}
+
 	if msg["ACTION"] == "AUTH" {
 		if c.isAuthed {
 			c.writeError(msg["REQUESTID"], "already authenticated")
@@ -50,8 +58,10 @@ func msgHandler(c *Client, msg map[string]string) {
 
 		if instance != nil {
 			c.instance = joinInstance(c, msg["INSTANCEID"])
+			log.Println("Joined existing instance")
 		} else {
 			c.instance = newInstance(c, msg["INSTANCEID"])
+			log.Println("New instance created")
 		}
 
 		c.writeOk(msg["REQUESTID"])

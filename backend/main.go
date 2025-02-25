@@ -48,27 +48,21 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) read(ws *websocket.Conn) {
 	defer ws.Close()
 	for {
-		var msg = make(map[string]string)
-		err := ws.ReadJSON(&msg)
+		_, msg, err := ws.ReadMessage()
 		if err != nil {
-			if websocket.IsCloseError(err) || websocket.IsUnexpectedCloseError(err) {
-				if s.conns[ws].isAuthed {
-					s.conns[ws].broadcastToInstance(map[string]string{"ACTION": "LEAVE", "USERID": s.conns[ws].id})
-					delete(s.conns[ws].instance.clients, s.conns[ws].id)
+			if s.conns[ws].isAuthed {
+				s.conns[ws].broadcastToInstance(map[string]string{"ACTION": "LEAVE", "USERID": s.conns[ws].id})
+				delete(s.conns[ws].instance.clients, s.conns[ws].id)
 
-					if len(s.conns[ws].instance.clients) == 0 {
-						delete(s.instances, s.conns[ws].instance.id)
-						log.Printf("Deleted empty instance")
-					}
+				if len(s.conns[ws].instance.clients) == 0 {
+					delete(s.instances, s.conns[ws].instance.id)
+					log.Printf("Deleted empty instance")
 				}
-				delete(s.conns, ws)
-				log.Println(err)
-				break
 			}
 
-			ws.WriteJSON(map[string]string{"ACTION": "ERROR", "MESSAGE": err.Error()})
+			delete(s.conns, ws)
 			log.Println(err)
-			continue
+			break
 		}
 
 		msgHandler(s.conns[ws], msg)

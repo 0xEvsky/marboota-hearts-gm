@@ -1,9 +1,5 @@
 package main
 
-import (
-	"log"
-)
-
 type Instance struct {
 	id      string
 	clients map[string]*Client // key is userid
@@ -13,7 +9,6 @@ type Instance struct {
 func joinInstance(c *Client, id string) *Instance {
 	if instance := server.instances[id]; instance != nil {
 		instance.clients[c.id] = c
-		log.Println("Joined existing instance")
 		return instance
 	}
 
@@ -30,6 +25,5 @@ func newInstance(c *Client, id string) *Instance {
 	// TODO: Investigate mutex
 	server.instances[id] = &newInstance
 
-	log.Println("New instance created")
 	return &newInstance
 }
