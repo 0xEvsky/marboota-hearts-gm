@@ -13,9 +13,10 @@ const (
 )
 
 type Table struct {
-	players [4]*Player
-	state   TableState
-	turn    int
+	instance *Instance
+	players  [4]*Player
+	state    TableState
+	turn     int
 }
 
 type PlayerState int
@@ -73,18 +74,42 @@ func (t *Table) seatPlayer(c *Client, s int) error {
 		return errors.New("seat is taken")
 	}
 
-	t.unseatPlayer(c)
+	unseatPlayer(c)
 
 	p.client = c
 	c.player = p
 	c.state = ClientSeated
+
+	// TODO: Change depending on game state
+	p.state = PlayerWaiting
+
 	return nil
 }
 
-func (t *Table) unseatPlayer(c *Client) {
+func unseatPlayer(c *Client) {
 	if c.state != ClientSeated {
 		return
 	}
 	c.player.client = nil
 	c.state = ClientIdle
+}
+
+func (t *Table) isEveryoneReady() bool {
+	for _, p := range t.players {
+		if p.state != PlayerReady {
+			return false
+		}
+	}
+	return true
+}
+
+func (t *Table) startGame() {
+	t.instance.Broadcast(map[string]string{"ACTION": "STARTGAME"})
+	t.state = TableTrumping
+	t.turn = 0
+
+	for _, p := range t.players {
+		p.state = PlayerTrumping
+	}
+	t.players[0].isTurn = true
 }

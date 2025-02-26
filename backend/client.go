@@ -16,15 +16,16 @@ const (
 )
 
 type Client struct {
-	mu       sync.Mutex
-	conn     *websocket.Conn
-	isAuthed bool
-	instance *Instance
-	id       string
-	name     string
-	iconUrl  string
-	state    ClientState
-	player   *Player
+	mu        sync.Mutex
+	conn      *websocket.Conn
+	isAuthed  bool
+	instance  *Instance
+	id        string
+	name      string
+	iconUrl   string
+	state     ClientState
+	player    *Player
+	requestId string
 }
 
 func newClient(conn *websocket.Conn) *Client {
@@ -39,15 +40,15 @@ func (c *Client) writeJson(msg map[string]string) error {
 	return c.conn.WriteJSON(msg)
 }
 
-func (c *Client) writeError(requestId string, msg string) error {
-	return c.writeJson(map[string]string{"ACTION": "ERROR", "REQUESTID": requestId, "MESSAGE": msg})
+func (c *Client) writeError(msg string) error {
+	return c.writeJson(map[string]string{"ACTION": "ERROR", "REQUESTID": c.requestId, "MESSAGE": msg})
 }
 
-func (c *Client) writeOk(requestId string) error {
-	return c.writeJson(map[string]string{"ACTION": "OK", "REQUESTID": requestId})
+func (c *Client) writeOk() error {
+	return c.writeJson(map[string]string{"ACTION": "OK", "REQUESTID": c.requestId})
 }
 
-func (c *Client) broadcastToInstance(msg map[string]string) error {
+func (c *Client) broadcastToMates(msg map[string]string) error {
 	if c.instance == nil {
 		return errors.New("Client not authenticated")
 	}

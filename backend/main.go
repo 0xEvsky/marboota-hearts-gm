@@ -51,7 +51,7 @@ func (s *Server) read(ws *websocket.Conn) {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
 			if s.conns[ws].isAuthed {
-				s.conns[ws].broadcastToInstance(map[string]string{"ACTION": "LEAVE", "USERID": s.conns[ws].id})
+				s.conns[ws].broadcastToMates(map[string]string{"ACTION": "LEAVE", "USERID": s.conns[ws].id})
 				delete(s.conns[ws].instance.clients, s.conns[ws].id)
 
 				if len(s.conns[ws].instance.clients) == 0 {
@@ -61,7 +61,7 @@ func (s *Server) read(ws *websocket.Conn) {
 			}
 
 			delete(s.conns, ws)
-			log.Println(err)
+			log.Printf("Connection closed: %s\n", err)
 			break
 		}
 

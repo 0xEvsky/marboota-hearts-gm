@@ -1,6 +1,9 @@
 package main
 
+import "sync"
+
 type Instance struct {
+	mu      sync.Mutex
 	id      string
 	clients map[string]*Client // key is userid
 	table   Table
@@ -8,6 +11,8 @@ type Instance struct {
 
 func joinInstance(c *Client, id string) *Instance {
 	if instance := server.instances[id]; instance != nil {
+		instance.mu.Lock()
+		defer instance.mu.Unlock()
 		instance.clients[c.id] = c
 		return instance
 	}
@@ -16,14 +21,26 @@ func joinInstance(c *Client, id string) *Instance {
 }
 
 func newInstance(c *Client, id string) *Instance {
-	var newInstance = Instance{
+	var newInstance = &Instance{
 		id:      id,
 		clients: map[string]*Client{c.id: c},
 		table:   newTable(),
 	}
 
-	// TODO: Investigate mutex
-	server.instances[id] = &newInstance
+	newInstance.table.instance = newInstance
 
-	return &newInstance
+	server.mu.Lock()
+	defer server.mu.Unlock()
+	server.instances[id] = newInstance
+
+	return newInstance
+}
+
+func (i *Instance) Broadcast(msg map[string]string) {
+	for _, c := range i.clients {
+		if !c.isAuthed {
+			continue
+		}
+		c.writeJson(msg)
+	}
 }
