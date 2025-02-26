@@ -8,7 +8,8 @@ on:
     branches: [ "main" ]
     paths:
       - 'backend/**'
-      - '!**.md'
+      - '!backend/docs/**'
+      - '!backend/README.md'
 #   tags:
 #     - 'v*.*.*'
   workflow_dispatch:
