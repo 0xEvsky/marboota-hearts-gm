@@ -23,12 +23,42 @@ Registers the client & its details in the server, required before any further co
     "REQUESTID": "request000123"
 }
 ```
+
 ### SIT
-Requests to sit at the provided seat, 0 being for spectators and 1-4 for players. Returns an error if a player seat was requested and it was taken or the table was full.
+Requests to sit at the provided seat (1-4) for players. Returns an error if a player seat was requested and it was taken, the table was full or the seat was invalid.
 ```json
 {
     "ACTION":"SIT",
     "SEAT":"1",
+    "REQUESTID": "request000123"
+}
+```
+
+### UNSIT
+Requests to unsit the client from the game table and back to spectating. Returns an error if the player was not seated to begin with or the game has already started.
+```json
+{
+    "ACTION":"UNSIT",
+    "REQUESTID": "request000123"
+}
+```
+
+### READY
+Requests to set the client at the game table as ready. Returns an error if the player is not seated or was already ready.
+> [!NOTE]
+> Once all players in a table are ready, the game will trigger the GAMESTART sequence
+```json
+{
+    "ACTION":"READY",
+    "REQUESTID": "request000123"
+}
+```
+
+### UNREADY
+Requests to set the client at the game table as NOT ready. Returns an error if the player is not seated, wasn't ready or the game has already started.
+```json
+{
+    "ACTION":"UNREADY",
     "REQUESTID": "request000123"
 }
 ```
@@ -44,12 +74,13 @@ Everything is A-OK 👍.
     "REQUESTID": "request000123"
 }
 ```
+
 ### ERROR
 Error with message.
 ```json
 {
     "ACTION":"ERROR",
-    "MESSAGE":"Your error message will be here",
+    "MESSAGE":"your error message will be here",
     "REQUESTID": "request000123"
 }
 ```
@@ -70,6 +101,7 @@ Whenever a new client authenticates, this message is sent to all other clients i
     "ICONURL": "discord.com/avatar/55667788"
 }
 ```
+
 ### LEAVE
 Sent to all clients in the instance when a client disconnects announcing its user ID
 ```json
@@ -78,6 +110,7 @@ Sent to all clients in the instance when a client disconnects announcing its use
     "USERID":"11223344"
 }
 ```
+
 ### SIT
 This is sent to all other clients in an instance when a client is successfully seated alongside its information.
 > [!NOTE]
@@ -87,5 +120,24 @@ This is sent to all other clients in an instance when a client is successfully s
     "ACTION": "SIT",
     "SEAT": "1",
     "USERID": "11223344"
+}
+```
+
+### READY
+This is sent to all other clients in an instance when a client is successfully set as ready alongside its information.
+> [!NOTE]
+> This is also catch-up sent just like `JOIN`
+```json
+{
+    "ACTION": "READY",
+    "USERID": "11223344"
+}
+```
+
+### GAMESTART
+Once all players in a table are ready, this is sent to all clients in that instance signaling the game has started.
+```json
+{
+    "ACTION": "GAMESTART",
 }
 ```

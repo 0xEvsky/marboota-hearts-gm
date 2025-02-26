@@ -85,6 +85,10 @@ func seatClient(c *Client, seatStr string) error {
 }
 
 func unseatClient(c *Client) error {
+	if c.instance.table.state != TableWaiting {
+		return errors.New("game has started")
+	}
+
 	if c.state == ClientIdle {
 		return errors.New("already unseated")
 	}
@@ -97,6 +101,10 @@ func unseatClient(c *Client) error {
 }
 
 func setReady(c *Client) error {
+	if c.instance.table.state != TableWaiting {
+		return errors.New("game has started")
+	}
+
 	if c.state != ClientSeated {
 		return errors.New("not seated")
 	}

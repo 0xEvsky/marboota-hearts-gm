@@ -104,7 +104,7 @@ func (t *Table) isEveryoneReady() bool {
 }
 
 func (t *Table) startGame() {
-	t.instance.Broadcast(map[string]string{"ACTION": "STARTGAME"})
+	t.instance.Broadcast(map[string]string{"ACTION": "GAMESTART"})
 	t.state = TableTrumping
 	t.turn = 0
 

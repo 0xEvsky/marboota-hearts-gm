@@ -4,6 +4,8 @@ The various parts making up the server heirarchy.
 > Methods were omitted
 ## Client
 ```go
+type ClientState int
+
 const (
 	ClientUnavailable ClientState = iota
 	ClientIdle
@@ -11,15 +13,16 @@ const (
 )
 
 type Client struct {
-	mu       sync.Mutex
-	conn     *websocket.Conn
-	isAuthed bool
-	instance *Instance
-	id       string
-	name     string
-	iconUrl  string
-	state    ClientState
-	player   *Player
+	mu        sync.Mutex
+	conn      *websocket.Conn
+	isAuthed  bool
+	instance  *Instance
+	id        string
+	name      string
+	iconUrl   string
+	state     ClientState
+	player    *Player
+	requestId string
 }
 ```
 ## Player
@@ -62,6 +65,7 @@ type Server struct {
 ## Instance
 ```go
 type Instance struct {
+	mu      sync.Mutex
 	id      string
 	clients map[string]*Client // key is userid
 	table   Table
@@ -78,8 +82,9 @@ const (
 )
 
 type Table struct {
-	players [4]*Player
-	state   TableState
-	turn    int
+	instance *Instance
+	players  [4]*Player
+	state    TableState
+	turn     int
 }
 ```
