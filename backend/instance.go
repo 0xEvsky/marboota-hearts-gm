@@ -10,6 +10,8 @@ type Instance struct {
 }
 
 func joinInstance(c *Client, id string) *Instance {
+	server.mu.Lock()
+	defer server.mu.Unlock()
 	if instance := server.instances[id]; instance != nil {
 		instance.mu.Lock()
 		defer instance.mu.Unlock()

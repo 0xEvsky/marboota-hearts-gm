@@ -56,8 +56,12 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 		// Seat catch-up
 		if client.state == ClientSeated {
 			c.writeJson(map[string]string{"ACTION": "SIT", "USERID": c.id, "SEAT": strconv.Itoa(client.player.seat)})
+			// Ready catchup
+			if client.player.state == PlayerReady {
+				c.writeJson(map[string]string{"ACTION": "READY", "USERID": c.id})
+			}
 		}
-		// TODO: Ready catchup
+		// TODO: Table catchup
 	}
 
 	return nil
