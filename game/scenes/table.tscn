@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3 uid="uid://belne7lgw02p3"]
+
+[ext_resource type="Texture2D" uid="uid://buqxed4qdih7p" path="res://assets/graphics/table.png" id="1_4ps2g"]
+[ext_resource type="Texture2D" uid="uid://haha0q0yyasu" path="res://assets/graphics/seat.png" id="2_eyh1y"]
+
+[node name="Table" type="Node2D"]
+
+[node name="TableSprite" type="Sprite2D" parent="."]
+scale = Vector2(0.57963, 0.57963)
+texture = ExtResource("1_4ps2g")
+
+[node name="Seat1" type="Sprite2D" parent="."]
+position = Vector2(0, 313)
+scale = Vector2(1.70833, 1.70833)
+texture = ExtResource("2_eyh1y")
+
+[node name="Seat2" type="Sprite2D" parent="."]
+position = Vector2(0, -313)
+scale = Vector2(1.70833, 1.70833)
+texture = ExtResource("2_eyh1y")
+
+[node name="Seat3" type="Sprite2D" parent="."]
+position = Vector2(313, -6.10352e-05)
+scale = Vector2(1.70833, 1.70833)
+texture = ExtResource("2_eyh1y")
+
+[node name="Seat4" type="Sprite2D" parent="."]
+position = Vector2(-313, -6.10352e-05)
+scale = Vector2(1.70833, 1.70833)
+texture = ExtResource("2_eyh1y")

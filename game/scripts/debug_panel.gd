@@ -20,11 +20,11 @@ func _process(_delta: float) -> void:
 
 func _on_button_button_up() -> void:
 	EventManager.send_request(
-		EventManager.sit_request(0),
+		EventManager.unsit_request(),
 		func():
-			print("sit 0 success"),
+			print_debug("sit 0 success"),
 		func():
-			print("sit 0 fail"),
+			print_debug("sit 0 fail"),
 	)
 
 
@@ -32,9 +32,9 @@ func _on_button_2_button_up() -> void:
 	EventManager.send_request(
 		EventManager.sit_request(1),
 		func():
-			print("sit 1 success"),
+			print_debug("sit 1 success"),
 		func():
-			print("sit 1 fail"),
+			print_debug("sit 1 fail"),
 	)
 
 
@@ -42,7 +42,7 @@ func _on_button_3_button_up() -> void:
 	EventManager.send_request(
 		EventManager.sit_request(2),
 		func():
-			print("sit 2 success"),
+			print_debug("sit 2 success"),
 		func():
-			print("sit 2 fail"),
+			print_debug("sit 2 fail"),
 	)

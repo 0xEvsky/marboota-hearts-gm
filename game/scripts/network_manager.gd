@@ -2,8 +2,8 @@ extends Node
 
 var instance_id = "1234"
 var username = "Player"
-var user_id = "11223344"
-var icon_url = "https://google.com"
+var user_id = str(randi_range(1,1000000))
+var icon_url = "https://placehold.co/120x120.png?text=" + username + user_id
 
 var _backend_url = "ws://localhost:3000/ws"
 
@@ -19,7 +19,7 @@ func _ready() -> void:
 	# TODO: Get data from JSbridge
 	var err = _socket.connect_to_url(_backend_url)
 	if err != OK:
-		print("Unable to connect")
+		push_error("Unable to connect")
 		set_process(false)
 
 
@@ -51,10 +51,10 @@ func _handle_auth() -> void:
 	if msg["ACTION"] == "OK":
 		authenticated = true
 		AUTH_accepted.emit()
-		print("Authenticated!")
-	else:
+		print_debug("Authenticated!")
+	elif msg["ACTION"] == "ERROR":
 		# TODO: handle error
-		print("Authentication failed: " + msg["MESSAGE"] + ", exiting...")
+		push_error("Authentication failed: " + msg["MESSAGE"] + ", exiting...")
 		set_process(false)
 
 func _read_loop() -> void:

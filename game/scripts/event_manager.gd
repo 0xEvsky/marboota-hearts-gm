@@ -5,6 +5,8 @@ signal JOIN_received
 signal LEAVE_received
 signal SIT_received
 signal UNSIT_received
+signal READY_received
+signal UNREADY_received
 
 var _request_queue: Array[Dictionary] = []
 var _response_queue: Array[Dictionary] = []
@@ -18,36 +20,52 @@ func send_request(msg: Dictionary, on_success: Callable, on_error: Callable) -> 
     _request_queue.append({"message": msg, "request_id": request_id, "on_success": on_success, "on_error": on_error})
     NetworkManager._write_json(msg)
 
+func _generate_request_id() -> String:
+    return "request" + "-" + NetworkManager.user_id + "-" + str(RandomNumberGenerator.new().randi())
+
 func _handle_message(msg: Dictionary) -> void:
     _response_queue.append(msg)
     _process_response_queue()
 
 func _process_response_queue() -> void:
-    for res in _response_queue:
-        if res["REQUESTID"] == _request_queue.front()["request_id"]:
+    var res = _response_queue.pop_front()
+    for req in _request_queue:
+        if res["REQUESTID"] == req["request_id"]:
             if res["ACTION"] == "OK":
-                _request_queue.front()["on_success"].call()
+                req["on_success"].call()
             elif res["ACTION"] == "ERROR":
-                _request_queue.front()["on_error"].call(res["MESSAGE"])
+                req["on_error"].call(res["MESSAGE"])
             _request_queue.pop_front()
-            _response_queue.erase(res)
-            break
+            return
+    _dispatch(res["ACTION"], res)
 
-func _dispatch(action: String) -> void:
+func _dispatch(action: String, msg: Dictionary) -> void:
     match action:
         "JOIN":
-            JOIN_received.emit()
+            JOIN_received.emit(msg["USERID"], msg["USERNAME"], msg["ICONURL"])
         "LEAVE":
-            LEAVE_received.emit()
+            LEAVE_received.emit(msg["USERID"])
         "SIT":
             SIT_received.emit()
         "UNSIT":
             UNSIT_received.emit()
+        "READY":
+            READY_received.emit()
+        "UNREADY":
+            UNREADY_received.emit()
         _:
-            print("Invalid action")
+            push_error("Invalid or unknown action received from server")
 
-func _generate_request_id() -> String:
-    return "request" + "-" + NetworkManager.user_id + "-" + str(RandomNumberGenerator.new().randi())
+# Requests
 
 func sit_request(seat: int) -> Dictionary:
     return {"ACTION": "SIT", "SEAT": str(seat)}
+
+func unsit_request() -> Dictionary:
+    return {"ACTION": "UNSIT"}
+
+func ready_request() -> Dictionary:
+    return {"ACTION": "READY"}
+
+func unready_request() -> Dictionary:
+    return {"ACTION": "UNREADY"}
