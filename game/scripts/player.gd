@@ -7,3 +7,4 @@ var username = "Player"
 @onready var icon: Sprite2D = $Icon
 
 var state = manager.PLAYER_IDLE
+var seat: Seat = null

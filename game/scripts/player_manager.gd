@@ -5,9 +5,11 @@ enum {PLAYER_UNAVAILABLE, PLAYER_IDLE, PLAYER_WAITING, PLAYER_READY, PLAYER_TRUM
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	Globals.player_manager = self
 	NetworkManager.AUTH_accepted.connect(_init_my_player)
 	EventManager.JOIN_received.connect(_on_player_join)
 	EventManager.LEAVE_received.connect(_on_player_leave)
+	EventManager.SIT_received.connect(_on_player_sit)
 
 func _init_my_player() -> void:
 	_on_player_join("Me", NetworkManager.username, NetworkManager.icon_url)
@@ -44,5 +46,16 @@ func _on_player_join(id: String, username: String, url: String) -> void:
 	add_child(new_player)
 
 func _on_player_leave(id: String) -> void:
-	var leaving_player = get_node(id)
+	var leaving_player = get_node(id) as Player
+	if leaving_player.seat != null:
+		leaving_player.seat.unseat_player()
 	leaving_player.queue_free()
+
+func _on_player_sit(id: String, seat_num: String) -> void:
+	var seat_str = "../Table/Seat" + seat_num
+	var seat = get_node(seat_str) as Seat
+	seat.seat_player(id)
+
+func move_player(id: String, pos: Vector2) -> void:
+	var player = get_node(id) as Player
+	player.global_position = pos

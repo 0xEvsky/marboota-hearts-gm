@@ -7,9 +7,9 @@
 script = ExtResource("1_qdsxo")
 
 [node name="IconBorder" type="Sprite2D" parent="."]
-scale = Vector2(0.1875, 0.1875)
+scale = Vector2(0.916667, 0.916667)
 texture = ExtResource("2_tdhj7")
 
 [node name="Icon" type="Sprite2D" parent="."]
-scale = Vector2(0.140625, 0.140625)
+scale = Vector2(0.833333, 0.833333)
 texture = ExtResource("2_tdhj7")

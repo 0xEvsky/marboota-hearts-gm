@@ -12,12 +12,15 @@ var _request_queue: Array[Dictionary] = []
 var _response_queue: Array[Dictionary] = []
 
 func _process(_delta: float) -> void:
-    if !_response_queue.is_empty():
-        _process_response_queue()
+    #if !_response_queue.is_empty():
+        #_process_response_queue()
+    pass
 
 func send_request(msg: Dictionary, on_success: Callable, on_error: Callable) -> void:
     var request_id = _generate_request_id()
+    msg["REQUESTID"] = request_id
     _request_queue.append({"message": msg, "request_id": request_id, "on_success": on_success, "on_error": on_error})
+    print_debug("request: ", msg)
     NetworkManager._write_json(msg)
 
 func _generate_request_id() -> String:
@@ -29,6 +32,7 @@ func _handle_message(msg: Dictionary) -> void:
 
 func _process_response_queue() -> void:
     var res = _response_queue.pop_front()
+    print_debug("request: ", res)
     for req in _request_queue:
         if res["REQUESTID"] == req["request_id"]:
             if res["ACTION"] == "OK":
@@ -46,7 +50,7 @@ func _dispatch(action: String, msg: Dictionary) -> void:
         "LEAVE":
             LEAVE_received.emit(msg["USERID"])
         "SIT":
-            SIT_received.emit()
+            SIT_received.emit(msg["USERID"], msg["SEAT"])
         "UNSIT":
             UNSIT_received.emit()
         "READY":
