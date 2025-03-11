@@ -50,11 +50,15 @@ func (s *Server) read(ws *websocket.Conn) {
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
-			if s.conns[ws].isAuthed {
-				s.conns[ws].broadcastToMates(map[string]string{"ACTION": "LEAVE", "USERID": s.conns[ws].id})
-				delete(s.conns[ws].instance.clients, s.conns[ws].id)
+			var c = s.conns[ws]
+			if c.isAuthed {
+				c.broadcastToMates(map[string]string{"ACTION": "LEAVE", "USERID": s.conns[ws].id})
+				if c.state == ClientSeated {
+					c.instance.table.unseatPlayer(c)
+				}
+				delete(c.instance.clients, s.conns[ws].id)
 
-				if len(s.conns[ws].instance.clients) == 0 {
+				if len(c.instance.clients) == 0 {
 					delete(s.instances, s.conns[ws].instance.id)
 					log.Printf("Deleted empty instance")
 				}

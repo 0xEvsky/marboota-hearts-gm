@@ -74,23 +74,35 @@ func (t *Table) seatPlayer(c *Client, s int) error {
 		return errors.New("seat is taken")
 	}
 
-	unseatPlayer(c)
+	t.unseatPlayer(c)
 
 	p.client = c
 	c.player = p
 	c.state = ClientSeated
 
-	// TODO: Change depending on game state
+	// Change depending on game state
 	p.state = PlayerWaiting
+	if t.state == TableTrumping {
+		p.state = PlayerTrumping
+	}
+	if t.state == TablePlaying {
+		p.state = PlayerPlaying
+	}
 
 	return nil
 }
 
-func unseatPlayer(c *Client) {
+func (t *Table) unseatPlayer(c *Client) {
 	if c.state != ClientSeated {
 		return
 	}
-	c.player.client = nil
+
+	var p = c.player
+
+	p.client = nil
+	p.state = PlayerUnavailable
+	c.player = nil
+
 	c.state = ClientIdle
 }
 

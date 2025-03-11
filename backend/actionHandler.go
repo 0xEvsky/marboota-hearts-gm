@@ -98,8 +98,8 @@ func unseatClient(c *Client) error {
 	}
 
 	unsetReady(c)
+	c.instance.table.unseatPlayer(c)
 
-	unseatPlayer(c)
 	c.broadcastToMates(map[string]string{"ACTION": "UNSIT", "USERID": c.id})
 	return nil
 }
@@ -125,7 +125,7 @@ func setReady(c *Client) error {
 
 	c.broadcastToMates(map[string]string{"ACTION": "READY", "USERID": c.id})
 
-	// TODO: check if all players are ready
+	// Check if all players are ready
 	if c.instance.table.isEveryoneReady() {
 		c.instance.table.startGame()
 	}

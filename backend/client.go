@@ -62,3 +62,7 @@ func (c *Client) broadcastToMates(msg map[string]string) error {
 
 	return nil
 }
+
+func (c *Client) onDisconnect() {
+
+}
