@@ -8,3 +8,9 @@ var username = "Player"
 
 var state = manager.PLAYER_IDLE
 var seat: Seat = null
+
+func unseat() -> void:
+    state = manager.PLAYER_IDLE
+    seat = null
+    # Move player back to player list
+    manager.pin_player(self)

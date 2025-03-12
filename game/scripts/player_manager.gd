@@ -44,14 +44,16 @@ func _on_player_join(id: String, username: String, url: String) -> void:
 	
 	add_child(new_player)
 	pin_player(new_player)
+	if id == "Me":
+		Globals.my_player = new_player
 
 func _on_player_leave(id: String) -> void:
 	var leaving_player = get_node(id) as Player
 
 	if leaving_player.seat != null:
 		leaving_player.seat.unseat_player()
-	else:
-		unpin_player(leaving_player)
+	
+	unpin_player(leaving_player)
 
 	leaving_player.queue_free()
 
@@ -71,9 +73,13 @@ func _update_pinned_players() -> void:
 	pass
 
 func pin_player(player: Player) -> void:
+	if pinned_players.has(player):
+		return
 	pinned_players.append(player)
 	_update_pinned_players()
 
 func unpin_player(player: Player) -> void:
+	if !pinned_players.has(player):
+		return
 	pinned_players.erase(player)
 	_update_pinned_players()
