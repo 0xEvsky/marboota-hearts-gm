@@ -1,0 +1,28 @@
+extends Button
+
+
+func _ready() -> void:
+	visible = false
+
+
+func _on_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		Globals.my_player.state = Globals.player_manager.PLAYER_READY
+		EventManager.send_request(EventManager.ready_request()
+		# on success 
+		,func():
+			pass
+		# on error
+		,func():
+			Globals.my_player.state = Globals.player_manager.PLAYER_WAITING
+		)
+	else:
+		if Globals.my_player.state == Globals.player_manager.PLAYER_READY:
+			Globals.my_player.state = Globals.player_manager.PLAYER_WAITING
+			EventManager.send_request(EventManager.unready_request()
+			,func():
+				pass
+			,func():
+				Globals.my_player.state = Globals.player_manager.PLAYER_READY
+			)
+

@@ -17,6 +17,7 @@ scale = Vector2(0.57963, 0.57963)
 texture = ExtResource("1_4ps2g")
 
 [node name="Seat1" parent="." instance=ExtResource("2_bw1av")]
+seat_num = null
 
 [node name="Seat2" parent="." instance=ExtResource("2_bw1av")]
 position = Vector2(313, 0)
@@ -46,8 +47,5 @@ theme = SubResource("Theme_67dwn")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 66
 theme_override_styles/pressed = SubResource("StyleBoxFlat_j3pjb")
-toggle_mode = true
 text = "Ready"
 script = ExtResource("3_n1v42")
-
-[connection signal="toggled" from="ReadyButton" to="ReadyButton" method="_on_toggled"]

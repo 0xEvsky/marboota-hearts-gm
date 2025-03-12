@@ -1,9 +1,10 @@
 extends Node2D
 class_name Seat
 
-@export var seat_num = 1
 
+@export var seat_num = 1
 var sitter: Player
+@onready var seat_ready_button : Button = $"../ReadyButton"
 var is_taken = false
 
 func _disable_button() -> void:
@@ -40,12 +41,15 @@ func unseat_player() -> void:
 
 func _on_button_button_up() -> void:
 	seat_player("Me")
+	seat_ready_button.show()
+
 	EventManager.send_request(
 		EventManager.sit_request(seat_num)
 	,func():
 		pass
 	,func(err: String):
 		var me = Globals.my_player
+		seat_ready_button.hide()
 		if sitter == me:
 			unseat_player()
 		else:
