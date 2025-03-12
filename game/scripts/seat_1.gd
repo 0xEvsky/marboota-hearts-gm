@@ -6,15 +6,11 @@ class_name Seat
 var sitter: Player
 var is_taken = false
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-func disable_button() -> void:
+func _disable_button() -> void:
 	is_taken = true
 	$Button.disabled = true
 
-func enable_button() -> void:
+func _enable_button() -> void:
 	is_taken = false
 	$Button.disabled = false
 
@@ -24,19 +20,21 @@ func seat_player(id: String) -> void:
 	var player = player_manager.get_node(id) as Player
 
 	if player.seat != null:
-		var old_seat = get_node("../Seat" + str(player.seat)) as Seat
+		var old_seat = player.seat as Seat
 		old_seat.unseat_player()
 
-	player.state = player_manager.PLAYER_READY # TODO: Change depending on game state
+	player.state = player_manager.PLAYER_WAITING # TODO: Change depending on game state
 	player.seat = self
 
 	sitter = player
-	disable_button()
+	_disable_button()
 
 func unseat_player() -> void:
 	# TODO: Move player back to player list
+	if sitter != null:
+		sitter.seat = null
 	sitter = null
-	enable_button()
+	_enable_button()
 
 func _on_button_button_up() -> void:
 	EventManager.send_request(

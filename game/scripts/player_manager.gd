@@ -14,7 +14,6 @@ func _ready() -> void:
 func _init_my_player() -> void:
 	_on_player_join("Me", NetworkManager.username, NetworkManager.icon_url)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _on_player_join(id: String, username: String, url: String) -> void:
 	var player_scene = preload("res://scenes/player.tscn")
 	var new_player = player_scene.instantiate() as Player
