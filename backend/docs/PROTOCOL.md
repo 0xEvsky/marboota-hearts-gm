@@ -112,7 +112,7 @@ Sent to all clients in the instance when a client disconnects announcing its use
 ```
 
 ### SIT
-This is sent to all other clients in an instance when a client is successfully seated alongside its information.
+This is sent to all other clients in an instance when a client is successfully seated, alongside its information.
 > [!NOTE]
 > This is also catch-up sent just like `JOIN`
 ```json
@@ -123,13 +123,31 @@ This is sent to all other clients in an instance when a client is successfully s
 }
 ```
 
+### UNSIT
+This is sent to all other clients in an instance when a client is Unseated, alongside its information.
+```json
+{
+    "ACTION": "UNSIT",
+    "USERID": "11223344"
+}
+```
+
 ### READY
-This is sent to all other clients in an instance when a client is successfully set as ready alongside its information.
+This is sent to all other clients in an instance when a client is successfully set as ready, alongside its information.
 > [!NOTE]
 > This is also catch-up sent just like `JOIN`
 ```json
 {
     "ACTION": "READY",
+    "USERID": "11223344"
+}
+```
+
+### UNREADY
+This is sent to all other clients in an instance when a client is set as unready, alongside its information.
+```json
+{
+    "ACTION": "UNREADY",
     "USERID": "11223344"
 }
 ```
