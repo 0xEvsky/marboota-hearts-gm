@@ -19,6 +19,8 @@ func seat_player(id: String) -> void:
 	player_manager.move_player(id, global_position)
 	var player = player_manager.get_node(id) as Player
 
+	player_manager.unpin_player(player)
+
 	if player.seat != null:
 		var old_seat = player.seat as Seat
 		old_seat.unseat_player()
@@ -33,6 +35,9 @@ func unseat_player() -> void:
 	# TODO: Move player back to player list
 	if sitter != null:
 		sitter.seat = null
+	
+	var player_manager = Globals.player_manager
+	player_manager.pin_player(sitter)
 	sitter = null
 	_enable_button()
 

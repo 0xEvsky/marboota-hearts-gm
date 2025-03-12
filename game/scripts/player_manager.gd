@@ -2,6 +2,7 @@ extends Node2D
 class_name PlayerManager
 
 enum {PLAYER_UNAVAILABLE, PLAYER_IDLE, PLAYER_WAITING, PLAYER_READY, PLAYER_TRUMPING, PLAYER_PLAYING}
+var pinned_players: Array[Player] = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -40,14 +41,18 @@ func _on_player_join(id: String, username: String, url: String) -> void:
 	var error = http_request.request(url)
 	if error != OK:
 		push_error("An error occurred in the HTTP request.")
-
-	new_player.position.y += get_child_count() * 55
+	
 	add_child(new_player)
+	pin_player(new_player)
 
 func _on_player_leave(id: String) -> void:
 	var leaving_player = get_node(id) as Player
+
 	if leaving_player.seat != null:
 		leaving_player.seat.unseat_player()
+	else:
+		unpin_player(leaving_player)
+
 	leaving_player.queue_free()
 
 func _on_player_sit(id: String, seat_num: String) -> void:
@@ -58,3 +63,17 @@ func _on_player_sit(id: String, seat_num: String) -> void:
 func move_player(id: String, pos: Vector2) -> void:
 	var player = get_node(id) as Player
 	player.global_position = pos
+
+func _update_pinned_players() -> void:
+	for i in pinned_players.size():
+		var player = pinned_players[i]
+		move_player(player.name, Vector2(global_position.x, global_position.y + (i * 120)))
+	pass
+
+func pin_player(player: Player) -> void:
+	pinned_players.append(player)
+	_update_pinned_players()
+
+func unpin_player(player: Player) -> void:
+	pinned_players.erase(player)
+	_update_pinned_players()
