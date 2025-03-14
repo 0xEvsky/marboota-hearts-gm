@@ -25,7 +25,7 @@ Registers the client & its details in the server, required before any further co
 ```
 
 ### SIT
-Requests to sit at the provided seat (1-4) for players. Returns an error if a player seat was requested and it was taken, the table was full or the seat was invalid.
+Requests to sit at the provided seat (1-4) for players. Returns an error if a player seat was requested and it was taken or invalid.
 ```json
 {
     "ACTION":"SIT",
