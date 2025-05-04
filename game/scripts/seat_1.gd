@@ -5,15 +5,19 @@ class_name Seat
 @export var seat_num = 1
 var sitter: Player
 @onready var seat_ready_button : Button = $"../ReadyButton"
+@onready var seat_leave_button : Button = $"../LeaveButton"
 var is_taken = false
+
 
 func _disable_button() -> void:
 	is_taken = true
 	$Button.disabled = true
 
+
 func _enable_button() -> void:
 	is_taken = false
 	$Button.disabled = false
+
 
 func seat_player(id: String) -> void:
 	var player_manager = Globals.player_manager
@@ -32,6 +36,8 @@ func seat_player(id: String) -> void:
 	sitter = player
 	_disable_button()
 
+
+
 func unseat_player() -> void:
 	if sitter != null:
 		sitter.unseat()
@@ -39,9 +45,12 @@ func unseat_player() -> void:
 	sitter = null
 	_enable_button()
 
+
+
 func _on_button_button_up() -> void:
 	seat_player("Me")
 	seat_ready_button.show()
+	seat_leave_button.show()
 
 	EventManager.send_request(
 		EventManager.sit_request(seat_num)
@@ -50,6 +59,7 @@ func _on_button_button_up() -> void:
 	,func(err: String):
 		var me = Globals.my_player
 		seat_ready_button.hide()
+		seat_leave_button.hide()
 		if sitter == me:
 			unseat_player()
 		else:

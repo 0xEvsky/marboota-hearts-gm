@@ -1,13 +1,16 @@
-[gd_scene load_steps=6 format=3 uid="uid://belne7lgw02p3"]
+[gd_scene load_steps=8 format=3 uid="uid://belne7lgw02p3"]
 
 [ext_resource type="Texture2D" uid="uid://buqxed4qdih7p" path="res://assets/graphics/table.png" id="1_4ps2g"]
 [ext_resource type="PackedScene" uid="uid://cur6qosdw6bdc" path="res://scenes/seat.tscn" id="2_bw1av"]
 [ext_resource type="Script" path="res://scripts/ready_button.gd" id="3_n1v42"]
+[ext_resource type="Script" path="res://scripts/leave_button.gd" id="4_y4k8u"]
 
 [sub_resource type="Theme" id="Theme_67dwn"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j3pjb"]
 bg_color = Color(0, 0.701961, 0.0470588, 1)
+
+[sub_resource type="Theme" id="Theme_m6cxa"]
 
 [node name="Table" type="Node2D"]
 
@@ -50,4 +53,15 @@ toggle_mode = true
 text = "Ready"
 script = ExtResource("3_n1v42")
 
+[node name="LeaveButton" type="Button" parent="."]
+offset_left = -91.0
+offset_top = 108.0
+offset_right = 84.0
+offset_bottom = 150.0
+theme = SubResource("Theme_m6cxa")
+theme_override_font_sizes/font_size = 31
+text = "Leave"
+script = ExtResource("4_y4k8u")
+
 [connection signal="toggled" from="ReadyButton" to="ReadyButton" method="_on_toggled"]
+[connection signal="button_up" from="LeaveButton" to="LeaveButton" method="_on_button_up"]
