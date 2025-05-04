@@ -33,9 +33,12 @@ func _handle_message(msg: Dictionary) -> void:
 	_process_response_queue()
 
 func _process_response_queue() -> void:
-	var res = _response_queue.pop_front()
-	print_debug("request: ", res)
+	var res = _response_queue.pop_front() as Dictionary
+	print_debug("response: ", res)
 	for req in _request_queue:
+		if !res.has("REQUESTID"):
+			_dispatch(res["ACTION"], res)
+			return
 		if res["REQUESTID"] == req["request_id"]:
 			if res["ACTION"] == "OK":
 				req["on_success"].call()
@@ -59,10 +62,10 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			READY_received.emit()
 		"UNREADY":
 			UNREADY_received.emit()
+		# TODO: DEAL
+		# TODO: TRUMPSTART
 		_:
 			push_error("Invalid or unknown action received from server")
-
-
 
 # Requests
 

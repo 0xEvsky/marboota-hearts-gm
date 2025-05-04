@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"math/rand/v2"
 )
 
 type TableState int
@@ -13,10 +14,11 @@ const (
 )
 
 type Table struct {
-	instance *Instance
-	players  [4]*Player
-	state    TableState
-	turn     int
+	instance   *Instance
+	players    [4]*Player
+	state      TableState
+	turn       int
+	turnOffset int
 }
 
 type PlayerState int
@@ -39,7 +41,7 @@ const (
 type Player struct {
 	client  *Client
 	state   PlayerState
-	hand    []string
+	hand    []Card
 	seat    int
 	team    Team
 	score   int
@@ -115,13 +117,39 @@ func (t *Table) isEveryoneReady() bool {
 	return true
 }
 
-func (t *Table) startGame() {
-	t.instance.Broadcast(map[string]string{"ACTION": "GAMESTART"})
+func (t *Table) trumpStart() {
+	var deck = newDeck()
+
+	// shuffle deck
+	for i := range deck {
+		j := rand.IntN(i + 1)
+		deck[i], deck[j] = deck[j], deck[i]
+	}
+
+	// deal hands
+	for i := range deck {
+		t.players[i/13].hand = append(t.players[i/13].hand, deck[i])
+	}
+
+	for _, p := range t.players {
+		var cardstring = ""
+		for i, c := range p.hand {
+			cardstring += c.name
+			if i < len(p.hand)-1 {
+				cardstring += ","
+			}
+		}
+
+		p.client.writeJson(map[string]string{"ACTION": "DEAL", "CARDS": cardstring})
+	}
+
+	t.instance.Broadcast(map[string]string{"ACTION": "TRUMPSTART"})
 	t.state = TableTrumping
-	t.turn = 0
+	t.turn = t.turnOffset
 
 	for _, p := range t.players {
 		p.state = PlayerTrumping
 	}
-	t.players[0].isTurn = true
+	t.players[t.turnOffset].isTurn = true
+
 }
