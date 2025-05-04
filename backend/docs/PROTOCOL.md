@@ -152,10 +152,13 @@ This is sent to all other clients in an instance when a client is set as unready
 }
 ```
 
-### GAMESTART
-Once all players in a table are ready, this is sent to all clients in that instance signaling the game has started.
+<!-- TODO -->
+### DEAL
+
+### TRUMPSTART
+Once all players in a table are ready, this is sent to all clients in that instance signaling the game has started at the TRUMPING state.
 ```json
 {
-    "ACTION": "GAMESTART",
+    "ACTION": "TRUMPSTART",
 }
 ```

@@ -61,7 +61,7 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 				c.writeJson(map[string]string{"ACTION": "READY", "USERID": c.id})
 			}
 		}
-		// TODO: Table catchup
+		// TODO: Table catchup (game state)
 	}
 
 	return nil
@@ -127,7 +127,7 @@ func setReady(c *Client) error {
 
 	// Check if all players are ready
 	if c.instance.table.isEveryoneReady() {
-		c.instance.table.startGame()
+		c.instance.table.trumpStart()
 	}
 
 	return nil
