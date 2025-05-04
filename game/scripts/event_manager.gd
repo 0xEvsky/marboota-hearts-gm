@@ -57,7 +57,7 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 		"SIT":
 			SIT_received.emit(msg["USERID"], msg["SEAT"])
 		"UNSIT":
-			UNSIT_received.emit()
+			UNSIT_received.emit(msg["USERID"])
 		"READY":
 			READY_received.emit()
 		"UNREADY":

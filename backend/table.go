@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"math/rand/v2"
+	"slices"
 )
 
 type TableState int
@@ -129,6 +130,25 @@ func (t *Table) trumpStart() {
 	// deal hands
 	for i := range deck {
 		t.players[i/13].hand = append(t.players[i/13].hand, deck[i])
+	}
+
+	// TODO: sort hands
+	for _, p := range t.players {
+		slices.SortFunc(p.hand, func(i Card, j Card) int {
+			if i.suit < j.suit {
+				return -1
+			}
+
+			if i.suit == j.suit {
+				if i.value > j.value {
+					return -1
+				} else {
+					return 1
+				}
+			}
+
+			return 1
+		})
 	}
 
 	for _, p := range t.players {

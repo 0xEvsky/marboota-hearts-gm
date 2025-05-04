@@ -6,8 +6,8 @@ type suit int
 
 const (
 	Spades suit = iota
-	Clubs
 	Hearts
+	Clubs
 	Diamonds
 )
 
@@ -20,10 +20,10 @@ type Card struct {
 func newCard(suit suit, value int) Card {
 	var letter = "S"
 	if suit == 1 {
-		letter = "C"
+		letter = "H"
 	}
 	if suit == 2 {
-		letter = "H"
+		letter = "C"
 	}
 	if suit == 3 {
 		letter = "D"
