@@ -75,7 +75,7 @@ func _on_player_sit(id: String, seat_num: String) -> void:
 
 func _on_player_unsit(id: String) -> void:
 	var player = get_node(id) as Player
-	player.unseat()
+	player.seat.unseat_player()
 
 
 func move_player(id: String, pos: Vector2) -> void:
