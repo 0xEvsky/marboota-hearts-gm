@@ -189,7 +189,7 @@ func advanceTrump(c *Client, scoreStr string) error {
 
 	c.broadcastToMates(map[string]string{"ACTION": "TRUMPCALL", "USERID": c.id, "SCORE": scoreStr})
 
-	if len(c.instance.table.trump.callers) <= 1 {
+	if len(c.instance.table.trump.callers) <= 1 || c.instance.table.trump.highestCall >= 13 {
 		// TODO: End trump
 	} else {
 		// Advance turn
@@ -202,7 +202,7 @@ func advanceTrump(c *Client, scoreStr string) error {
 			}
 		}
 		c.instance.table.players[c.instance.table.turn].isTurn = true
-		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL"})
+		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": strconv.Itoa(c.instance.table.trump.highestCall + 1)})
 	}
 
 	return nil
