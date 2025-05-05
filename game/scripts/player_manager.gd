@@ -11,9 +11,14 @@ func _ready() -> void:
 	EventManager.JOIN_received.connect(_on_player_join)
 	EventManager.LEAVE_received.connect(_on_player_leave)
 	EventManager.SIT_received.connect(_on_player_sit)
+	EventManager.UNSIT_received.connect(_on_player_unsit)
+
+
 
 func _init_my_player() -> void:
 	_on_player_join("Me", NetworkManager.username, NetworkManager.icon_url)
+
+
 
 func _on_player_join(id: String, username: String, url: String) -> void:
 	var player_scene = preload("res://scenes/player.tscn")
@@ -47,6 +52,8 @@ func _on_player_join(id: String, username: String, url: String) -> void:
 	if id == "Me":
 		Globals.my_player = new_player
 
+
+
 func _on_player_leave(id: String) -> void:
 	var leaving_player = get_node(id) as Player
 
@@ -57,14 +64,25 @@ func _on_player_leave(id: String) -> void:
 
 	leaving_player.queue_free()
 
+
+
 func _on_player_sit(id: String, seat_num: String) -> void:
 	var seat_str = "../Table/Seat" + seat_num
 	var seat = get_node(seat_str) as Seat
 	seat.seat_player(id)
 
+
+
+func _on_player_unsit(id: String) -> void:
+	var player = get_node(id) as Player
+	player.unseat()
+
+
 func move_player(id: String, pos: Vector2) -> void:
 	var player = get_node(id) as Player
 	player.global_position = pos
+
+
 
 func _update_pinned_players() -> void:
 	for i in pinned_players.size():
@@ -72,14 +90,21 @@ func _update_pinned_players() -> void:
 		move_player(player.name, Vector2(global_position.x, global_position.y + (i * 120)))
 	pass
 
+
+
 func pin_player(player: Player) -> void:
 	if pinned_players.has(player):
 		return
 	pinned_players.append(player)
 	_update_pinned_players()
 
+
+
 func unpin_player(player: Player) -> void:
 	if !pinned_players.has(player):
 		return
 	pinned_players.erase(player)
 	_update_pinned_players()
+
+
+
