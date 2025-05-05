@@ -20,6 +20,13 @@ type Table struct {
 	state      TableState
 	turn       int
 	turnOffset int
+	trump      Trump
+}
+
+type Trump struct {
+	highestCall   int
+	highestCaller *Player
+	callers       []*Player
 }
 
 type PlayerState int
@@ -63,7 +70,9 @@ func newTable() Table {
 	return Table{
 		players: players,
 		state:   TableWaiting,
-		turn:    0,
+		trump: Trump{
+			callers: players[:],
+		},
 	}
 }
 
@@ -132,7 +141,7 @@ func (t *Table) trumpStart() {
 		t.players[i/13].hand = append(t.players[i/13].hand, deck[i])
 	}
 
-	// TODO: sort hands
+	// Sort hands
 	for _, p := range t.players {
 		slices.SortFunc(p.hand, func(i Card, j Card) int {
 			if i.suit < j.suit {

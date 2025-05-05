@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"log"
+	"slices"
 	"strconv"
 )
 
@@ -147,4 +148,62 @@ func unsetReady(c *Client) error {
 	return nil
 }
 
-// TODO: advanceTrump
+func advanceTrump(c *Client, scoreStr string) error {
+	var p = c.player
+
+	// Check if game is in trump state
+	if c.instance.table.state != TableTrumping {
+		return errors.New("table not in trump state")
+	}
+
+	// Check if it's player's turn
+	if !p.isTurn {
+		return errors.New("not player turn")
+	}
+
+	// Check if player is in caller list
+	if !slices.Contains(c.instance.table.trump.callers, p) {
+		return errors.New("player is not a valid caller")
+	}
+
+	// Check if player is passing
+	if scoreStr == "PASS" {
+		c.instance.table.trump.callers = slices.DeleteFunc(c.instance.table.trump.callers, func(caller *Player) bool {
+			return caller == p
+		})
+	} else {
+		var score, err = strconv.Atoi(scoreStr)
+		// Check if score is between 7 and 13
+		if err != nil || score < 7 || score > 13 {
+			return errors.New("invalid or missing score (7-13/PASS)")
+		}
+
+		// Check if score is higher than the current highest call
+		if score <= c.instance.table.trump.highestCall {
+			return errors.New("trump call must be higher than the previous one")
+		} else {
+			c.instance.table.trump.highestCall = score
+			c.instance.table.trump.highestCaller = p
+		}
+	}
+
+	c.broadcastToMates(map[string]string{"ACTION": "TRUMPCALL", "USERID": c.id, "SCORE": scoreStr})
+
+	if len(c.instance.table.trump.callers) <= 1 {
+		// TODO: End trump
+	} else {
+		// Advance turn
+		p.isTurn = false
+		for {
+			c.instance.table.turn += 1
+			c.instance.table.turn %= 4
+			if slices.Contains(c.instance.table.trump.callers, c.instance.table.players[c.instance.table.turn]) {
+				break
+			}
+		}
+		c.instance.table.players[c.instance.table.turn].isTurn = true
+		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL"})
+	}
+
+	return nil
+}

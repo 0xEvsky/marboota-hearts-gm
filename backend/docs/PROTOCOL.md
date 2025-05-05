@@ -156,19 +156,57 @@ This is sent to all other clients in an instance when a client is set as unready
 
 # Game events
 
+## Client -> server requests
+
+### TRUMPCALL
+Submits a score as a trump call (تسمية), returns an error if the call is invalid (invalid score, invalid turn...etc).
+```json
+{
+    "ACTION": "TRUMPCALL",
+    "SCORE": "8"
+}
+```
+When called with the `SCORE` value being `PASS`, the call is considered a pass in game terms.
+```json
+{
+    "ACTION": "TRUMPCALL",
+    "SCORE": "PASS"
+}
+```
+
 ## Server -> client event messages
 The server will *- without prompt -* send these messages that contain event updates about game state, other players...etc. Such as notifying all other clients when a client does something (joins, sits..etc).
 
-<!-- TODO -->
 ### DEAL
+Notifies the player of which cards they were dealt randomly, the card names are sent as a comma-seperated string in the `CARDS` field, where the first letter is the initial letter of the suit name, and the number following it is the power/value of the card, (14: Ace, 13: King....3: 3, 2: 2).
+```json
+{
+    "ACTION": "DEAL",
+    "CARDS": "S14,S5,S4,S2,H14,H11,H10,C11,C10,C9,C2,D13,D2"
+}
+```
 
 ### TRUMPSTART
 Once all players in a table are ready, this is sent to all clients in that instance signaling the game has started at the TRUMPING state.
 ```json
 {
-    "ACTION": "TRUMPSTART",
+    "ACTION": "TRUMPSTART"
 }
 ```
 
-<!-- TODO -->
 ### YOURTRUMPCALL
+Notifies the player that it's their turn to call a trump score using `TRUMPCALL`.
+```json
+{
+    "ACTION": "YOURTRUMPCALL"
+}
+```
+
+### TRUMPCALL
+Notifies a player that another player has made a successful trump call, along with the `USERID` of said player, and the `SCORE` called (being `PASS` if it's a pass).
+```json
+{
+    "ACTION": "TRUMPCALL",
+    "USERID": "11223344",
+    "SCORE": "8"
+}

@@ -76,7 +76,15 @@ func msgHandler(c *Client, rawMsg []byte) {
 		c.writeOk()
 		log.Println("UNREADY request accepted")
 
-	// TODO: case "TRUMPCALL"
+	case "TRUMPCALL":
+		err := advanceTrump(c, msg["SCORE"])
+		if err != nil {
+			c.writeError(err.Error())
+			log.Printf("TRUMPCALL request refused: %s\n", err)
+			return
+		}
+		c.writeOk()
+		log.Println("TRUMPCALL request accepted")
 
 	default:
 		c.writeError("unknown or missing action")

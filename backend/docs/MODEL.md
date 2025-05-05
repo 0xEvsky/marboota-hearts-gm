@@ -86,6 +86,13 @@ type Table struct {
 	players  [4]*Player
 	state    TableState
 	turn     int
+	trump      Trump
+}
+
+type Trump struct {
+	highestCall   int
+	highestCaller *Player
+	callers       []*Player
 }
 ```
 ## Card
