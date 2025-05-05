@@ -47,7 +47,7 @@ const (
 type Player struct {
 	client  *Client
 	state   PlayerState
-	hand    []string
+	hand    []Card
 	seat    int
 	team    Team
 	score   int
@@ -86,5 +86,22 @@ type Table struct {
 	players  [4]*Player
 	state    TableState
 	turn     int
+}
+```
+## Card
+```go
+type suit int
+
+const (
+	Spades suit = iota
+	Hearts
+	Clubs
+	Diamonds
+)
+
+type Card struct {
+	name  string
+	suit  suit
+	value int
 }
 ```

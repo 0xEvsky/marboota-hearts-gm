@@ -76,6 +76,8 @@ func msgHandler(c *Client, rawMsg []byte) {
 		c.writeOk()
 		log.Println("UNREADY request accepted")
 
+	// TODO: case "TRUMPCALL"
+
 	default:
 		c.writeError("unknown or missing action")
 		log.Println("Unknown or missing action skipped")

@@ -146,3 +146,5 @@ func unsetReady(c *Client) error {
 	c.broadcastToMates(map[string]string{"ACTION": "UNREADY", "USERID": c.id})
 	return nil
 }
+
+// TODO: advanceTrump

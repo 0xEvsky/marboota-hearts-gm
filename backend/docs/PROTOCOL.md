@@ -8,6 +8,30 @@ Each message must have an `ACTION` key describing the type of event. Furthermore
 It only serves as a way for clients to keep track of which response belongs to which request, which is useful in situations with bad connections (high latency, packetloss...etc).
 The `REQUESTID` is expected to be unique for each request, either incremented or random, so the client can actually match request-response pairs even if responses arrive out of order. The server, however, does **NOT** ensure that in any way, it simply echoes back the `REQUESTID` it gets 🤷‍♀️.
 
+## Server responses
+The server responds with either of these to client requests.
+
+### OK
+Everything is A-OK 👍.
+```json
+{
+    "ACTION":"OK",
+    "REQUESTID": "request000123"
+}
+```
+
+### ERROR
+Error with message.
+```json
+{
+    "ACTION":"ERROR",
+    "MESSAGE":"your error message will be here",
+    "REQUESTID": "request000123"
+}
+```
+
+# Lobby events
+
 ## Client -> server requests
 These are messages clients can send to the server to request a specific action.
 
@@ -59,28 +83,6 @@ Requests to set the client at the game table as NOT ready. Returns an error if t
 ```json
 {
     "ACTION":"UNREADY",
-    "REQUESTID": "request000123"
-}
-```
-
-## Server responses
-The server responds with either of these to client requests.
-
-### OK
-Everything is A-OK 👍.
-```json
-{
-    "ACTION":"OK",
-    "REQUESTID": "request000123"
-}
-```
-
-### ERROR
-Error with message.
-```json
-{
-    "ACTION":"ERROR",
-    "MESSAGE":"your error message will be here",
     "REQUESTID": "request000123"
 }
 ```
@@ -152,6 +154,11 @@ This is sent to all other clients in an instance when a client is set as unready
 }
 ```
 
+# Game events
+
+## Server -> client event messages
+The server will *- without prompt -* send these messages that contain event updates about game state, other players...etc. Such as notifying all other clients when a client does something (joins, sits..etc).
+
 <!-- TODO -->
 ### DEAL
 
@@ -162,3 +169,6 @@ Once all players in a table are ready, this is sent to all clients in that insta
     "ACTION": "TRUMPSTART",
 }
 ```
+
+<!-- TODO -->
+### YOURTRUMPCALL

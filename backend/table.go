@@ -170,6 +170,6 @@ func (t *Table) trumpStart() {
 	for _, p := range t.players {
 		p.state = PlayerTrumping
 	}
-	t.players[t.turnOffset].isTurn = true
-
+	t.players[t.turn].isTurn = true
+	t.players[t.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL"})
 }
