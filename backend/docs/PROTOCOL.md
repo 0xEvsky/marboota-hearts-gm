@@ -70,7 +70,7 @@ Requests to unsit the client from the game table and back to spectating. Returns
 ### READY
 Requests to set the client at the game table as ready. Returns an error if the player is not seated or was already ready.
 > [!NOTE]
-> Once all players in a table are ready, the game will trigger the GAMESTART sequence
+> Once all players in a table are ready, the game will trigger the PLAYSTART sequence
 ```json
 {
     "ACTION":"READY",
@@ -159,7 +159,7 @@ This is sent to all other clients in an instance when a client is set as unready
 ## Client -> server requests
 
 ### TRUMPCALL
-Submits a score as a trump call (تسمية), returns an error if the call is invalid (invalid score, invalid turn...etc).
+After the server notifies the client with `YOURTRUMPCALL`, the client should use this to submit a score as a trump call (تسمية), returns an error if the call is invalid (invalid score, invalid turn...etc).
 ```json
 {
     "ACTION": "TRUMPCALL",
@@ -171,6 +171,15 @@ When called with the `SCORE` value being `PASS`, the call is considered a pass i
 {
     "ACTION": "TRUMPCALL",
     "SCORE": "PASS"
+}
+```
+
+### TRUMPSUIT
+After the server notifies the client with `YOURTRUMPSUIT` when trumping is almost over and it's the highest caller, the client should use this to submit the suit for the trump.
+```json
+{
+    "ACTION": "TRUMPSUIT",
+    "SCORE": "DIAMONDS"
 }
 ```
 
@@ -211,3 +220,23 @@ Notifies a player that another player has made a successful trump call, along wi
     "USERID": "11223344",
     "SCORE": "8"
 }
+```
+
+### YOURTRUMPSUIT
+Notifies the player with the highest call that they should call their trump suit using `TRUMPSUIT`, alongside it is the highest called `SCORE`.
+```json
+{
+    "ACTION": "YOURTRUMPSUIT",
+    "SCORE": "10"
+}
+```
+
+### TRUMPEND
+Notifies all players that trump phase is over! Informing them of the selected trump suit and score.
+```json
+{
+    "ACTION": "TRUMPEND",
+    "SUIT": "SPADES",
+    "SCORE": "9"
+}
+```

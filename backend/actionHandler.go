@@ -128,7 +128,7 @@ func setReady(c *Client) error {
 
 	// Check if all players are ready
 	if c.instance.table.isEveryoneReady() {
-		c.instance.table.trumpStart()
+		c.instance.table.startTrump()
 	}
 
 	return nil
@@ -152,7 +152,7 @@ func advanceTrump(c *Client, scoreStr string) error {
 	var p = c.player
 
 	// Check if game is in trump state
-	if c.instance.table.state != TableTrumping {
+	if c.instance.table.state != TableTrumping || c.instance.table.trump.isDone {
 		return errors.New("table not in trump state")
 	}
 
@@ -190,7 +190,10 @@ func advanceTrump(c *Client, scoreStr string) error {
 	c.broadcastToMates(map[string]string{"ACTION": "TRUMPCALL", "USERID": c.id, "SCORE": scoreStr})
 
 	if len(c.instance.table.trump.callers) <= 1 || c.instance.table.trump.highestCall >= 13 {
-		// TODO: End trump
+		// Toggle trump as done
+		c.instance.table.trump.isDone = true
+		// Ask for trump suit
+		c.instance.table.trump.highestCaller.client.writeJson(map[string]string{"ACTION": "YOURTRUMPSUIT", "SCORE": strconv.Itoa(c.instance.table.trump.highestCall)})
 	} else {
 		// Advance turn
 		p.isTurn = false
@@ -205,5 +208,37 @@ func advanceTrump(c *Client, scoreStr string) error {
 		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": strconv.Itoa(c.instance.table.trump.highestCall + 1)})
 	}
 
+	return nil
+}
+
+func endTrump(c *Client, suit string) error {
+	// End trump
+	// Check if table is trumping
+	if c.instance.table.state != TableTrumping {
+		return errors.New("table not in trump state")
+	}
+
+	// Check if trump is done
+	if !c.instance.table.trump.isDone {
+		return errors.New("table not waiting for trump suit yet")
+	}
+
+	// Check if request is from highest caller
+	if c != c.instance.table.trump.highestCaller.client {
+		return errors.New("player not highest caller")
+	}
+
+	var suits = []string{"SPADES", "HEARTS", "CLUBS", "DIAMONDS"}
+
+	// Check if suit is valid
+	if !slices.Contains(suits, suit) {
+		return errors.New("invalid suit (SPADES, HEARTS, CLUBS, DIAMONDS)")
+	}
+
+	// Announce trump end with suit and score
+	c.instance.Broadcast(map[string]string{"ACTION": "TRUMPEND", "SUIT": suit, "SCORE": strconv.Itoa(c.instance.table.trump.highestCall)})
+
+	// Start play
+	c.instance.table.startPlay()
 	return nil
 }

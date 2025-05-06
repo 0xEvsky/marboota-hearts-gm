@@ -27,6 +27,7 @@ type Trump struct {
 	highestCall   int
 	highestCaller *Player
 	callers       []*Player
+	isDone        bool
 }
 
 type PlayerState int
@@ -127,7 +128,7 @@ func (t *Table) isEveryoneReady() bool {
 	return true
 }
 
-func (t *Table) trumpStart() {
+func (t *Table) startTrump() {
 	var deck = newDeck()
 
 	// shuffle deck
@@ -181,4 +182,10 @@ func (t *Table) trumpStart() {
 	}
 	t.players[t.turn].isTurn = true
 	t.players[t.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": "7"})
+}
+
+func (t *Table) startPlay() {
+	// TODO: startPlay
+	// Change table state to playing
+	t.state = TablePlaying
 }
