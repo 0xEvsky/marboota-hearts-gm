@@ -21,13 +21,7 @@ type Table struct {
 	turn       int
 	turnOffset int
 	trump      Trump
-}
-
-type Trump struct {
-	highestCall   int
-	highestCaller *Player
-	callers       []*Player
-	isDone        bool
+	play       Play
 }
 
 type PlayerState int
@@ -58,6 +52,21 @@ type Player struct {
 	isTurn  bool
 }
 
+type Trump struct {
+	highestCall   int
+	highestCaller *Player
+	callers       []*Player
+	isDone        bool
+	suit          Suit
+}
+
+type Play struct {
+	cards        [4]Card
+	curWinCard   Card
+	curWinPlayer *Player
+	round        int
+}
+
 func newTable() Table {
 	var players = [4]*Player{}
 	for i := range players {
@@ -74,6 +83,7 @@ func newTable() Table {
 		trump: Trump{
 			callers: players[:],
 		},
+		play: Play{},
 	}
 }
 
@@ -185,7 +195,50 @@ func (t *Table) startTrump() {
 }
 
 func (t *Table) startPlay() {
-	// TODO: startPlay
+	// StartPlay
 	// Change table state to playing
 	t.state = TablePlaying
+
+	t.instance.Broadcast(map[string]string{"ACTION": "PLAYSTART"})
+
+	for _, p := range t.players {
+		p.state = PlayerPlaying
+	}
+
+	t.players[t.turn].isTurn = false
+	t.turn = t.trump.highestCaller.seat - 1
+	t.trump.highestCaller.isTurn = true
+
+	var _, cardsStr = t.trump.highestCaller.getPlayableCards()
+
+	t.trump.highestCaller.client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": cardsStr})
+}
+
+func (p *Player) getPlayableCards() ([]Card, string) {
+	if p.state != PlayerPlaying {
+		return []Card{}, ""
+	}
+
+	var cards = []Card{}
+
+	for _, c := range p.hand {
+		if c.suit == p.client.instance.table.trump.suit {
+			cards = append(cards, c)
+		}
+	}
+
+	if len(cards) == 0 {
+		cards = p.hand
+	}
+
+	var str = ""
+
+	for i, c := range cards {
+		str += c.name
+		if i < len(cards)-1 {
+			str += ","
+		}
+	}
+
+	return cards, str
 }

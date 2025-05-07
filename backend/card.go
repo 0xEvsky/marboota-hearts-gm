@@ -2,10 +2,10 @@ package main
 
 import "strconv"
 
-type suit int
+type Suit int
 
 const (
-	Spades suit = iota
+	Spades Suit = iota
 	Hearts
 	Clubs
 	Diamonds
@@ -13,11 +13,11 @@ const (
 
 type Card struct {
 	name  string
-	suit  suit
+	suit  Suit
 	value int
 }
 
-func newCard(suit suit, value int) Card {
+func newCard(suit Suit, value int) Card {
 	var letter = "S"
 	if suit == 1 {
 		letter = "H"
@@ -40,7 +40,7 @@ func newDeck() [52]Card {
 	var newDeck = [52]Card{}
 	for i := 0; i < 4; i++ {
 		for j := 2; j <= 14; j++ {
-			newDeck[(i*13)+j-2] = newCard(suit(i), j)
+			newDeck[(i*13)+j-2] = newCard(Suit(i), j)
 		}
 	}
 	return newDeck

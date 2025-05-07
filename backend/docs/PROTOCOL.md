@@ -240,3 +240,21 @@ Notifies all players that trump phase is over! Informing them of the selected tr
     "SCORE": "9"
 }
 ```
+
+### PLAYSTART
+Notifies all players that play has started.
+```json
+{
+    "ACTION": "PLAYSTART"
+}
+```
+
+### YOURPLAY
+Notifies the client that it's their turn to play a card, alongside is the `PLAYABLE` field which holds which cards the client can play.
+Just like `DEAL`, the card names are sent as a comma-seperated string in the `CARDS` field, where the first letter is the initial letter of the suit name, and the number following it is the power/value of the card, (14: Ace, 13: King....3: 3, 2: 2).
+```json
+{
+    "ACTION": "YOURPLAY",
+    "PLAYABLE": "S14,S5,S4,S2"
+}
+```

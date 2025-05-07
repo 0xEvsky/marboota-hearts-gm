@@ -228,9 +228,8 @@ func endTrump(c *Client, suit string) error {
 		return errors.New("player not highest caller")
 	}
 
-	var suits = []string{"SPADES", "HEARTS", "CLUBS", "DIAMONDS"}
-
 	// Check if suit is valid
+	var suits = []string{"SPADES", "HEARTS", "CLUBS", "DIAMONDS"}
 	if !slices.Contains(suits, suit) {
 		return errors.New("invalid suit (SPADES, HEARTS, CLUBS, DIAMONDS)")
 	}
