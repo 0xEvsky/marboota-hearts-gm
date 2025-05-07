@@ -290,6 +290,11 @@ func advancePlay(c *Client, cardStr string) error {
 	// Add cards to played cards
 	c.instance.table.play.cards = append(c.instance.table.play.cards, card)
 
+	// Remove played card from hand
+	c.player.hand = slices.DeleteFunc(c.player.hand, func(ec Card) bool {
+		return ec.name == card.name
+	})
+
 	// Winning card deciding logic
 	if len(c.instance.table.play.cards) == 1 {
 		c.instance.table.play.curWinCard = card
@@ -306,9 +311,36 @@ func advancePlay(c *Client, cardStr string) error {
 		}
 	}
 
-	// TODO: Check if play is complete
+	// Check if play is complete
+	if len(c.instance.table.play.cards) == 4 {
+		// Add score & advance round
+		c.instance.table.play.curWinPlayer.score += 1
+		c.instance.table.playRound += 1
 
-	c.instance.table.play.round += 1
-	clog.Debugf("(i:%s) play advanced", c.instance.id)
+		// TODO: End handRound if playRound == 13
+
+		// Set turn to winner
+		c.player.isTurn = false
+		c.instance.table.turn = c.instance.table.play.curWinPlayer.seat - 1
+		c.instance.table.players[c.instance.table.turn].isTurn = true
+		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": c.player.getHandString()})
+
+		// Wipe play
+		c.instance.table.play = Play{}
+
+		clog.Debugf("(i:%s) play round ended", c.instance.id)
+	} else {
+		// Advance turn
+		c.player.isTurn = false
+		c.instance.table.turn += 1
+		c.instance.table.turn %= 4
+		c.instance.table.players[c.instance.table.turn].isTurn = true
+
+		var _, nextPlayables = c.instance.table.players[c.instance.table.turn].getPlayableCards()
+		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": nextPlayables})
+
+		clog.Debugf("(i:%s) play advanced", c.instance.id)
+	}
+
 	return nil
 }

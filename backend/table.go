@@ -24,6 +24,7 @@ type Table struct {
 	turnOffset int
 	trump      Trump
 	play       Play
+	playRound  int
 }
 
 type PlayerState int
@@ -66,7 +67,6 @@ type Play struct {
 	cards        []Card
 	curWinCard   Card
 	curWinPlayer *Player
-	round        int
 }
 
 func newTable() Table {
@@ -214,7 +214,7 @@ func (t *Table) startPlay() {
 	t.turn = t.trump.highestCaller.seat - 1
 	t.trump.highestCaller.isTurn = true
 
-	t.play.round = 1
+	t.playRound = 1
 
 	var _, cardsStr = t.trump.highestCaller.getPlayableCards()
 
@@ -248,4 +248,17 @@ func (p *Player) getPlayableCards() ([]Card, string) {
 	}
 
 	return cards, str
+}
+
+func (p *Player) getHandString() string {
+	var str = ""
+
+	for i, c := range p.hand {
+		str += c.name
+		if i < len(p.hand)-1 {
+			str += ","
+		}
+	}
+
+	return str
 }
