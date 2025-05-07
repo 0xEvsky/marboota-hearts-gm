@@ -35,7 +35,7 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	clog.Println("New client connected")
+	clog.Println("(server) New client connected")
 	var newClient = newClient(c)
 
 	s.mu.Lock()
