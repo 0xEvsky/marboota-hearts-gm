@@ -1,10 +1,10 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"sync"
 
+	"github.com/OmarQurashi868/marboota/backend/clog"
 	"github.com/gorilla/websocket"
 )
 
@@ -31,11 +31,11 @@ func (s *Server) authHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		clog.Println(err)
 		return
 	}
 
-	log.Println("New client connected")
+	clog.Println("New client connected")
 	var newClient = newClient(c)
 
 	s.mu.Lock()
@@ -64,14 +64,14 @@ func (s *Server) read(ws *websocket.Conn) {
 					s.mu.Lock()
 					delete(s.instances, s.conns[ws].instance.id)
 					s.mu.Unlock()
-					log.Println("Deleted empty instance (" + c.instance.id + ")")
+					clog.Println("Deleted empty instance (" + c.instance.id + ")")
 				}
 			}
 
 			s.mu.Lock()
 			delete(s.conns, ws)
 			s.mu.Unlock()
-			log.Printf("Connection closed: %s\n", err)
+			clog.Printf("Connection closed: %s\n", err)
 			break
 		}
 
@@ -88,7 +88,7 @@ func main() {
 	http.HandleFunc("/auth", server.authHandler)
 	http.HandleFunc("/ws", server.wsHandler)
 
-	log.Printf("Server is up and listening on port: %s\n", PORT)
+	clog.Printf("Server is up and listening on port: %s\n", PORT)
 	err := http.ListenAndServe(":"+PORT, nil)
-	log.Fatal(err)
+	clog.Fatal(err)
 }

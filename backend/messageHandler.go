@@ -2,7 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"log"
+
+	"github.com/OmarQurashi868/marboota/backend/clog"
 )
 
 func msgHandler(c *Client, rawMsg []byte) {
@@ -10,7 +11,7 @@ func msgHandler(c *Client, rawMsg []byte) {
 	err := json.Unmarshal(rawMsg, &msg)
 	if err != nil {
 		c.writeError(err.Error())
-		log.Println(err)
+		clog.Println(err)
 	}
 
 	c.requestId = msg["REQUESTID"]
@@ -19,18 +20,18 @@ func msgHandler(c *Client, rawMsg []byte) {
 		err := authClient(c, msg["INSTANCEID"], msg["USERID"], msg["USERNAME"], msg["ICONURL"])
 		if err != nil {
 			c.writeError(err.Error())
-			log.Printf("AUTH request refused: %s\n", err)
+			clog.Printf("(i:%s) (c:%s) AUTH request refused: %s\n", msg["INSTANCEID"], msg["USERID"], err)
 			return
 		}
 
-		log.Println("AUTH request accepted")
+		clog.Printf("(i:%s) (c:%s) AUTH request accepted\n", msg["INSTANCEID"], msg["USERID"])
 		return
 	}
 
 	if !c.isAuthed {
 		var err = "not authenticated"
 		c.writeError(err)
-		log.Printf("Request refused: %s\n", err)
+		clog.Printf("Request refused: %s\n", err)
 		return
 	}
 
@@ -40,75 +41,75 @@ func msgHandler(c *Client, rawMsg []byte) {
 		err := seatClient(c, msg["SEAT"])
 		if err != nil {
 			c.writeError(err.Error())
-			log.Printf("SIT request refused: %s\n", err)
+			clog.Debugf("(i:%s) (c:%s) SIT request refused: %s\n", c.instance.id, c.id, err)
 			return
 		}
 		c.writeOk()
-		log.Println("SIT request accepted")
+		clog.Debugf("(i:%s) (c:%s) SIT request accepted", c.instance.id, c.id)
 
 	case "UNSIT":
 		err := unseatClient(c)
 		if err != nil {
 			c.writeError(err.Error())
-			log.Printf("UNSIT request refused: %s\n", err)
+			clog.Debugf("(i:%s) (c:%s) UNSIT request refused: %s\n", c.instance.id, c.id, err)
 			return
 		}
 		c.writeOk()
-		log.Println("UNSIT request accepted")
+		clog.Debugf("(i:%s) (c:%s) UNSIT request accepted", c.instance.id, c.id)
 
 	case "READY":
 		err := setReady(c)
 		if err != nil {
 			c.writeError(err.Error())
-			log.Printf("READY request refused: %s\n", err)
+			clog.Debugf("(i:%s) (c:%s) READY request refused: %s\n", c.instance.id, c.id, err)
 			return
 		}
 		c.writeOk()
-		log.Println("READY request accepted")
+		clog.Debugf("(i:%s) (c:%s) READY request accepted", c.instance.id, c.id)
 
 	case "UNREADY":
 		err := unsetReady(c)
 		if err != nil {
 			c.writeError(err.Error())
-			log.Printf("UNREADY request refused: %s\n", err)
+			clog.Debugf("(i:%s) (c:%s) UNREADY request refused: %s\n", c.instance.id, c.id, err)
 			return
 		}
 		c.writeOk()
-		log.Println("UNREADY request accepted")
+		clog.Debugf("(i:%s) (c:%s) UNREADY request accepted", c.instance.id, c.id)
 
 	case "TRUMPCALL":
 		err := advanceTrump(c, msg["SCORE"])
 		if err != nil {
 			c.writeError(err.Error())
-			log.Printf("TRUMPCALL request refused: %s\n", err)
+			clog.Debugf("(i:%s) (c:%s) TRUMPCALL request refused: %s\n", c.instance.id, c.id, err)
 			return
 		}
 		c.writeOk()
-		log.Println("TRUMPCALL request accepted")
+		clog.Debugf("(i:%s) (c:%s) TRUMPCALL request accepted", c.instance.id, c.id)
 
 	case "TRUMPSUIT":
 		err := endTrump(c, msg["SUIT"])
 		if err != nil {
 			c.writeError(err.Error())
-			log.Printf("TRUMPSUIT request refused: %s\n", err)
+			clog.Debugf("(i:%s) (c:%s) TRUMPSUIT request refused: %s\n", c.instance.id, c.id, err)
 			return
 		}
 		c.writeOk()
-		log.Println("TRUMPSUIT request accepted")
+		clog.Debugf("(i:%s) (c:%s) TRUMPSUIT request accepted", c.instance.id, c.id)
 
 	case "PLAY":
 		err := advancePlay(c, msg["CARD"])
 		if err != nil {
 			c.writeError(err.Error())
-			log.Printf("PLAY request refused: %s\n", err)
+			clog.Debugf("(i:%s) (c:%s) PLAY request refused: %s\n", c.instance.id, c.id, err)
 			return
 		}
 		c.writeOk()
-		log.Println("PLAY request accepted")
+		clog.Debugf("(i:%s) (c:%s) PLAY request accepted", c.instance.id, c.id)
 
 	default:
 		c.writeError("unknown or missing action")
-		log.Println("Unknown or missing action skipped")
+		clog.Debugf("(i:%s) (c:%s) Unknown or missing action skipped: (%s)", c.instance.id, c.id, msg["ACTION"])
 		return
 	}
 }

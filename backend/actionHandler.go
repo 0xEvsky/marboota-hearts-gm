@@ -2,9 +2,10 @@ package main
 
 import (
 	"errors"
-	"log"
 	"slices"
 	"strconv"
+
+	"github.com/OmarQurashi868/marboota/backend/clog"
 )
 
 func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
@@ -41,10 +42,10 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 
 	if instance != nil {
 		c.instance = joinInstance(c, instanceId)
-		log.Println("Client " + c.id + " joined existing instance")
+		clog.Debug("Client (" + c.id + ") joined existing instance")
 	} else {
 		c.instance = newInstance(c, instanceId)
-		log.Println("New instance created (" + instanceId + ")")
+		clog.Println("New instance created (" + instanceId + ")")
 	}
 
 	c.writeOk()
