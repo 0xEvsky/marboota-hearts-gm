@@ -4,6 +4,8 @@ import (
 	"errors"
 	"math/rand/v2"
 	"slices"
+
+	"github.com/OmarQurashi868/marboota/backend/clog"
 )
 
 type TableState int
@@ -135,6 +137,7 @@ func (t *Table) isEveryoneReady() bool {
 			return false
 		}
 	}
+	clog.Debugf("(i:%s) everyone ready", t.instance.id)
 	return true
 }
 
@@ -184,6 +187,7 @@ func (t *Table) startTrump() {
 	}
 
 	t.instance.Broadcast(map[string]string{"ACTION": "TRUMPSTART"})
+	clog.Debugf("(i:%s) trump started", t.instance.id)
 	t.state = TableTrumping
 	t.turn = t.turnOffset
 
@@ -200,6 +204,7 @@ func (t *Table) startPlay() {
 	t.state = TablePlaying
 
 	t.instance.Broadcast(map[string]string{"ACTION": "PLAYSTART"})
+	clog.Debugf("(i:%s) play started", t.instance.id)
 
 	for _, p := range t.players {
 		p.state = PlayerPlaying

@@ -217,6 +217,7 @@ func advanceTrump(c *Client, scoreStr string) error {
 		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": strconv.Itoa(c.instance.table.trump.highestCall + 1)})
 	}
 
+	clog.Debugf("(i:%s) trump advanced", c.instance.id)
 	return nil
 }
 
@@ -252,6 +253,7 @@ func endTrump(c *Client, suit string) error {
 
 	// Start play
 	c.instance.table.startPlay()
+	clog.Debugf("(i:%s) trump ended", c.instance.id)
 	return nil
 }
 
@@ -307,5 +309,6 @@ func advancePlay(c *Client, cardStr string) error {
 	// TODO: Check if play is complete
 
 	c.instance.table.play.round += 1
+	clog.Debugf("(i:%s) play advanced", c.instance.id)
 	return nil
 }

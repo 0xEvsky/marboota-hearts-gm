@@ -1,6 +1,8 @@
 package clog
 
-import "log"
+import (
+	"log"
+)
 
 // TODO: Debug logging
 func Debug(v ...any) {
