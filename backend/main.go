@@ -56,14 +56,20 @@ func (s *Server) read(ws *websocket.Conn) {
 				if c.state == ClientSeated {
 					c.instance.table.unseatPlayer(c)
 				}
+				c.instance.mu.Lock()
+				defer c.instance.mu.Unlock()
 				delete(c.instance.clients, s.conns[ws].id)
 
 				if len(c.instance.clients) == 0 {
+					s.mu.Lock()
+					defer s.mu.Unlock()
 					delete(s.instances, s.conns[ws].instance.id)
 					log.Printf("Deleted empty instance")
 				}
 			}
 
+			s.mu.Lock()
+			defer s.mu.Unlock()
 			delete(s.conns, ws)
 			log.Printf("Connection closed: %s\n", err)
 			break

@@ -53,6 +53,8 @@ func (c *Client) broadcastToMates(msg map[string]string) error {
 		return errors.New("Client not authenticated")
 	}
 
+	c.instance.mu.Lock()
+	defer c.instance.mu.Unlock()
 	for _, client := range c.instance.clients {
 		if !client.isAuthed || client == c {
 			continue

@@ -25,6 +25,8 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 		return errors.New("missing field: ICONURL")
 	}
 
+	server.mu.Lock()
+	defer server.mu.Unlock()
 	var instance = server.instances[instanceId]
 
 	if instance != nil && instance.clients[userId] != nil {
