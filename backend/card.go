@@ -1,6 +1,9 @@
 package main
 
-import "strconv"
+import (
+	"errors"
+	"strconv"
+)
 
 type Suit int
 
@@ -44,4 +47,15 @@ func newDeck() [52]Card {
 		}
 	}
 	return newDeck
+}
+
+func getCardByName(name string) (Card, error) {
+	var deck = newDeck()
+	for _, c := range deck {
+		if c.name == name {
+			return c, nil
+		}
+	}
+
+	return Card{}, errors.New("invalid card")
 }

@@ -96,6 +96,16 @@ func msgHandler(c *Client, rawMsg []byte) {
 		c.writeOk()
 		log.Println("TRUMPSUIT request accepted")
 
+	case "PLAY":
+		err := advancePlay(c, msg["CARD"])
+		if err != nil {
+			c.writeError(err.Error())
+			log.Printf("PLAY request refused: %s\n", err)
+			return
+		}
+		c.writeOk()
+		log.Println("PLAY request accepted")
+
 	default:
 		c.writeError("unknown or missing action")
 		log.Println("Unknown or missing action skipped")

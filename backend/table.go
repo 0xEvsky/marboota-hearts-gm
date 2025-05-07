@@ -61,7 +61,7 @@ type Trump struct {
 }
 
 type Play struct {
-	cards        [4]Card
+	cards        []Card
 	curWinCard   Card
 	curWinPlayer *Player
 	round        int
@@ -208,6 +208,8 @@ func (t *Table) startPlay() {
 	t.players[t.turn].isTurn = false
 	t.turn = t.trump.highestCaller.seat - 1
 	t.trump.highestCaller.isTurn = true
+
+	t.play.round = 1
 
 	var _, cardsStr = t.trump.highestCaller.getPlayableCards()
 
