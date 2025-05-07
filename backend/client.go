@@ -54,13 +54,13 @@ func (c *Client) broadcastToMates(msg map[string]string) error {
 	}
 
 	c.instance.mu.Lock()
-	defer c.instance.mu.Unlock()
 	for _, client := range c.instance.clients {
 		if !client.isAuthed || client == c {
 			continue
 		}
 		client.writeJson(msg)
 	}
+	c.instance.mu.Unlock()
 
 	return nil
 }

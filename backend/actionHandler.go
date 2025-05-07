@@ -26,8 +26,8 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 	}
 
 	server.mu.Lock()
-	defer server.mu.Unlock()
 	var instance = server.instances[instanceId]
+	server.mu.Unlock()
 
 	if instance != nil && instance.clients[userId] != nil {
 		return errors.New("ID is already authenticated with different client")

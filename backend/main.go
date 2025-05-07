@@ -39,8 +39,8 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	var newClient = newClient(c)
 
 	s.mu.Lock()
-	defer s.mu.Unlock()
 	s.conns[c] = newClient
+	s.mu.Unlock()
 
 	go s.read(c)
 }
@@ -57,20 +57,20 @@ func (s *Server) read(ws *websocket.Conn) {
 					c.instance.table.unseatPlayer(c)
 				}
 				c.instance.mu.Lock()
-				defer c.instance.mu.Unlock()
 				delete(c.instance.clients, s.conns[ws].id)
+				c.instance.mu.Unlock()
 
 				if len(c.instance.clients) == 0 {
 					s.mu.Lock()
-					defer s.mu.Unlock()
 					delete(s.instances, s.conns[ws].instance.id)
+					s.mu.Unlock()
 					log.Printf("Deleted empty instance")
 				}
 			}
 
 			s.mu.Lock()
-			defer s.mu.Unlock()
 			delete(s.conns, ws)
+			s.mu.Unlock()
 			log.Printf("Connection closed: %s\n", err)
 			break
 		}
