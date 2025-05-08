@@ -57,6 +57,7 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 		}
 		// Join catch-up
 		c.writeJson(map[string]string{"ACTION": "JOIN", "USERID": client.id, "USERNAME": client.name, "ICONURL": client.iconUrl})
+
 		// Seat catch-up
 		if client.state == ClientSeated {
 			c.writeJson(map[string]string{"ACTION": "SIT", "USERID": c.id, "SEAT": strconv.Itoa(client.player.seat)})
@@ -65,7 +66,9 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 				c.writeJson(map[string]string{"ACTION": "READY", "USERID": c.id})
 			}
 		}
+
 		// TODO: Trump catchup
+
 		// TODO: Play catchup
 	}
 
@@ -74,8 +77,8 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 
 func seatClient(c *Client, seatStr string) error {
 	var seat, err = strconv.Atoi(seatStr)
-	if err != nil || seat < 1 || seat > 4 {
-		return errors.New("invalid or missing seat (1-4)")
+	if err != nil || seat < 0 || seat > 3 {
+		return errors.New("invalid or missing seat (0-3)")
 	}
 
 	if c.state == ClientSeated && seat == c.player.seat {
@@ -331,7 +334,7 @@ func advancePlay(c *Client, cardStr string) error {
 
 		// Set turn to winner
 		c.player.isTurn = false
-		c.instance.table.turn = c.instance.table.play.curWinPlayer.seat - 1
+		c.instance.table.turn = c.instance.table.play.curWinPlayer.seat
 		c.instance.table.players[c.instance.table.turn].isTurn = true
 		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": c.player.getHandString()})
 

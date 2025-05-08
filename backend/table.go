@@ -81,7 +81,7 @@ func newTable() Table {
 	var players = [4]*Player{}
 	for i := range players {
 		players[i] = &Player{
-			seat:    i + 1,
+			seat:    i,
 			team:    Team(i % 2),
 			partner: players[(i+2)%4],
 		}
@@ -98,11 +98,11 @@ func newTable() Table {
 }
 
 func (t *Table) seatPlayer(c *Client, s int) error {
-	if s < 1 || s > 4 {
+	if s < 0 || s > 3 {
 		return errors.New("invalid seat")
 	}
 
-	var p = t.players[s-1]
+	var p = t.players[s]
 	if p.client != nil {
 		return errors.New("seat is taken")
 	}
@@ -224,7 +224,7 @@ func (t *Table) startPlay() {
 	}
 
 	t.players[t.turn].isTurn = false
-	t.turn = t.trump.highestCaller.seat - 1
+	t.turn = t.trump.highestCaller.seat
 	t.trump.highestCaller.isTurn = true
 
 	t.playCount = 0
