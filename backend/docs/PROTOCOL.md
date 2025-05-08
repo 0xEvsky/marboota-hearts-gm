@@ -183,6 +183,16 @@ After the server notifies the client with `YOURTRUMPSUIT` when trumping is almos
 }
 ```
 
+### PLAY
+Request to play a card after being prompted by the server with `YOURPLAY`.
+```json
+{
+    "ACTION": "PLAY",
+    "CARD": "C4"
+}
+```
+
+
 ## Server -> client event messages
 The server will *- without prompt -* send these messages that contain event updates about game state, other players...etc. Such as notifying all other clients when a client does something (joins, sits..etc).
 
@@ -256,5 +266,36 @@ Just like `DEAL`, the card names are sent as a comma-seperated string in the `CA
 {
     "ACTION": "YOURPLAY",
     "PLAYABLE": "S14,S5,S4,S2"
+}
+```
+
+### PLAY
+Notifies all clients that the user with id `USERID` has played the card `CARD`.
+```json
+{
+    "ACTION": "PLAY",
+    "USERID": "11223344",
+    "CARD": "H14"
+}
+```
+
+### PLAYEND
+Notifies all clients that the current hand play has ended, alongside the winner's userid.
+```json
+{
+    "ACTION": "PLAYEND",
+    "WINNERID": "11223344"
+}
+```
+
+### ROUNDEND
+Notifies all client that the current hand round (13 plays) has ended. With it are the end scores for the teams for that round `TEAMASCORE` & `TEAMBSCORE`, alongside the total scores for the entire game `TOTALASCORE` & `TOTALBSCORE`.
+```json
+{
+    "ACTION": "ROUNDEND",
+    "TEAMASCORE":  "8",
+    "TEAMBSCORE":  "5",
+    "TOTALASCORE": "15",
+    "TOTALBSCORE": "11"
 }
 ```

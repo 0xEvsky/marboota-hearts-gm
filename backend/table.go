@@ -17,14 +17,17 @@ const (
 )
 
 type Table struct {
-	instance   *Instance
-	players    [4]*Player
-	state      TableState
-	turn       int
-	turnOffset int
-	trump      Trump
-	play       Play
-	playRound  int
+	instance    *Instance
+	players     [4]*Player
+	state       TableState
+	turn        int
+	turnOffset  int
+	trump       Trump
+	play        Play
+	playCount   int
+	rounds      []Round
+	totalAScore int
+	totalBScore int
 }
 
 type PlayerState int
@@ -67,6 +70,11 @@ type Play struct {
 	cards        []Card
 	curWinCard   Card
 	curWinPlayer *Player
+}
+
+type Round struct {
+	teamAScore int
+	teamBScore int
 }
 
 func newTable() Table {
@@ -150,6 +158,11 @@ func (t *Table) startTrump() {
 		deck[i], deck[j] = deck[j], deck[i]
 	}
 
+	// clear hands
+	for _, p := range t.players {
+		p.hand = []Card{}
+	}
+
 	// deal hands
 	for i := range deck {
 		t.players[i/13].hand = append(t.players[i/13].hand, deck[i])
@@ -214,7 +227,7 @@ func (t *Table) startPlay() {
 	t.turn = t.trump.highestCaller.seat - 1
 	t.trump.highestCaller.isTurn = true
 
-	t.playRound = 1
+	t.playCount = 0
 
 	var _, cardsStr = t.trump.highestCaller.getPlayableCards()
 

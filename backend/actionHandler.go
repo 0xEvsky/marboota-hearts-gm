@@ -295,6 +295,9 @@ func advancePlay(c *Client, cardStr string) error {
 		return ec.name == card.name
 	})
 
+	c.instance.Broadcast(map[string]string{"ACTION": "PLAY", "USERID": c.id, "CARD": card.name})
+	clog.Debugf("(i:%s) (c:%s) card played (%s)", c.instance.id, c.id, card.name)
+
 	// Winning card deciding logic
 	if len(c.instance.table.play.cards) == 1 {
 		c.instance.table.play.curWinCard = card
@@ -315,9 +318,16 @@ func advancePlay(c *Client, cardStr string) error {
 	if len(c.instance.table.play.cards) == 4 {
 		// Add score & advance round
 		c.instance.table.play.curWinPlayer.score += 1
-		c.instance.table.playRound += 1
+		c.instance.table.playCount += 1
 
-		// TODO: End handRound if playRound == 13
+		// Announce play round end
+		c.instance.Broadcast(map[string]string{"ACTION": "PLAYEND", "WINNERID": c.instance.table.play.curWinPlayer.client.id})
+
+		// End round if playRound == 13
+		if c.instance.table.playCount == 13 {
+			endRound(c.instance)
+			return nil
+		}
 
 		// Set turn to winner
 		c.player.isTurn = false
@@ -328,7 +338,7 @@ func advancePlay(c *Client, cardStr string) error {
 		// Wipe play
 		c.instance.table.play = Play{}
 
-		clog.Debugf("(i:%s) play round ended", c.instance.id)
+		clog.Debugf("(i:%s) play ended, winner (%s)", c.instance.id, c.id)
 	} else {
 		// Advance turn
 		c.player.isTurn = false
@@ -343,4 +353,45 @@ func advancePlay(c *Client, cardStr string) error {
 	}
 
 	return nil
+}
+
+func endRound(i *Instance) {
+	var teamAScore = i.table.players[0].score + i.table.players[2].score
+	var teamBScore = i.table.players[1].score + i.table.players[3].score
+	i.table.totalAScore += teamAScore
+	i.table.totalBScore += teamBScore
+
+	var lastGameRound = Round{
+		teamAScore: teamAScore,
+		teamBScore: teamBScore,
+	}
+	i.table.rounds = append(i.table.rounds, lastGameRound)
+
+	i.Broadcast(map[string]string{"ACTION": "ROUNDEND",
+		"TEAMASCORE":  strconv.Itoa(teamAScore),
+		"TEAMBSCORE":  strconv.Itoa(teamBScore),
+		"TOTALASCORE": strconv.Itoa(i.table.totalAScore),
+		"TOTALBSCORE": strconv.Itoa(i.table.totalBScore)})
+
+	clog.Debugf("(i:%s) round ended (scoreA:%v, scoreB:%v) (totalA:%v, totalB:%v)",
+		i.id,
+		teamAScore,
+		teamBScore,
+		i.table.totalAScore,
+		i.table.totalBScore)
+
+	// TODO: Check total score for winning and ending entire game
+
+	i.table.state = TableWaiting
+	i.table.turnOffset += 1
+	i.table.trump = Trump{}
+	i.table.play = Play{}
+	i.table.playCount = 0
+
+	// Start new round
+	i.table.startTrump()
+}
+
+func endGame() {
+	// TODO: Reset table newTable
 }
