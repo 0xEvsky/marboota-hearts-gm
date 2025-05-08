@@ -4,13 +4,19 @@ import (
 	"log"
 )
 
+const DEBUG = true
+
 // TODO: Debug logging
 func Debug(v ...any) {
-	log.Println(v...)
+	if DEBUG {
+		log.Println(v...)
+	}
 }
 
 func Debugf(format string, v ...any) {
-	log.Printf(format, v...)
+	if DEBUG {
+		log.Printf(format, v...)
+	}
 }
 
 func Println(v ...any) {
