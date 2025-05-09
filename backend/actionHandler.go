@@ -81,8 +81,16 @@ func seatClient(c *Client, seatStr string) error {
 		return errors.New("invalid or missing seat (0-3)")
 	}
 
-	if c.state == ClientSeated && seat == c.player.seat {
-		return errors.New("already seated")
+	if c.state == ClientSeated {
+		if seat == c.player.seat {
+			return errors.New("already seated")
+		}
+		if c.player.state == PlayerReady {
+			return errors.New("can't change seats when ready")
+		}
+		if c.player.state == PlayerTrumping || c.player.state == PlayerPlaying {
+			return errors.New("game already started")
+		}
 	}
 
 	err = c.instance.table.seatPlayer(c, seat)
