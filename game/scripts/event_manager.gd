@@ -7,6 +7,7 @@ signal SIT_received
 signal UNSIT_received
 signal READY_received
 signal UNREADY_received
+signal TRUMPSTART_recevied
 
 
 
@@ -62,8 +63,10 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			READY_received.emit()
 		"UNREADY":
 			UNREADY_received.emit()
+		"TRUMPSTART":
+			TRUMPSTART_recevied.emit()
+
 		# TODO: DEAL
-		# TODO: TRUMPSTART
 		_:
 			push_error("Invalid or unknown action received from server")
 

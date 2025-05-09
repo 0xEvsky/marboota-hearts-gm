@@ -6,7 +6,6 @@ func _ready() -> void:
 
 
 func _on_button_up() -> void:
-
 	var player = Globals.my_player
 	var manager = Globals.player_manager
 	var seat: Seat = player.seat

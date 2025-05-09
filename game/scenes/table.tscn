@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://belne7lgw02p3"]
+[gd_scene load_steps=9 format=3 uid="uid://belne7lgw02p3"]
 
 [ext_resource type="Texture2D" uid="uid://buqxed4qdih7p" path="res://assets/graphics/table.png" id="1_4ps2g"]
+[ext_resource type="Script" path="res://scripts/table.gd" id="1_er5af"]
 [ext_resource type="PackedScene" uid="uid://cur6qosdw6bdc" path="res://scenes/seat.tscn" id="2_bw1av"]
 [ext_resource type="Script" path="res://scripts/ready_button.gd" id="3_n1v42"]
 [ext_resource type="Script" path="res://scripts/leave_button.gd" id="4_y4k8u"]
@@ -13,25 +14,26 @@ bg_color = Color(0, 0.701961, 0.0470588, 1)
 [sub_resource type="Theme" id="Theme_m6cxa"]
 
 [node name="Table" type="Node2D"]
+script = ExtResource("1_er5af")
 
 [node name="TableSprite" type="Sprite2D" parent="."]
 position = Vector2(0, -0.000141511)
 scale = Vector2(0.57963, 0.57963)
 texture = ExtResource("1_4ps2g")
 
+[node name="Seat0" parent="." instance=ExtResource("2_bw1av")]
+
 [node name="Seat1" parent="." instance=ExtResource("2_bw1av")]
+position = Vector2(-313, 0)
+seat_num = 1
 
 [node name="Seat2" parent="." instance=ExtResource("2_bw1av")]
-position = Vector2(313, 0)
+position = Vector2(0, -313)
 seat_num = 2
 
 [node name="Seat3" parent="." instance=ExtResource("2_bw1av")]
-position = Vector2(0, -313)
+position = Vector2(313, 0)
 seat_num = 3
-
-[node name="Seat4" parent="." instance=ExtResource("2_bw1av")]
-position = Vector2(-313, 0)
-seat_num = 4
 
 [node name="ReadyButton" type="Button" parent="."]
 anchors_preset = 8
@@ -62,6 +64,18 @@ theme = SubResource("Theme_m6cxa")
 theme_override_font_sizes/font_size = 31
 text = "Leave"
 script = ExtResource("4_y4k8u")
+
+[node name="anchor0" type="Node2D" parent="."]
+position = Vector2(0, 313)
+
+[node name="anchor1" type="Node2D" parent="."]
+position = Vector2(-313, 0)
+
+[node name="anchor2" type="Node2D" parent="."]
+position = Vector2(0, -313)
+
+[node name="anchor3" type="Node2D" parent="."]
+position = Vector2(313, 0)
 
 [connection signal="toggled" from="ReadyButton" to="ReadyButton" method="_on_toggled"]
 [connection signal="button_up" from="LeaveButton" to="LeaveButton" method="_on_button_up"]
