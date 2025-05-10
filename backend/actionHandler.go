@@ -409,6 +409,15 @@ func endRound(i *Instance) {
 		i.table.totalScores[trumpCallerTeam] -= i.table.trump.highestCall
 	}
 
+	i.Broadcast(map[string]string{"ACTION": "TOTALSCORE",
+		"TEAMASCORE": strconv.Itoa(i.table.totalScores[TeamA]),
+		"TEAMBSCORE": strconv.Itoa(i.table.totalScores[TeamB])})
+
+	clog.Debugf("(i:%s) total team scores (scoreA:%v, scoreB:%v)",
+		i.id,
+		i.table.totalScores[TeamA],
+		i.table.totalScores[TeamB])
+
 	// Check total scores for winning game
 	if i.table.totalScores[TeamA] >= 25 || i.table.totalScores[TeamB] <= -25 {
 		endGame(i, TeamA)
@@ -419,19 +428,10 @@ func endRound(i *Instance) {
 		return
 	}
 
-	i.Broadcast(map[string]string{"ACTION": "TOTALSCORE",
-		"TEAMASCORE": strconv.Itoa(i.table.totalScores[TeamA]),
-		"TEAMBSCORE": strconv.Itoa(i.table.totalScores[TeamB])})
-
-	clog.Debugf("(i:%s) total team scores (scoreA:%v, scoreB:%v)",
-		i.id,
-		i.table.totalScores[TeamA],
-		i.table.totalScores[TeamB])
-
+	// Start new round
 	i.table.state = TableWaiting
 	i.table.turnOffset += 1
 
-	// Start new round
 	i.table.startTrump()
 }
 
@@ -440,6 +440,7 @@ func endGame(i *Instance, winner Team) {
 	var winner1 = i.table.players[winner]
 	var winner2 = winner1.partner
 	i.Broadcast(map[string]string{"ACTION": "GAMEEND", "WINNER1ID": winner1.client.id, "WINNER2ID": winner2.client.id})
+	clog.Debugf("(i:%s) game ended (scoreA:%v, scoreB:%v)", i.id, i.table.totalScores[TeamA], i.table.totalScores[TeamB])
 
 	// Save current players
 	var curPlayers = [4]*Player{}

@@ -153,29 +153,34 @@ func (t *Table) startTrump() {
 	t.play = Play{}
 	t.playCount = 0
 	for _, p := range t.players {
+		p.state = PlayerTrumping
 		p.score = 0
 		p.hand = []Card{}
 		p.isTurn = false
 	}
 
-	// TODO: reshuffles
-	var deck = newDeck()
+	// Reshuffles
+	for {
+		var deck = newDeck()
 
-	// shuffle deck
-	for i := range deck {
-		j := rand.IntN(i + 1)
-		deck[i], deck[j] = deck[j], deck[i]
-	}
+		// Shuffle deck
+		for i := range deck {
+			j := rand.IntN(i + 1)
+			deck[i], deck[j] = deck[j], deck[i]
+		}
 
-	// clear hands
-	for _, p := range t.players {
-		p.state = PlayerTrumping
-		p.hand = []Card{}
-	}
+		// Deal hands
+		for i := range deck {
+			t.players[i/13].hand = append(t.players[i/13].hand, deck[i])
+		}
 
-	// deal hands
-	for i := range deck {
-		t.players[i/13].hand = append(t.players[i/13].hand, deck[i])
+		// Check hand validity
+		for _, p := range t.players {
+			if p.isHandInvalid() {
+				continue
+			}
+		}
+		break
 	}
 
 	// Sort hands
@@ -273,4 +278,33 @@ func (p *Player) getHandString() string {
 	}
 
 	return str
+}
+
+func (p *Player) isHandInvalid() bool {
+	var suitCardCounts = map[Suit]int{}
+	var faceCardCounts = 0
+
+	for _, c := range p.hand {
+		suitCardCounts[c.suit] += 1
+		if c.value > 10 {
+			faceCardCounts += 1
+		}
+
+		if faceCardCounts >= 8 {
+			return false
+		}
+	}
+
+	if faceCardCounts == 0 {
+		return false
+	}
+
+	for i := range 4 {
+		if suitCardCounts[Suit(i)] >= 8 {
+			return false
+		}
+	}
+
+	return true
+
 }
