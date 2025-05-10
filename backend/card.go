@@ -33,7 +33,7 @@ func newCard(suit Suit, value int) Card {
 	}
 
 	return Card{
-		name:  letter + strconv.Itoa(value),
+		name:  letter + ":" + strconv.Itoa(value),
 		suit:  suit,
 		value: value,
 	}
@@ -41,7 +41,7 @@ func newCard(suit Suit, value int) Card {
 
 func newDeck() [52]Card {
 	var newDeck = [52]Card{}
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		for j := 2; j <= 14; j++ {
 			newDeck[(i*13)+j-2] = newCard(Suit(i), j)
 		}

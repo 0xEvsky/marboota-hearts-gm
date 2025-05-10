@@ -188,7 +188,7 @@ Request to play a card after being prompted by the server with `YOURPLAY`.
 ```json
 {
     "ACTION": "PLAY",
-    "CARD": "C4"
+    "CARD": "C:4"
 }
 ```
 
@@ -197,11 +197,11 @@ Request to play a card after being prompted by the server with `YOURPLAY`.
 The server will *- without prompt -* send these messages that contain event updates about game state, other players...etc. Such as notifying all other clients when a client does something (joins, sits..etc).
 
 ### DEAL
-Notifies the player of which cards they were dealt randomly, the card names are sent as a comma-seperated string in the `CARDS` field, where the first letter is the initial letter of the suit name, and the number following it is the power/value of the card, (14: Ace, 13: King....3: 3, 2: 2).
+Notifies the player of which cards they were dealt randomly, the card names are sent as a comma-seperated string in the `CARDS` field, where the initial letter of the suit name and the power/value of the card are seperated by a colon `:`, (S:14 = Ace of spades, D:13 = King of diamonds....H:4 = 4 of hearts...etc).
 ```json
 {
     "ACTION": "DEAL",
-    "CARDS": "S14,S5,S4,S2,H14,H11,H10,C11,C10,C9,C2,D13,D2"
+    "CARDS": "S:14,S:5,S:4,S:2,H:14,H:11,H:10,C:11,C:10,C:9,C:2,D:13,D:2"
 }
 ```
 
@@ -261,11 +261,11 @@ Notifies all players that play has started.
 
 ### YOURPLAY
 Notifies the client that it's their turn to play a card, alongside is the `PLAYABLE` field which holds which cards the client can play.
-Just like `DEAL`, the card names are sent as a comma-seperated string in the `CARDS` field, where the first letter is the initial letter of the suit name, and the number following it is the power/value of the card, (14: Ace, 13: King....3: 3, 2: 2).
+Just like `DEAL`, the card names are sent as a comma-seperated string in the `CARDS` field, where the initial letter of the suit name and the power/value of the card are seperated by a colon `:`, (S:14 = Ace of spades, D:13 = King of diamonds....H:4 = 4 of hearts...etc).
 ```json
 {
     "ACTION": "YOURPLAY",
-    "PLAYABLE": "S14,S5,S4,S2"
+    "PLAYABLE": "S:14,S:5,S:4,S:2"
 }
 ```
 
@@ -275,7 +275,7 @@ Notifies all clients that the user with id `USERID` has played the card `CARD`.
 {
     "ACTION": "PLAY",
     "USERID": "11223344",
-    "CARD": "H14"
+    "CARD": "H:14"
 }
 ```
 

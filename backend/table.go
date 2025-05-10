@@ -188,15 +188,7 @@ func (t *Table) startTrump() {
 	}
 
 	for _, p := range t.players {
-		var cardstring = ""
-		for i, c := range p.hand {
-			cardstring += c.name
-			if i < len(p.hand)-1 {
-				cardstring += ","
-			}
-		}
-
-		p.client.writeJson(map[string]string{"ACTION": "DEAL", "CARDS": cardstring})
+		p.client.writeJson(map[string]string{"ACTION": "DEAL", "CARDS": p.getHandString()})
 	}
 
 	t.instance.Broadcast(map[string]string{"ACTION": "TRUMPSTART"})
