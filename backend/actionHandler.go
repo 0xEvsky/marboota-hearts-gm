@@ -436,6 +436,20 @@ func endRound(i *Instance) {
 }
 
 func endGame(i *Instance, winner Team) {
-	// TODO: Announce game end
-	// TODO: Reset table newTable
+	// Announce game end
+	var winner1 = i.table.players[winner]
+	var winner2 = winner1.partner
+	i.Broadcast(map[string]string{"ACTION": "GAMEEND", "WINNER1ID": winner1.client.id, "WINNER2ID": winner2.client.id})
+
+	// Save current players
+	var curPlayers = [4]*Player{}
+	for j := range 4 {
+		curPlayers[j] = i.table.players[j]
+	}
+
+	// Reset table newTable
+	i.table = newTable()
+	for j := range 4 {
+		i.table.players[j] = curPlayers[j]
+	}
 }

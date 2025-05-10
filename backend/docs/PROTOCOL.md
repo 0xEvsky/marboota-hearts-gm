@@ -307,3 +307,13 @@ Notifies all clients of the total scores for each team at the moment; `TEAMASCOR
     "TEAMBSCORE":  "11",
 }
 ```
+
+### GAMEEND
+Notifies all clients that the game has ended, announcing the USERID of the winning players.
+```json
+{
+    "ACTION": "GAMEEND",
+    "WINNER1ID": "11223344",
+    "WINNER2ID": "55667788"
+}
+```
