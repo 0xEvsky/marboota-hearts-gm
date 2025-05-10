@@ -289,13 +289,21 @@ Notifies all clients that the current hand play has ended, alongside the winner'
 ```
 
 ### ROUNDEND
-Notifies all client that the current hand round (13 plays) has ended. With it are the end scores for the teams for that round `TEAMASCORE` & `TEAMBSCORE`, alongside the total scores for the entire game `TOTALASCORE` & `TOTALBSCORE`.
+Notifies all clients that the current hand round (13 plays) has ended. With it are the end scores for the teams for that round `TEAMASCORE` & `TEAMBSCORE`.
 ```json
 {
     "ACTION": "ROUNDEND",
     "TEAMASCORE":  "8",
     "TEAMBSCORE":  "5",
-    "TOTALASCORE": "15",
-    "TOTALBSCORE": "11"
+}
+```
+
+### TOTALSCORE
+Notifies all clients of the total scores for each team at the moment; `TEAMASCORE` & `TEAMBSCORE`.
+```json
+{
+    "ACTION": "TOTALSCORE",
+    "TEAMASCORE":  "15",
+    "TEAMBSCORE":  "11",
 }
 ```

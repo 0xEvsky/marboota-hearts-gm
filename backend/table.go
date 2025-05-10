@@ -26,8 +26,7 @@ type Table struct {
 	play        Play
 	playCount   int
 	rounds      []Round
-	totalAScore int
-	totalBScore int
+	totalScores map[Team]int
 }
 
 type PlayerState int
@@ -150,6 +149,16 @@ func (t *Table) isEveryoneReady() bool {
 }
 
 func (t *Table) startTrump() {
+	t.trump = Trump{}
+	t.play = Play{}
+	t.playCount = 0
+	for _, p := range t.players {
+		p.score = 0
+		p.hand = []Card{}
+		p.isTurn = false
+	}
+
+	// TODO: reshuffles
 	var deck = newDeck()
 
 	// shuffle deck
@@ -160,6 +169,7 @@ func (t *Table) startTrump() {
 
 	// clear hands
 	for _, p := range t.players {
+		p.state = PlayerTrumping
 		p.hand = []Card{}
 	}
 
@@ -196,9 +206,6 @@ func (t *Table) startTrump() {
 	t.state = TableTrumping
 	t.turn = t.turnOffset
 
-	for _, p := range t.players {
-		p.state = PlayerTrumping
-	}
 	t.players[t.turn].isTurn = true
 	t.players[t.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": "7"})
 }

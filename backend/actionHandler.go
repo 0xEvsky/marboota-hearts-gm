@@ -344,10 +344,12 @@ func advancePlay(c *Client, cardStr string) error {
 		c.player.isTurn = false
 		c.instance.table.turn = c.instance.table.play.curWinPlayer.seat
 		c.instance.table.players[c.instance.table.turn].isTurn = true
-		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": c.player.getHandString()})
 
 		// Wipe play
 		c.instance.table.play = Play{}
+
+		// Announce new turn
+		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": c.player.getHandString()})
 
 		clog.Debugf("(i:%s) play ended, winner (%s)", c.instance.id, c.id)
 	} else {
@@ -367,42 +369,73 @@ func advancePlay(c *Client, cardStr string) error {
 }
 
 func endRound(i *Instance) {
-	var teamAScore = i.table.players[0].score + i.table.players[2].score
-	var teamBScore = i.table.players[1].score + i.table.players[3].score
-	i.table.totalAScore += teamAScore
-	i.table.totalBScore += teamBScore
+	// Check score of trumpcaller + their partner
+	var teamScores = map[Team]int{}
+	teamScores[TeamA] = i.table.players[0].score + i.table.players[2].score
+	teamScores[TeamB] = i.table.players[1].score + i.table.players[3].score
 
 	var lastGameRound = Round{
-		teamAScore: teamAScore,
-		teamBScore: teamBScore,
+		teamAScore: teamScores[TeamA],
+		teamBScore: teamScores[TeamB],
 	}
 	i.table.rounds = append(i.table.rounds, lastGameRound)
 
 	i.Broadcast(map[string]string{"ACTION": "ROUNDEND",
-		"TEAMASCORE":  strconv.Itoa(teamAScore),
-		"TEAMBSCORE":  strconv.Itoa(teamBScore),
-		"TOTALASCORE": strconv.Itoa(i.table.totalAScore),
-		"TOTALBSCORE": strconv.Itoa(i.table.totalBScore)})
+		"TEAMASCORE": strconv.Itoa(teamScores[TeamA]),
+		"TEAMBSCORE": strconv.Itoa(teamScores[TeamB])})
 
-	clog.Debugf("(i:%s) round ended (scoreA:%v, scoreB:%v) (totalA:%v, totalB:%v)",
+	clog.Debugf("(i:%s) round ended (scoreA:%v, scoreB:%v)",
 		i.id,
-		teamAScore,
-		teamBScore,
-		i.table.totalAScore,
-		i.table.totalBScore)
+		teamScores[TeamA],
+		teamScores[TeamB])
 
-	// TODO: Check total score for winning and ending entire game
+	// Check if one of the teams have 13 score -> endGame (seek)
+	if teamScores[TeamA] == 13 {
+		endGame(i, TeamA)
+		return
+	}
+	if teamScores[TeamB] == 13 {
+		endGame(i, TeamB)
+		return
+	}
+
+	// Calculate scores for round
+	var trumpCallerTeam = i.table.trump.highestCaller.team
+	if teamScores[trumpCallerTeam] >= i.table.trump.highestCall {
+		i.table.totalScores[trumpCallerTeam] += teamScores[trumpCallerTeam]
+	} else {
+		var otherTeam = (trumpCallerTeam + 1) % 2
+		i.table.totalScores[otherTeam] += teamScores[otherTeam]
+		i.table.totalScores[trumpCallerTeam] -= i.table.trump.highestCall
+	}
+
+	// Check total scores for winning game
+	if i.table.totalScores[TeamA] >= 25 || i.table.totalScores[TeamB] <= -25 {
+		endGame(i, TeamA)
+		return
+	}
+	if i.table.totalScores[TeamB] >= 25 || i.table.totalScores[TeamA] <= -25 {
+		endGame(i, TeamB)
+		return
+	}
+
+	i.Broadcast(map[string]string{"ACTION": "TOTALSCORE",
+		"TEAMASCORE": strconv.Itoa(i.table.totalScores[TeamA]),
+		"TEAMBSCORE": strconv.Itoa(i.table.totalScores[TeamB])})
+
+	clog.Debugf("(i:%s) total team scores (scoreA:%v, scoreB:%v)",
+		i.id,
+		i.table.totalScores[TeamA],
+		i.table.totalScores[TeamB])
 
 	i.table.state = TableWaiting
 	i.table.turnOffset += 1
-	i.table.trump = Trump{}
-	i.table.play = Play{}
-	i.table.playCount = 0
 
 	// Start new round
 	i.table.startTrump()
 }
 
-func endGame() {
+func endGame(i *Instance, winner Team) {
+	// TODO: Announce game end
 	// TODO: Reset table newTable
 }
