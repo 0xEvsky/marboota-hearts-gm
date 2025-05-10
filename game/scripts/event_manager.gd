@@ -68,7 +68,7 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 
 		# TODO: DEAL
 		_:
-			push_error("Invalid or unknown action received from server")
+			push_error("Invalid or unknown action received from server:" + str(action))
 
 # Requests
 
