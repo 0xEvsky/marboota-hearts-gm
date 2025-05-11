@@ -212,7 +212,7 @@ func (t *Table) startTrump() {
 	t.turn = t.turnOffset
 
 	t.players[t.turn].isTurn = true
-	t.players[t.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": "7"})
+	t.players[t.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": "7", "MAXSCORE": "11"})
 }
 
 func (t *Table) startPlay() {

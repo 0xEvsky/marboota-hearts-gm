@@ -225,10 +225,10 @@ func advanceTrump(c *Client, scoreStr string) error {
 			}
 		}
 		c.instance.table.players[c.instance.table.turn].isTurn = true
-		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": strconv.Itoa(c.instance.table.trump.highestCall + 1)})
+		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": strconv.Itoa(c.instance.table.trump.highestCall + 1), "MAXSCORE": "13"})
 	}
 
-	clog.Debugf("(i:%s) trump advanced", c.instance.id)
+	clog.Debugf("(i:%s) (c:%s) trump advanced, called %s", c.instance.id, c.id, scoreStr)
 	return nil
 }
 
@@ -264,7 +264,7 @@ func endTrump(c *Client, suit string) error {
 
 	// Start play
 	c.instance.table.startPlay()
-	clog.Debugf("(i:%s) trump ended", c.instance.id)
+	clog.Debugf("(i:%s) (c:%s) trump ended (%v, %v)", c.instance.id, c.id, c.instance.table.trump.suit, c.instance.table.trump.highestCall)
 	return nil
 }
 

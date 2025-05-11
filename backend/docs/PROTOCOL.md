@@ -214,11 +214,12 @@ Once all players in a table are ready, this is sent to all clients in that insta
 ```
 
 ### YOURTRUMPCALL
-Notifies the player that it's their turn to call a trump score using `TRUMPCALL`, alongside `MINSCORE` which is the minimum valid score to call (any less will return an error).
+Notifies the player that it's their turn to call a trump score using `TRUMPCALL`, alongside `MINSCORE` which is the minimum valid score to call (any less will return an error), and `MAXSCORE` which is the maximum valid score to call (any more will return an error).
 ```json
 {
     "ACTION": "YOURTRUMPCALL",
-    "MINSCORE": "7"
+    "MINSCORE": "7",
+    "MAXSCORE": "13"
 }
 ```
 
