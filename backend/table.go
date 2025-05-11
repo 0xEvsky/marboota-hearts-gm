@@ -147,6 +147,7 @@ func (t *Table) isEveryoneReady() bool {
 
 func (t *Table) startGame() {
 	t.instance.Broadcast(map[string]string{"ACTION": "GAMESTART"})
+	clog.Debugf("(i:%s) game started", t.instance.id)
 	t.startTrump()
 }
 
