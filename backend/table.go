@@ -60,7 +60,6 @@ type Player struct {
 type Trump struct {
 	highestCall   int
 	highestCaller *Player
-	callers       []*Player
 	isDone        bool
 	suit          Suit
 }
@@ -89,10 +88,8 @@ func newTable() Table {
 	return Table{
 		players: players,
 		state:   TableWaiting,
-		trump: Trump{
-			callers: players[:],
-		},
-		play: Play{},
+		trump:   Trump{},
+		play:    Play{},
 	}
 }
 
@@ -307,4 +304,25 @@ func (p *Player) isHandInvalid() bool {
 
 	return true
 
+}
+
+func (p *Player) getAvailableTrumps() ([]string, string) {
+	var trumpArr = []string{}
+	var trumpsStr = ""
+	var suitCounts = map[Suit]int{}
+	for _, c := range p.hand {
+		suitCounts[c.suit] += 1
+	}
+	var suits = map[Suit]string{Spades: "SPADES", Hearts: "HEARTS", Clubs: "CLUBS", Diamonds: "DIAMONDS"}
+	for k, v := range suits {
+		if suitCounts[k]+3 <= p.client.instance.table.trump.highestCall {
+			trumpArr = append(trumpArr, v)
+			trumpsStr += v
+			if k < 4 {
+				trumpsStr += ","
+			}
+		}
+	}
+
+	return trumpArr, trumpsStr
 }

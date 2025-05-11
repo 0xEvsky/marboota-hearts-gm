@@ -181,21 +181,16 @@ func advanceTrump(c *Client, scoreStr string) error {
 		return errors.New("not player turn")
 	}
 
-	// Check if player is in caller list
-	if !slices.Contains(c.instance.table.trump.callers, p) {
-		return errors.New("player is not a valid caller")
-	}
-
-	// Check if player is passing
-	if scoreStr == "PASS" {
-		c.instance.table.trump.callers = slices.DeleteFunc(c.instance.table.trump.callers, func(caller *Player) bool {
-			return caller == p
-		})
-	} else {
+	// Check if player is not passing
+	if scoreStr != "PASS" {
 		var score, err = strconv.Atoi(scoreStr)
 		// Check if score is between 7 and 13
-		if err != nil || score < 7 || score > 13 {
-			return errors.New("invalid or missing score (7-13/PASS)")
+		var maxScore = 13
+		if c.instance.table.turn == c.instance.table.turnOffset {
+			maxScore = 11
+		}
+		if err != nil || score < 7 || score > maxScore {
+			return errors.New("invalid or missing score (7-" + strconv.Itoa(maxScore) + "/PASS)")
 		}
 
 		// Check if score is higher than the current highest call
@@ -209,21 +204,21 @@ func advanceTrump(c *Client, scoreStr string) error {
 
 	c.broadcastToMates(map[string]string{"ACTION": "TRUMPCALL", "USERID": c.id, "SCORE": scoreStr})
 
-	if len(c.instance.table.trump.callers) <= 1 || c.instance.table.trump.highestCall >= 13 {
+	if (c.instance.table.turn+1)%4 == c.instance.table.turnOffset || c.instance.table.trump.highestCall >= 13 {
 		// Toggle trump as done
 		c.instance.table.trump.isDone = true
+
+		// Get available trumps
+		var _, trumpsStr = p.getAvailableTrumps()
+
 		// Ask for trump suit
-		c.instance.table.trump.highestCaller.client.writeJson(map[string]string{"ACTION": "YOURTRUMPSUIT", "SCORE": strconv.Itoa(c.instance.table.trump.highestCall)})
+		c.instance.table.trump.highestCaller.client.writeJson(map[string]string{"ACTION": "YOURTRUMPSUIT", "SCORE": strconv.Itoa(c.instance.table.trump.highestCall), "TRUMPS": trumpsStr})
 	} else {
 		// Advance turn
 		p.isTurn = false
-		for {
-			c.instance.table.turn += 1
-			c.instance.table.turn %= 4
-			if slices.Contains(c.instance.table.trump.callers, c.instance.table.players[c.instance.table.turn]) {
-				break
-			}
-		}
+		c.instance.table.turn += 1
+		c.instance.table.turn %= 4
+
 		c.instance.table.players[c.instance.table.turn].isTurn = true
 		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": strconv.Itoa(c.instance.table.trump.highestCall + 1), "MAXSCORE": "13"})
 	}
@@ -259,6 +254,11 @@ func endTrump(c *Client, suit string) error {
 		return errors.New("invalid suit (SPADES, HEARTS, CLUBS, DIAMONDS)")
 	}
 
+	// Check trump is available
+	var trumps, trumpsStr = c.player.getAvailableTrumps()
+	if !slices.Contains(trumps, suit) {
+		return errors.New("invalid trump suit (" + trumpsStr + ")")
+	}
 	// Announce trump end with suit and score
 	c.instance.Broadcast(map[string]string{"ACTION": "TRUMPEND", "SUIT": suit, "SCORE": strconv.Itoa(c.instance.table.trump.highestCall)})
 
@@ -431,6 +431,7 @@ func endRound(i *Instance) {
 	// Start new round
 	i.table.state = TableWaiting
 	i.table.turnOffset += 1
+	i.table.turnOffset %= 4
 
 	i.table.startTrump()
 }
