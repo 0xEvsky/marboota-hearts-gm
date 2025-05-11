@@ -196,6 +196,14 @@ Request to play a card after being prompted by the server with `YOURPLAY`.
 ## Server -> client event messages
 The server will *- without prompt -* send these messages that contain event updates about game state, other players...etc. Such as notifying all other clients when a client does something (joins, sits..etc).
 
+### GAMESTART
+Once all players in a table are ready, this is sent to all clients in that instance signaling the game has started.
+```json
+{
+    "ACTION": "GAMESTART"
+}
+```
+
 ### DEAL
 Notifies the player of which cards they were dealt randomly, the card names are sent as a comma-seperated string in the `CARDS` field, where the initial letter of the suit name and the power/value of the card are seperated by a colon `:`, (S:14 = Ace of spades, D:13 = King of diamonds....H:4 = 4 of hearts...etc).
 ```json
@@ -206,7 +214,7 @@ Notifies the player of which cards they were dealt randomly, the card names are 
 ```
 
 ### TRUMPSTART
-Once all players in a table are ready, this is sent to all clients in that instance signaling the game has started at the TRUMPING state.
+Notifies all clients that trumping has started.
 ```json
 {
     "ACTION": "TRUMPSTART"

@@ -143,7 +143,7 @@ func setReady(c *Client) error {
 
 	// Check if all players are ready
 	if c.instance.table.isEveryoneReady() {
-		c.instance.table.startTrump()
+		c.instance.table.startGame()
 	}
 
 	return nil

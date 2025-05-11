@@ -145,6 +145,11 @@ func (t *Table) isEveryoneReady() bool {
 	return true
 }
 
+func (t *Table) startGame() {
+	t.instance.Broadcast(map[string]string{"ACTION": "GAMESTART"})
+	t.startTrump()
+}
+
 func (t *Table) startTrump() {
 	t.trump = Trump{}
 	t.play = Play{}
