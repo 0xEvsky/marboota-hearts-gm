@@ -7,16 +7,24 @@ func _ready() -> void:
 	EventManager.TRUMPSTART_received.connect(_on_trumpstart)
 
 func _on_gamestart():
-	rotate_table()
+	# ! reverse at GAMEEND
+	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
+		rotate_table()
 
-	var leaveButton = $"LeaveButton"
-	leaveButton.hide()
+		var leaveButton = $"LeaveButton"
+		leaveButton.hide()
 
-	var readyButton = $"ReadyButton"
-	readyButton.hide()
+		var readyButton = $"ReadyButton"
+		readyButton.hide()
 
-	Globals.my_player.hide()
-	Globals.my_player.seat.hide()
+		Globals.my_player.hide()
+		Globals.my_player.seat.hide()
+		Globals.my_player.hand.scale = Vector2(1, 1)
+		Globals.my_player.hand.position.y = 260
+	else:
+		for i in range(4):
+			var hand = get_node("Hand" + str(i)) as Hand
+			hand._on_deal("")
 
 
 func _on_trumpstart():

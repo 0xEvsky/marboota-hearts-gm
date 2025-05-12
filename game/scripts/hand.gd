@@ -12,8 +12,8 @@ func _ready() -> void:
 	EventManager.DEAL_received.connect(_on_deal)
 
 func _on_deal(cardStr: String):
-	var cardStrArr = cardStr.split(",")
 	if player == Globals.my_player:
+		var cardStrArr = cardStr.split(",")
 		for card in cardStrArr:
 			add_card(card)
 	else:

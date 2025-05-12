@@ -79,7 +79,8 @@ text = "Leave"
 script = ExtResource("4_y4k8u")
 
 [node name="Hand0" parent="." instance=ExtResource("6_605ca")]
-position = Vector2(0, 260)
+position = Vector2(0, 225)
+scale = Vector2(0.25, 0.25)
 
 [node name="Hand1" parent="." instance=ExtResource("6_605ca")]
 position = Vector2(-225, 0)
