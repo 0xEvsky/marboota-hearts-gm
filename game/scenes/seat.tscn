@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cur6qosdw6bdc"]
 
-[ext_resource type="Script" path="res://scripts/seat_1.gd" id="1_qlcua"]
+[ext_resource type="Script" path="res://scripts/seat.gd" id="1_qlcua"]
 [ext_resource type="Texture2D" uid="uid://haha0q0yyasu" path="res://assets/graphics/seat.png" id="2_4f3bn"]
 
 [node name="Seat" type="Node2D"]

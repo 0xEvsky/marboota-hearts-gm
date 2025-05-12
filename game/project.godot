@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 NetworkManager="*res://scripts/network_manager.gd"
 EventManager="*res://scripts/event_manager.gd"
 Globals="*res://scripts/globals.gd"
+CardMap="*res://scripts/card_map.gd"
 
 [display]
 

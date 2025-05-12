@@ -7,7 +7,9 @@ signal SIT_received
 signal UNSIT_received
 signal READY_received
 signal UNREADY_received
-signal TRUMPSTART_recevied
+signal GAMESTART_received
+signal DEAL_received
+signal TRUMPSTART_received
 
 
 
@@ -63,8 +65,12 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			READY_received.emit()
 		"UNREADY":
 			UNREADY_received.emit()
+		"GAMESTART":
+			GAMESTART_received.emit()
+		"DEAL": 
+			DEAL_received.emit(msg["CARDS"])
 		"TRUMPSTART":
-			TRUMPSTART_recevied.emit()
+			TRUMPSTART_received.emit()
 
 		# TODO: DEAL
 		_:
