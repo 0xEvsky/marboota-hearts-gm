@@ -188,7 +188,7 @@ Request to play a card after being prompted by the server with `YOURPLAY`.
 ```json
 {
     "ACTION": "PLAY",
-    "CARD": "C:4"
+    "CARD": "C_4"
 }
 ```
 
@@ -205,11 +205,11 @@ Once all players in a table are ready, this is sent to all clients in that insta
 ```
 
 ### DEAL
-Notifies the player of which cards they were dealt randomly, the card names are sent as a comma-seperated string in the `CARDS` field, where the initial letter of the suit name and the power/value of the card are seperated by a colon `:`, (S:14 = Ace of spades, D:13 = King of diamonds....H:4 = 4 of hearts...etc).
+Notifies the player of which cards they were dealt randomly, the card names are sent as a comma-seperated string in the `CARDS` field, where the initial letter of the suit name and the power/value of the card are seperated by an underscore `_`, (S_14 = Ace of spades, D_13 = King of diamonds....H_4 = 4 of hearts...etc).
 ```json
 {
     "ACTION": "DEAL",
-    "CARDS": "S:14,S:5,S:4,S:2,H:14,H:11,H:10,C:11,C:10,C:9,C:2,D:13,D:2"
+    "CARDS": "S_14,S_5,S_4,S_2,H_14,H_11,H_10,C_11,C_10,C_9,C_2,D_13,D_2"
 }
 ```
 
@@ -271,11 +271,11 @@ Notifies all players that play has started.
 
 ### YOURPLAY
 Notifies the client that it's their turn to play a card, alongside is the `PLAYABLE` field which holds which cards the client can play.
-Just like `DEAL`, the card names are sent as a comma-seperated string in the `CARDS` field, where the initial letter of the suit name and the power/value of the card are seperated by a colon `:`, (S:14 = Ace of spades, D:13 = King of diamonds....H:4 = 4 of hearts...etc).
+Just like `DEAL`, the card names are sent as a comma-seperated string in the `CARDS` field, where the initial letter of the suit name and the power/value of the card are seperated by an underscore `_`, (S_14 = Ace of spades, D_13 = King of diamonds....H_4 = 4 of hearts...etc).
 ```json
 {
     "ACTION": "YOURPLAY",
-    "PLAYABLE": "S:14,S:5,S:4,S:2"
+    "PLAYABLE": "S_14,S_5,S_4,S_2"
 }
 ```
 

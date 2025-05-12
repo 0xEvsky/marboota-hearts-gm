@@ -33,7 +33,7 @@ func newCard(suit Suit, value int) Card {
 	}
 
 	return Card{
-		name:  letter + ":" + strconv.Itoa(value),
+		name:  letter + "_" + strconv.Itoa(value),
 		suit:  suit,
 		value: value,
 	}
