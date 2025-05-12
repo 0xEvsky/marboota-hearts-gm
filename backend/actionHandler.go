@@ -42,7 +42,7 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 
 	if instance != nil {
 		c.instance = joinInstance(c, instanceId)
-		clog.Debug("Client (" + c.id + ") joined existing instance")
+		clog.Debugf("(server) (c:%s) joined existing instance (i:%s)", c.id, instanceId)
 	} else {
 		c.instance = newInstance(c, instanceId)
 		clog.Println("(server) New instance created (" + instanceId + ")")
