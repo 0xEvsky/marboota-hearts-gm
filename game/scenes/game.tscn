@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://8xkf68liril2"]
+[gd_scene load_steps=11 format=3 uid="uid://8xkf68liril2"]
 
 [ext_resource type="Texture2D" uid="uid://chnhuidtxoexr" path="res://assets/graphics/bg.jpg" id="1_bjwno"]
 [ext_resource type="Texture2D" uid="uid://xudi6b2awstb" path="res://assets/ui/icon_repeat_light.png" id="1_lit6y"]
 [ext_resource type="Script" path="res://scripts/loading_ui.gd" id="1_w3f0r"]
 [ext_resource type="PackedScene" uid="uid://chi8vcmil521h" path="res://scenes/debug_panel.tscn" id="3_udsek"]
 [ext_resource type="PackedScene" uid="uid://belne7lgw02p3" path="res://scenes/table.tscn" id="4_24tct"]
+[ext_resource type="Script" path="res://scripts/game_ui.gd" id="5_cxi62"]
 [ext_resource type="Script" path="res://scripts/player_manager.gd" id="5_xiyoe"]
 
 [sub_resource type="Animation" id="Animation_5kc0w"]
@@ -138,9 +139,102 @@ texture = ExtResource("1_bjwno")
 expand_mode = 2
 stretch_mode = 6
 
+[node name="GameUI" type="CanvasLayer" parent="."]
+
+[node name="TrumpCall" type="Panel" parent="GameUI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -377.0
+offset_top = -125.0
+offset_right = 377.0
+offset_bottom = 125.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_cxi62")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/TrumpCall"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/TrumpCall/VBoxContainer"]
+layout_mode = 2
+size_flags_stretch_ratio = 0.0
+alignment = 1
+
+[node name="7Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 86
+disabled = true
+text = "7"
+
+[node name="8Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 86
+disabled = true
+text = "8"
+
+[node name="9Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 86
+disabled = true
+text = "9"
+
+[node name="10Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 86
+disabled = true
+text = "10"
+
+[node name="11Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 86
+disabled = true
+text = "11"
+
+[node name="12Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 86
+disabled = true
+text = "12"
+
+[node name="13Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 86
+disabled = true
+text = "13"
+
+[node name="PassButton" type="Button" parent="GameUI/TrumpCall/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 86
+text = "pass"
+
 [node name="Table" parent="." instance=ExtResource("4_24tct")]
 position = Vector2(640, 360)
 
 [node name="PlayerManager" type="Node2D" parent="."]
 position = Vector2(81, 73)
 script = ExtResource("5_xiyoe")
+
+[connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/7Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["7"]]
+[connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/8Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["8"]]
+[connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/9Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["9"]]
+[connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/10Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["10"]]
+[connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/11Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["11"]]
+[connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/12Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["12"]]
+[connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/13Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["13"]]
+[connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/PassButton" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["PASS"]]

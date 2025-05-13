@@ -10,6 +10,8 @@ signal UNREADY_received
 signal GAMESTART_received
 signal DEAL_received
 signal TRUMPSTART_received
+signal TRUMPCALL_received
+signal YOURTRUMPCALL_received
 
 
 
@@ -71,7 +73,11 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			DEAL_received.emit(msg["CARDS"])
 		"TRUMPSTART":
 			TRUMPSTART_received.emit()
-
+		"TRUMPCALL":
+			# TODO: Use this for trump score counter display
+			TRUMPCALL_received.emit(msg["USERID"], msg["SCORE"])
+		"YOURTRUMPCALL":
+			YOURTRUMPCALL_received.emit(msg["MINSCORE"], msg["MAXSCORE"])
 		# TODO: DEAL
 		_:
 			push_error("Invalid or unknown action received from server:" + str(action))
@@ -89,3 +95,6 @@ func ready_request() -> Dictionary:
 
 func unready_request() -> Dictionary:
 	return {"ACTION": "UNREADY"}
+
+func trumpcall_request(score: String) -> Dictionary:
+	return {"ACTION": "TRUMPCALL", "SCORE": score}
