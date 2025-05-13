@@ -174,15 +174,6 @@ When called with the `SCORE` value being `PASS`, the call is considered a pass i
 }
 ```
 
-### TRUMPSUIT
-After the server notifies the client with `YOURTRUMPSUIT` when trumping is almost over and it's the highest caller, the client should use this to submit the suit for the trump.
-```json
-{
-    "ACTION": "TRUMPSUIT",
-    "SCORE": "DIAMONDS"
-}
-```
-
 ### PLAY
 Request to play a card after being prompted by the server with `YOURPLAY`.
 ```json
@@ -241,16 +232,7 @@ Notifies a player that another player has made a successful trump call, along wi
 }
 ```
 
-### YOURTRUMPSUIT
-Notifies the player with the highest call that they should call their trump suit using `TRUMPSUIT`, alongside it is the highest called `SCORE`. Alongside it are the available suits that can be called as the trump as strings seperated by a comma `,`.
-```json
-{
-    "ACTION": "YOURTRUMPSUIT",
-    "SCORE": "10",
-    "TRUMPS": "SPADES,HEARTS"
-}
-```
-
+<!-- 
 ### TRUMPEND
 Notifies all players that trump phase is over! Informing them of the selected trump suit and score.
 ```json
@@ -259,7 +241,7 @@ Notifies all players that trump phase is over! Informing them of the selected tr
     "SUIT": "SPADES",
     "SCORE": "9"
 }
-```
+``` -->
 
 ### PLAYSTART
 Notifies all players that play has started.

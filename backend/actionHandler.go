@@ -172,7 +172,7 @@ func advanceTrump(c *Client, scoreStr string) error {
 	}
 
 	// Check if game is in trump state
-	if c.instance.table.state != TableTrumping || c.instance.table.trump.isDone {
+	if c.instance.table.state != TableTrumping {
 		return errors.New("table not in trump state")
 	}
 
@@ -205,14 +205,7 @@ func advanceTrump(c *Client, scoreStr string) error {
 	c.broadcastToMates(map[string]string{"ACTION": "TRUMPCALL", "USERID": c.id, "SCORE": scoreStr})
 
 	if (c.instance.table.turn+1)%4 == c.instance.table.turnOffset || c.instance.table.trump.highestCall >= 13 {
-		// Toggle trump as done
-		c.instance.table.trump.isDone = true
-
-		// Get available trumps
-		var _, trumpsStr = p.getAvailableTrumps()
-
-		// Ask for trump suit
-		c.instance.table.trump.highestCaller.client.writeJson(map[string]string{"ACTION": "YOURTRUMPSUIT", "SCORE": strconv.Itoa(c.instance.table.trump.highestCall), "TRUMPS": trumpsStr})
+		endTrump(c.instance)
 	} else {
 		// Advance turn
 		p.isTurn = false
@@ -227,44 +220,13 @@ func advanceTrump(c *Client, scoreStr string) error {
 	return nil
 }
 
-func endTrump(c *Client, suit string) error {
-	// Check if client is trumping
-	if c.state != ClientSeated || c.player.state != PlayerTrumping {
-		return errors.New("client not playing")
-	}
-
-	// Check if table is trumping
-	if c.instance.table.state != TableTrumping {
-		return errors.New("table not in trump state")
-	}
-
-	// Check if trump is done
-	if !c.instance.table.trump.isDone {
-		return errors.New("table not waiting for trump suit yet")
-	}
-
-	// Check if request is from highest caller
-	if c != c.instance.table.trump.highestCaller.client {
-		return errors.New("player not highest caller")
-	}
-
-	// Check if suit is valid
-	var suits = []string{"SPADES", "HEARTS", "CLUBS", "DIAMONDS"}
-	if !slices.Contains(suits, suit) {
-		return errors.New("invalid suit (SPADES, HEARTS, CLUBS, DIAMONDS)")
-	}
-
-	// Check trump is available
-	var trumps, trumpsStr = c.player.getAvailableTrumps()
-	if !slices.Contains(trumps, suit) {
-		return errors.New("invalid trump suit (" + trumpsStr + ")")
-	}
-	// Announce trump end with suit and score
-	c.instance.Broadcast(map[string]string{"ACTION": "TRUMPEND", "SUIT": suit, "SCORE": strconv.Itoa(c.instance.table.trump.highestCall)})
+func endTrump(i *Instance) error {
+	// // Announce trump end with suit and score
+	// c.instance.Broadcast(map[string]string{"ACTION": "TRUMPEND", "SUIT": suit, "SCORE": strconv.Itoa(c.instance.table.trump.highestCall)})
 
 	// Start play
-	c.instance.table.startPlay()
-	clog.Debugf("(i:%s) (c:%s) trump ended (%v, %v)", c.instance.id, c.id, c.instance.table.trump.suit, c.instance.table.trump.highestCall)
+	i.table.startPlay()
+	clog.Debugf("(i:%s) trump ended (%v)", i.id, i.table.trump.highestCall)
 	return nil
 }
 
@@ -291,11 +253,23 @@ func advancePlay(c *Client, cardStr string) error {
 		return err
 	}
 
-	// Check if card is playable
-	var playables, _ = c.player.getPlayableCards()
+	if c.instance.table.trump.suit == -1 {
+		// Check if first play ever is a valid trump
+		var playables, _ = c.player.getAvailableTrumps()
 
-	if !slices.Contains(playables, card) {
-		return errors.New("card not playable")
+		if !slices.Contains(playables, card.suit) {
+			return errors.New("invalid suit for trump")
+		}
+
+		// Set trump
+		c.instance.table.trump.suit = card.suit
+	} else {
+		// Check if card is playable
+		var playables, _ = c.player.getPlayableCards()
+
+		if !slices.Contains(playables, card) {
+			return errors.New("card not playable")
+		}
 	}
 
 	// Add cards to played cards

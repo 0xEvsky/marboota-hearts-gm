@@ -87,16 +87,6 @@ func msgHandler(c *Client, rawMsg []byte) {
 		c.writeOk()
 		clog.Debugf("(i:%s) (c:%s) TRUMPCALL request accepted", c.instance.id, c.id)
 
-	case "TRUMPSUIT":
-		err := endTrump(c, msg["SUIT"])
-		if err != nil {
-			c.writeError(err.Error())
-			clog.Debugf("(i:%s) (c:%s) TRUMPSUIT request refused: %s\n", c.instance.id, c.id, err)
-			return
-		}
-		c.writeOk()
-		clog.Debugf("(i:%s) (c:%s) TRUMPSUIT request accepted", c.instance.id, c.id)
-
 	case "PLAY":
 		err := advancePlay(c, msg["CARD"])
 		if err != nil {

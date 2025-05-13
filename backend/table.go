@@ -60,7 +60,6 @@ type Player struct {
 type Trump struct {
 	highestCall   int
 	highestCaller *Player
-	isDone        bool
 	suit          Suit
 }
 
@@ -88,8 +87,10 @@ func newTable() Table {
 	return Table{
 		players: players,
 		state:   TableWaiting,
-		trump:   Trump{},
-		play:    Play{},
+		trump: Trump{
+			suit: -1,
+		},
+		play: Play{},
 	}
 }
 
@@ -152,7 +153,9 @@ func (t *Table) startGame() {
 }
 
 func (t *Table) startTrump() {
-	t.trump = Trump{}
+	t.trump = Trump{
+		suit: -1,
+	}
 	t.play = Play{}
 	t.playCount = 0
 	for _, p := range t.players {
@@ -236,9 +239,16 @@ func (t *Table) startPlay() {
 
 	t.playCount = 0
 
-	var _, cardsStr = t.trump.highestCaller.getPlayableCards()
+	var playableCards = ""
+	if t.trump.suit == -1 {
+		var _, trumps = t.trump.highestCaller.getAvailableTrumps()
+		playableCards = trumps
+	} else {
+		var _, cardsStr = t.trump.highestCaller.getPlayableCards()
+		playableCards = cardsStr
+	}
 
-	t.trump.highestCaller.client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": cardsStr})
+	t.trump.highestCaller.client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": playableCards})
 }
 
 func (p *Player) getPlayableCards() ([]Card, string) {
@@ -312,23 +322,26 @@ func (p *Player) isHandInvalid() bool {
 
 }
 
-func (p *Player) getAvailableTrumps() ([]string, string) {
-	var trumpArr = []string{}
-	var trumpsStr = ""
+func (p *Player) getAvailableTrumps() ([]Suit, string) {
+	var str = ""
+	var trumps = []Suit{}
 	var suitCounts = map[Suit]int{}
 	for _, c := range p.hand {
 		suitCounts[c.suit] += 1
 	}
-	var suits = map[Suit]string{Spades: "SPADES", Hearts: "HEARTS", Clubs: "CLUBS", Diamonds: "DIAMONDS"}
-	for k, v := range suits {
-		if suitCounts[k]+3 <= p.client.instance.table.trump.highestCall {
-			trumpArr = append(trumpArr, v)
-			trumpsStr += v
-			if k < 4 {
-				trumpsStr += ","
+	for i := range 4 {
+		if suitCounts[Suit(i)]+3 <= p.client.instance.table.trump.highestCall {
+			trumps = append(trumps, Suit(i))
+		}
+	}
+	for i, c := range p.hand {
+		if slices.Contains(trumps, c.suit) {
+			str += c.name
+			if i < len(p.hand)-1 {
+				str += ","
 			}
 		}
 	}
 
-	return trumpArr, trumpsStr
+	return trumps, str
 }
