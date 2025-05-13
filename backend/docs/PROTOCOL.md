@@ -267,7 +267,7 @@ Notifies all clients that the user with id `USERID` has played the card `CARD`.
 {
     "ACTION": "PLAY",
     "USERID": "11223344",
-    "CARD": "H:14"
+    "CARD": "H_14"
 }
 ```
 
