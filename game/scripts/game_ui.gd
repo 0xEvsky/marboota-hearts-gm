@@ -21,9 +21,8 @@ func _on_yourtrumpcall(min_score_str: String, max_score_str: String):
 func _on_trump_button_up(score: String) -> void:
 	EventManager.send_request(
 		EventManager.trumpcall_request(score),
-		func():
-			pass ,
-		func():
+		func(error):
+			print_debug(error)
 			_on_yourtrumpcall(min_score_str_global, max_score_str_global)
 	)
 	hide()

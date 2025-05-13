@@ -23,10 +23,10 @@ func _process(_delta: float) -> void:
 		#_process_response_queue()
 	pass
 
-func send_request(msg: Dictionary, on_success: Callable, on_error: Callable) -> void:
+func send_request(msg: Dictionary, on_error: Callable) -> void:
 	var request_id = _generate_request_id()
 	msg["REQUESTID"] = request_id
-	_request_queue.append({"message": msg, "request_id": request_id, "on_success": on_success, "on_error": on_error})
+	_request_queue.append({"message": msg, "request_id": request_id, "on_error": on_error})
 	print_debug("request: ", msg)
 	NetworkManager._write_json(msg)
 

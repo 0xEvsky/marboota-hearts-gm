@@ -1,6 +1,9 @@
 extends Node2D
 class_name Table
 
+enum TableState {TABLE_IDLE, TABLE_READY, TABLE_TRUMPING, TABLE_PLAYING}
+var state: TableState = TableState.TABLE_IDLE
+
 func _ready() -> void:
 	Globals.table = self
 	EventManager.GAMESTART_received.connect(_on_gamestart)
@@ -8,6 +11,7 @@ func _ready() -> void:
 
 func _on_gamestart():
 	# ! reverse at GAMEEND
+	state = TableState.TABLE_READY
 	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
 		rotate_table()
 
@@ -28,6 +32,10 @@ func _on_gamestart():
 
 
 func _on_trumpstart():
+	# ! reset at ROUNDEND
+	state = TableState.TABLE_TRUMPING
+	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
+		Globals.my_player.state = Globals.player_manager.PLAYER_TRUMPING
 	pass	
 
 func rotate_table() -> void:

@@ -1,7 +1,6 @@
 extends Node2D
 class_name Seat
 
-
 @export var seat_num = 0
 var sitter: Player
 @onready var table: Table = get_parent()
@@ -14,11 +13,9 @@ func _disable_button() -> void:
 	is_taken = true
 	$Button.disabled = true
 
-
 func _enable_button() -> void:
 	is_taken = false
 	$Button.disabled = false
-
 
 func seat_player(id: String) -> void:
 	var player_manager = Globals.player_manager
@@ -31,13 +28,17 @@ func seat_player(id: String) -> void:
 	player_manager.unpin_player(player)
 	player_manager.move_player(id, global_position)
 
-	player.state = player_manager.PLAYER_WAITING # TODO: Change depending on game state
+	# Change player state depending on game state
+	player.state = player_manager.PLAYER_WAITING
+	if Globals.table.state == Globals.table.TableState.TABLE_TRUMPING:
+		player.state = player_manager.PLAYER_TRUMPING
+	if Globals.table.state == Globals.table.TableState.TABLE_PLAYING:
+		player.state = player_manager.PLAYER_PLAYING
+
 	player.seat = self
 
 	sitter = player
 	_disable_button()
-
-
 
 func unseat_player() -> void:
 	if sitter != null:
@@ -47,7 +48,6 @@ func unseat_player() -> void:
 	_enable_button()
 
 
-
 func _on_button_button_up() -> void:
 	seat_player("Me")
 	seat_ready_button.show()
@@ -55,9 +55,6 @@ func _on_button_button_up() -> void:
 
 	EventManager.send_request(
 		EventManager.sit_request(seat_num)
-
-	,func():
-		pass
 	,func(err: String):
 		var me = Globals.my_player
 		seat_ready_button.hide()
