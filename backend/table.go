@@ -257,7 +257,7 @@ func (p *Player) getPlayableCards() ([]Card, string) {
 	}
 
 	var cards = []Card{}
-
+	// TODO: if first play allow all cards, if not try to follow first card, if not allow anything
 	for _, c := range p.hand {
 		if c.suit == p.client.instance.table.trump.suit {
 			cards = append(cards, c)
@@ -334,12 +334,12 @@ func (p *Player) getAvailableTrumps() ([]Suit, string) {
 			trumps = append(trumps, Suit(i))
 		}
 	}
-	for i, c := range p.hand {
+	for _, c := range p.hand {
 		if slices.Contains(trumps, c.suit) {
-			str += c.name
-			if i < len(p.hand)-1 {
+			if str != "" {
 				str += ","
 			}
+			str += c.name
 		}
 	}
 

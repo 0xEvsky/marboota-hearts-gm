@@ -280,7 +280,7 @@ func advancePlay(c *Client, cardStr string) error {
 		return ec.name == card.name
 	})
 
-	c.instance.Broadcast(map[string]string{"ACTION": "PLAY", "USERID": c.id, "CARD": card.name})
+	c.broadcastToMates(map[string]string{"ACTION": "PLAY", "USERID": c.id, "CARD": card.name})
 	clog.Debugf("(i:%s) (c:%s) card played (%s)", c.instance.id, c.id, card.name)
 
 	// Winning card deciding logic
