@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://bi8r7wvcfhkx3"]
+[gd_scene load_steps=4 format=3 uid="uid://bi8r7wvcfhkx3"]
 
 [ext_resource type="Script" path="res://scripts/card.gd" id="1_6newa"]
 [ext_resource type="Texture2D" uid="uid://56ntuy864yuw" path="res://assets/graphics/cards/cardBack_red4.png" id="2_63jcn"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n2k4x"]
+size = Vector2(138, 188)
 
 [node name="Card" type="Node2D"]
 script = ExtResource("1_6newa")
@@ -10,3 +13,25 @@ script = ExtResource("1_6newa")
 
 [node name="Sprite2DBack" type="Sprite2D" parent="."]
 texture = ExtResource("2_63jcn")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_n2k4x")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = -95.0
+offset_right = 70.0
+offset_bottom = 95.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]

@@ -12,6 +12,9 @@ signal DEAL_received
 signal TRUMPSTART_received
 signal TRUMPCALL_received
 signal YOURTRUMPCALL_received
+signal PLAYSTART_received
+signal YOURPLAY_received
+signal PLAY_received
 
 
 
@@ -46,7 +49,7 @@ func _process_response_queue() -> void:
 			return
 		if res["REQUESTID"] == req["request_id"]:
 			if res["ACTION"] == "OK":
-				req["on_success"].call()
+				print_debug("OK")
 			elif res["ACTION"] == "ERROR":
 				req["on_error"].call(res["MESSAGE"])
 			_request_queue.pop_front()
@@ -78,7 +81,15 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			TRUMPCALL_received.emit(msg["USERID"], msg["SCORE"])
 		"YOURTRUMPCALL":
 			YOURTRUMPCALL_received.emit(msg["MINSCORE"], msg["MAXSCORE"])
-		# TODO: DEAL
+		"PLAYSTART":
+			PLAYSTART_received.emit()
+		"YOURPLAY":
+			YOURPLAY_received.emit(msg["PLAYABLE"])
+		"PLAY":
+			PLAY_received.emit(msg["USERID"], msg["CARD"])
+		# TODO: PLAYEEND:
+			# TODO: Use this for score counter display
+
 		_:
 			push_error("Invalid or unknown action received from server:" + str(action))
 
@@ -98,3 +109,6 @@ func unready_request() -> Dictionary:
 
 func trumpcall_request(score: String) -> Dictionary:
 	return {"ACTION": "TRUMPCALL", "SCORE": score}
+
+func play_request(card: String) -> Dictionary:
+	return {"ACTION": "PLAY", "CARD": card}

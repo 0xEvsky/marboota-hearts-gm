@@ -8,9 +8,12 @@ func _ready() -> void:
 	Globals.table = self
 	EventManager.GAMESTART_received.connect(_on_gamestart)
 	EventManager.TRUMPSTART_received.connect(_on_trumpstart)
+	EventManager.PLAYSTART_received.connect(_on_playstart)
+	EventManager.YOURPLAY_received.connect(_on_yourplay)
+	EventManager.PLAY_received.connect(_on_play)
 
 func _on_gamestart():
-	# ! reverse at GAMEEND
+	# ! reset at GAMEEND
 	state = TableState.TABLE_READY
 	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
 		rotate_table()
@@ -34,9 +37,27 @@ func _on_gamestart():
 func _on_trumpstart():
 	# ! reset at ROUNDEND
 	state = TableState.TABLE_TRUMPING
-	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
-		Globals.my_player.state = Globals.player_manager.PLAYER_TRUMPING
-	pass	
+	for i in range(4):
+		var seat = get_node("Seat" + str(i)) as Seat
+		if seat.sitter:
+			seat.sitter.state = Globals.player_manager.PLAYER_TRUMPING
+
+func _on_playstart():
+	# ! reset at GAMEEND?
+	state = TableState.TABLE_PLAYING
+	for i in range(4):
+		var seat = get_node("Seat" + str(i)) as Seat
+		if seat.sitter:
+			seat.sitter.state = Globals.player_manager.PLAYER_PLAYING
+
+func _on_yourplay(playable: String):
+	for cardStr in playable.split(","):
+		Globals.my_player.hand.set_playable(cardStr)
+
+func _on_play(user_id: String, card_str: String):
+	var player = Globals.player_manager.get_node(user_id) as Player
+	var hand = player.hand
+	hand.on_play(card_str)
 
 func rotate_table() -> void:
 	var _offset = 4 - Globals.my_player.seat.seat_num
@@ -56,6 +77,10 @@ func rotate_table() -> void:
 			var hand = get_node(hand_str) as Hand
 			current_seat.sitter.hand = hand
 			hand.player = current_seat.sitter
+			if current_seat.sitter == Globals.my_player:
+				hand.is_mine = true
+				Globals.my_player.hand = hand
+				hand.player = Globals.my_player
 
 func unRotate_table():
 	for i in range(4):

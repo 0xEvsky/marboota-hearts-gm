@@ -78,24 +78,40 @@ theme_override_font_sizes/font_size = 31
 text = "Leave"
 script = ExtResource("4_y4k8u")
 
-[node name="Hand0" parent="." instance=ExtResource("6_605ca")]
+[node name="Hand0" parent="." node_paths=PackedStringArray("anchor") instance=ExtResource("6_605ca")]
 position = Vector2(0, 225)
 scale = Vector2(0.25, 0.25)
+anchor = NodePath("../CardAnchor0")
 
-[node name="Hand1" parent="." instance=ExtResource("6_605ca")]
+[node name="Hand1" parent="." node_paths=PackedStringArray("anchor") instance=ExtResource("6_605ca")]
 position = Vector2(-225, 0)
 rotation = 1.5708
 scale = Vector2(0.25, 0.25)
+anchor = NodePath("../CardAnchor1")
 
-[node name="Hand2" parent="." instance=ExtResource("6_605ca")]
+[node name="Hand2" parent="." node_paths=PackedStringArray("anchor") instance=ExtResource("6_605ca")]
 position = Vector2(0, -225)
 rotation = 3.14159
 scale = Vector2(0.25, 0.25)
+anchor = NodePath("../CardAnchor2")
 
-[node name="Hand3" parent="." instance=ExtResource("6_605ca")]
+[node name="Hand3" parent="." node_paths=PackedStringArray("anchor") instance=ExtResource("6_605ca")]
 position = Vector2(225, 0)
 rotation = -1.5708
 scale = Vector2(0.25, 0.25)
+anchor = NodePath("../CardAnchor3")
+
+[node name="CardAnchor0" type="Node2D" parent="."]
+position = Vector2(0, 75)
+
+[node name="CardAnchor1" type="Node2D" parent="."]
+position = Vector2(-75, 0)
+
+[node name="CardAnchor2" type="Node2D" parent="."]
+position = Vector2(0, -75)
+
+[node name="CardAnchor3" type="Node2D" parent="."]
+position = Vector2(75, 0)
 
 [connection signal="toggled" from="ReadyButton" to="ReadyButton" method="_on_toggled"]
 [connection signal="button_up" from="LeaveButton" to="LeaveButton" method="_on_button_up"]
