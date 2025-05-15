@@ -323,7 +323,7 @@ func advancePlay(c *Client, cardStr string) error {
 		c.instance.table.play = Play{}
 
 		// Announce new turn
-		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": c.player.getHandString()})
+		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": c.instance.table.players[c.instance.table.turn].getHandString()})
 
 		clog.Debugf("(i:%s) play ended, winner (%s)", c.instance.id, c.id)
 	} else {
