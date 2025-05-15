@@ -90,7 +90,8 @@ func newTable() Table {
 		trump: Trump{
 			suit: -1,
 		},
-		play: Play{},
+		play:        Play{},
+		totalScores: map[Team]int{},
 	}
 }
 
@@ -257,9 +258,8 @@ func (p *Player) getPlayableCards() ([]Card, string) {
 	}
 
 	var cards = []Card{}
-	// TODO: if first play allow all cards, if not try to follow first card, if not allow anything
 	for _, c := range p.hand {
-		if c.suit == p.client.instance.table.trump.suit {
+		if c.suit == p.client.instance.table.play.cards[0].suit {
 			cards = append(cards, c)
 		}
 	}

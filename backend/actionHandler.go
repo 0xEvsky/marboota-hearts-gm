@@ -253,16 +253,18 @@ func advancePlay(c *Client, cardStr string) error {
 		return err
 	}
 
-	if c.instance.table.trump.suit == -1 {
-		// Check if first play ever is a valid trump
-		var playables, _ = c.player.getAvailableTrumps()
+	if len(c.instance.table.play.cards) == 0 {
+		if c.instance.table.trump.suit == -1 {
+			// Check if first play ever is a valid trump
+			var playables, _ = c.player.getAvailableTrumps()
 
-		if !slices.Contains(playables, card.suit) {
-			return errors.New("invalid suit for trump")
+			if !slices.Contains(playables, card.suit) {
+				return errors.New("invalid suit for trump")
+			}
+
+			// Set trump
+			c.instance.table.trump.suit = card.suit
 		}
-
-		// Set trump
-		c.instance.table.trump.suit = card.suit
 	} else {
 		// Check if card is playable
 		var playables, _ = c.player.getPlayableCards()
