@@ -2,6 +2,7 @@ extends Node2D
 class_name Player
 
 var username = "Player"
+var id = ""
 
 @onready var manager: PlayerManager = get_parent()
 @onready var icon: Sprite2D = $Icon

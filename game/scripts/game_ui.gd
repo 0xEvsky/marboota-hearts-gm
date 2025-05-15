@@ -13,6 +13,8 @@ func _on_yourtrumpcall(min_score_str: String, max_score_str: String):
 	var min_score = int(min_score_str)
 	var max_score = int(max_score_str)
 	var buttons = get_node("VBoxContainer/HBoxContainer").get_children() as Array[Button]
+	for button in buttons:
+		button.disabled = true
 	for i in range(min_score - 7, max_score + 1 - 7):
 		buttons[i].disabled = false
 	show()

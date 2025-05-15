@@ -15,6 +15,7 @@ signal YOURTRUMPCALL_received
 signal PLAYSTART_received
 signal YOURPLAY_received
 signal PLAY_received
+signal PLAYEND_received
 
 
 
@@ -87,8 +88,8 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			YOURPLAY_received.emit(msg["PLAYABLE"])
 		"PLAY":
 			PLAY_received.emit(msg["USERID"], msg["CARD"])
-		# TODO: PLAYEEND:
-			# TODO: Use this for score counter display
+		"PLAYEND":
+			PLAYEND_received.emit(msg["WINNERID"])
 
 		_:
 			push_error("Invalid or unknown action received from server:" + str(action))

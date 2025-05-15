@@ -11,6 +11,7 @@ func _ready() -> void:
 	EventManager.PLAYSTART_received.connect(_on_playstart)
 	EventManager.YOURPLAY_received.connect(_on_yourplay)
 	EventManager.PLAY_received.connect(_on_play)
+	EventManager.PLAYEND_received.connect(_on_playend)
 
 func _on_gamestart():
 	# ! reset at GAMEEND
@@ -51,6 +52,7 @@ func _on_playstart():
 			seat.sitter.state = Globals.player_manager.PLAYER_PLAYING
 
 func _on_yourplay(playable: String):
+	Globals.my_player.hand.playable = playable
 	for cardStr in playable.split(","):
 		Globals.my_player.hand.set_playable(cardStr)
 
@@ -59,11 +61,26 @@ func _on_play(user_id: String, card_str: String):
 	var hand = player.hand
 	hand.on_play(card_str)
 
+func _on_playend(winner_id: String):
+	#var cards: Array[Card] = []
+	var winning_hand = Globals.player_manager.get_player_by_id(winner_id).hand as Hand
+	for i in range(4):
+		var card = get_node("CardAnchor" + str(i)).get_child(0)
+		var tween = card.create_tween()
+		tween.tween_property(card, "global_position", winning_hand.global_position, 0.25)
+		tween.parallel().tween_property(card, "rotation", 0, 0.5)
+		tween.tween_callback(func():
+			# TODO: Use this for score counter display
+			card.queue_free()
+		)
+	
+	
+
 func rotate_table() -> void:
 	var _offset = 4 - Globals.my_player.seat.seat_num
 
 	for i in range(4):
-		var next_anchor_str = "anchor" + str((i + _offset) % 4)
+		var next_anchor_str = "Anchor" + str((i + _offset) % 4)
 		var next_anchor = get_node(next_anchor_str) as Node2D
 
 		var current_seat_str = "Seat" + str(i)
@@ -87,7 +104,7 @@ func unRotate_table():
 		var current_seat_str = "Seat" + str(i)
 		var current_seat = get_node(current_seat_str) as Seat
 
-		var anchor_str = "anchor" + str(i)
+		var anchor_str = "Anchor" + str(i)
 		var anchor = get_node(anchor_str) as Node2D
 
 		current_seat.global_position = anchor.global_position

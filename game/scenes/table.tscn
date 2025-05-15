@@ -36,16 +36,16 @@ seat_num = 2
 position = Vector2(313, 0)
 seat_num = 3
 
-[node name="anchor0" type="Node2D" parent="."]
+[node name="Anchor0" type="Node2D" parent="."]
 position = Vector2(0, 313)
 
-[node name="anchor1" type="Node2D" parent="."]
+[node name="Anchor1" type="Node2D" parent="."]
 position = Vector2(-313, 0)
 
-[node name="anchor2" type="Node2D" parent="."]
+[node name="Anchor2" type="Node2D" parent="."]
 position = Vector2(0, -313)
 
-[node name="anchor3" type="Node2D" parent="."]
+[node name="Anchor3" type="Node2D" parent="."]
 position = Vector2(313, 0)
 
 [node name="ReadyButton" type="Button" parent="."]

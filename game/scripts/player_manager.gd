@@ -15,14 +15,15 @@ func _ready() -> void:
 
 
 func _init_my_player() -> void:
-	_on_player_join("Me", NetworkManager.username, NetworkManager.icon_url)
+	_on_player_join(NetworkManager.user_id, NetworkManager.username, NetworkManager.icon_url, true)
 
 
-func _on_player_join(id: String, username: String, url: String) -> void:
+func _on_player_join(id: String, username: String, url: String, is_me: bool = false) -> void:
 	var player_scene = preload("res://scenes/player.tscn")
 	var new_player = player_scene.instantiate() as Player
 
 	new_player.name = id
+	new_player.id = id
 	new_player.username = username
 
 	# Get icon from URL
@@ -47,7 +48,7 @@ func _on_player_join(id: String, username: String, url: String) -> void:
 	
 	add_child(new_player)
 	pin_player(new_player)
-	if id == "Me":
+	if is_me:
 		Globals.my_player = new_player
 
 
@@ -97,3 +98,9 @@ func unpin_player(player: Player) -> void:
 		return
 	pinned_players.erase(player)
 	_update_pinned_players()
+
+func get_player_by_id(id: String) -> Player:
+	var player = get_node(id) as Player
+	if player == null:
+		return Globals.my_player
+	return player

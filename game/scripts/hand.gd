@@ -7,6 +7,7 @@ var cards: Array[Card] = []
 var is_mine = false
 var hovered_cards: Array[Card] = []
 @export var anchor: Node2D
+var playable: String = ""
 
 
 # Called when the node enters the scene tree for the first time.
@@ -36,13 +37,20 @@ func add_card(cardStr: String, index: int):
 		card.set_shroud(true)
 	card.global_position = global_position
 
+func sort_cards():
+	cards.sort_custom(func(a: Card, b: Card):
+		if a.hover_index > b.hover_index:
+			return true
+		return false
+	)
+
 func rearrange():
 	var half = (len(cards) - 1) / 2.0
 	for i in range(len(cards)):
 		cards[i].position.x = (i - half) * GAP
 
 func set_playable(cardStr: String):
-	var card = get_node(cardStr)
+	var card = get_node(cardStr) as Card
 	card.set_playable(true)
 
 func card_hovered(card: Card):
@@ -66,9 +74,9 @@ func rehover():
 		hovered_cards[id].hover(true)
 	
 func play(card: Card):
-	var old_cards = cards
 	card.reparent(anchor)
 	cards.erase(card)
+	hovered_cards.erase(card)
 	card.global_position = anchor.global_position
 	card.position = Vector2.ZERO
 	card.scale = Vector2(0.75, 0.75)
@@ -80,12 +88,12 @@ func play(card: Card):
 		EventManager.play_request(card.name),
 		func(error):
 			print_debug(error)
-			cards = []
-			var i = 0
-			for c in old_cards:
-				add_card(c.name, i)
-				i += 1
+			var c = anchor.get_child(0) as Card
+			add_card(c.name, c.hover_index)
+			c.queue_free()
+			sort_cards()
 			rearrange()
+			get_parent()._on_yourplay(playable)
 )
 
 func on_play(card_str: String):
