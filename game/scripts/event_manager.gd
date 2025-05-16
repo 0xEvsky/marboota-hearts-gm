@@ -78,7 +78,6 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 		"TRUMPSTART":
 			TRUMPSTART_received.emit()
 		"TRUMPCALL":
-			# TODO: Use this for trump score counter display
 			TRUMPCALL_received.emit(msg["USERID"], msg["SCORE"])
 		"YOURTRUMPCALL":
 			YOURTRUMPCALL_received.emit(msg["MINSCORE"], msg["MAXSCORE"])

@@ -16,6 +16,10 @@ func _ready() -> void:
 func _on_gamestart():
 	# ! reset at GAMEEND
 	state = TableState.TABLE_READY
+	for i in range(4):
+		var score = get_node("Score" + str(i))
+		score.get_node("Label").text = ""
+		score.show()
 	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
 		rotate_table()
 
@@ -39,13 +43,21 @@ func _on_trumpstart():
 	# ! reset at ROUNDEND
 	state = TableState.TABLE_TRUMPING
 	for i in range(4):
+		var score = get_node("Score" + str(i))
+		score.get_node("Label").text = ""
+		score.show()
+	for i in range(4):
 		var seat = get_node("Seat" + str(i)) as Seat
 		if seat.sitter:
 			seat.sitter.state = Globals.player_manager.PLAYER_TRUMPING
 
 func _on_playstart():
-	# ! reset at GAMEEND?
+	# ! reset at ROUNDEND
 	state = TableState.TABLE_PLAYING
+	for i in range(4):
+		var score = get_node("Score" + str(i))
+		score.get_node("Label").text = "0"
+		score.show()
 	for i in range(4):
 		var seat = get_node("Seat" + str(i)) as Seat
 		if seat.sitter:
@@ -73,6 +85,12 @@ func _on_playend(winner_id: String):
 			# TODO: Use this for score counter display
 			card.queue_free()
 		)
+	var player = Globals.player_manager.get_player_by_id(winner_id)
+	var panel = player.hand.score
+	var label = panel.get_node("Label") as Label
+	var score = int(label.text)
+	score += 1
+	label.text = str(score)
 	
 	
 

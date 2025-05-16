@@ -78,28 +78,32 @@ theme_override_font_sizes/font_size = 31
 text = "Leave"
 script = ExtResource("4_y4k8u")
 
-[node name="Hand0" parent="." node_paths=PackedStringArray("anchor") instance=ExtResource("6_605ca")]
+[node name="Hand0" parent="." node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
 position = Vector2(0, 225)
 scale = Vector2(0.25, 0.25)
 anchor = NodePath("../CardAnchor0")
+score = NodePath("../Score0")
 
-[node name="Hand1" parent="." node_paths=PackedStringArray("anchor") instance=ExtResource("6_605ca")]
+[node name="Hand1" parent="." node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
 position = Vector2(-225, 0)
 rotation = 1.5708
 scale = Vector2(0.25, 0.25)
 anchor = NodePath("../CardAnchor1")
+score = NodePath("../Score1")
 
-[node name="Hand2" parent="." node_paths=PackedStringArray("anchor") instance=ExtResource("6_605ca")]
+[node name="Hand2" parent="." node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
 position = Vector2(0, -225)
 rotation = 3.14159
 scale = Vector2(0.25, 0.25)
 anchor = NodePath("../CardAnchor2")
+score = NodePath("../Score2")
 
-[node name="Hand3" parent="." node_paths=PackedStringArray("anchor") instance=ExtResource("6_605ca")]
+[node name="Hand3" parent="." node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
 position = Vector2(225, 0)
 rotation = -1.5708
 scale = Vector2(0.25, 0.25)
 anchor = NodePath("../CardAnchor3")
+score = NodePath("../Score3")
 
 [node name="CardAnchor0" type="Node2D" parent="."]
 position = Vector2(0, 75)
@@ -112,6 +116,106 @@ position = Vector2(0, -75)
 
 [node name="CardAnchor3" type="Node2D" parent="."]
 position = Vector2(75, 0)
+
+[node name="Score0" type="Panel" parent="."]
+visible = false
+offset_left = -51.0
+offset_top = 303.0
+offset_right = 51.0
+offset_bottom = 369.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Score0"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -27.0
+offset_right = 47.0
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Score1" type="Panel" parent="."]
+visible = false
+offset_left = -314.0
+offset_top = 97.0
+offset_right = -212.0
+offset_bottom = 163.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Score1"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -27.0
+offset_right = 47.0
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Score2" type="Panel" parent="."]
+visible = false
+offset_left = -203.0
+offset_top = -314.0
+offset_right = -101.0
+offset_bottom = -248.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Score2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -27.0
+offset_right = 47.0
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Score3" type="Panel" parent="."]
+visible = false
+offset_left = 211.0
+offset_top = -166.0
+offset_right = 313.0
+offset_bottom = -100.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Score3"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -27.0
+offset_right = 47.0
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="toggled" from="ReadyButton" to="ReadyButton" method="_on_toggled"]
 [connection signal="button_up" from="LeaveButton" to="LeaveButton" method="_on_button_up"]

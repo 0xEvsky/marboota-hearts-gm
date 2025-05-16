@@ -7,6 +7,7 @@ var cards: Array[Card] = []
 var is_mine = false
 var hovered_cards: Array[Card] = []
 @export var anchor: Node2D
+@export var score: Panel
 var playable: String = ""
 
 

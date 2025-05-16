@@ -6,6 +6,7 @@ var max_score_str_global: String
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	EventManager.YOURTRUMPCALL_received.connect(_on_yourtrumpcall)
+	EventManager.TRUMPCALL_received.connect(_on_trumpcall)
 
 func _on_yourtrumpcall(min_score_str: String, max_score_str: String):
 	min_score_str_global = min_score_str
@@ -19,8 +20,18 @@ func _on_yourtrumpcall(min_score_str: String, max_score_str: String):
 		buttons[i].disabled = false
 	show()
 
+func _on_trumpcall(user_id: String, score_str: String):
+	var player = Globals.player_manager.get_player_by_id(user_id)
+	var panel = player.hand.score
+	var label = panel.get_node("Label") as Label
+	label.text = score_str
+
 
 func _on_trump_button_up(score: String) -> void:
+	var player = Globals.my_player
+	var panel = player.hand.score
+	var label = panel.get_node("Label") as Label
+	label.text = score
 	EventManager.send_request(
 		EventManager.trumpcall_request(score),
 		func(error):
