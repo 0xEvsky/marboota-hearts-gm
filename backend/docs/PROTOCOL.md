@@ -291,7 +291,7 @@ Notifies all clients that the current hand round (13 plays) has ended. With it a
 ```
 
 ### TOTALSCORE
-Notifies all clients of the total scores for each team at the moment; `TEAMASCORE` & `TEAMBSCORE`.
+Notifies all clients of the total scores for each team at the moment; `TEAMASCORE` & `TEAMBSCORE`, (sent with `ROUNDEND`).
 ```json
 {
     "ACTION": "TOTALSCORE",
