@@ -51,13 +51,25 @@ func _on_area_2d_mouse_exited() -> void:
 
 func hover(b: bool):
 	if !is_played:
+		var tween = create_tween()
 		if b:
 			if is_playable:
 				position.y -= 25
+				# if tween:
+				# 	tween.kill()
+				# tween = create_tween().set_trans(Tween.TRANS_SPRING).set_ease(Tween.EASE_OUT)
+				# tween.tween_property(self, "position", Vector2(position.x, -25), 0.100)
 			else:
 				position.y -= 5
+				# if tween:
+				# 	tween.kill()
+				# tween = create_tween().set_trans(Tween.TRANS_SPRING).set_ease(Tween.EASE_OUT)
+				# tween.tween_property(self, "position", Vector2(position.x, -5), 0.100)
 		else:
 			position.y = 0
+			# if tween:
+			# 	tween.kill()
+			# tween.tween_property(self, "position", Vector2(position.x, 0), 0.050).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_released("click"):

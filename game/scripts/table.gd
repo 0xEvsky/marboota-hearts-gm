@@ -66,7 +66,7 @@ func _on_playend(winner_id: String):
 	var winning_hand = Globals.player_manager.get_player_by_id(winner_id).hand as Hand
 	for i in range(4):
 		var card = get_node("CardAnchor" + str(i)).get_child(0)
-		var tween = card.create_tween()
+		var tween = card.create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		tween.tween_property(card, "global_position", winning_hand.global_position, 0.25)
 		tween.parallel().tween_property(card, "rotation", 0, 0.5)
 		tween.tween_callback(func():
