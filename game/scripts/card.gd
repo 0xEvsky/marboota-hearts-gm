@@ -51,7 +51,7 @@ func _on_area_2d_mouse_exited() -> void:
 
 func hover(b: bool):
 	if !is_played:
-		var tween = create_tween()
+		# var tween = create_tween()
 		if b:
 			if is_playable:
 				position.y -= 25
