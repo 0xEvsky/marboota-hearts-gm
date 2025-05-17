@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://8xkf68liril2"]
+[gd_scene load_steps=12 format=3 uid="uid://8xkf68liril2"]
 
 [ext_resource type="Texture2D" uid="uid://chnhuidtxoexr" path="res://assets/graphics/bg.jpg" id="1_bjwno"]
 [ext_resource type="Texture2D" uid="uid://xudi6b2awstb" path="res://assets/ui/icon_repeat_light.png" id="1_lit6y"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://belne7lgw02p3" path="res://scenes/table.tscn" id="4_24tct"]
 [ext_resource type="Script" path="res://scripts/game_ui.gd" id="5_cxi62"]
 [ext_resource type="Script" path="res://scripts/player_manager.gd" id="5_xiyoe"]
+[ext_resource type="Script" path="res://scripts/score_ui.gd" id="6_tl6g1"]
 
 [sub_resource type="Animation" id="Animation_5kc0w"]
 length = 0.001
@@ -48,6 +49,7 @@ _data = {
 [node name="Game" type="Node2D"]
 
 [node name="LoadingUI" type="CanvasLayer" parent="."]
+visible = false
 script = ExtResource("1_w3f0r")
 
 [node name="LoadingScreen" type="Control" parent="LoadingUI"]
@@ -222,6 +224,71 @@ text = "13"
 layout_mode = 2
 theme_override_font_sizes/font_size = 86
 text = "pass"
+
+[node name="ScoreUI" type="CanvasLayer" parent="."]
+script = ExtResource("6_tl6g1")
+
+[node name="HeaderRow" type="HBoxContainer" parent="ScoreUI"]
+custom_minimum_size = Vector2(0, 100)
+offset_left = 1031.0
+offset_top = 46.0
+offset_right = 1260.0
+offset_bottom = 146.0
+alignment = 1
+
+[node name="Label" type="Label" parent="ScoreUI/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "Team A"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="ScoreUI/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "Team B"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScoreContainer" type="VBoxContainer" parent="ScoreUI"]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -249.0
+offset_top = -216.0
+offset_right = -20.0
+offset_bottom = 284.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(1, 0.88)
+
+[node name="TotalScoreRow" type="HBoxContainer" parent="ScoreUI"]
+custom_minimum_size = Vector2(0, 100)
+offset_left = 1031.0
+offset_top = 570.0
+offset_right = 1260.0
+offset_bottom = 670.0
+alignment = 1
+
+[node name="Label" type="Label" parent="ScoreUI/TotalScoreRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="ScoreUI/TotalScoreRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Table" parent="." instance=ExtResource("4_24tct")]
 position = Vector2(640, 360)

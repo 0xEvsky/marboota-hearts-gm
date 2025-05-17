@@ -96,6 +96,12 @@ func play(card: Card):
 			rearrange()
 			get_parent()._on_yourplay(playable)
 )
+	if !get_parent().play_started:
+		get_parent().play_started = true
+		for i in range(4):
+			var score_node = get_parent().get_node("Score" + str(i))
+			score_node.get_node("Label").text = "0"
+			score_node.show()
 
 func on_play(card_str: String):
 	var card = get_child(-1) as Card
@@ -108,3 +114,9 @@ func on_play(card_str: String):
 	card.set_shroud(false)
 	card.is_played = true
 	rearrange()
+	if !get_parent().play_started:
+		get_parent().play_started = true
+		for i in range(4):
+			var score_node = get_parent().get_node("Score" + str(i))
+			score_node.get_node("Label").text = "0"
+			score_node.show()

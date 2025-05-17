@@ -16,6 +16,8 @@ signal PLAYSTART_received
 signal YOURPLAY_received
 signal PLAY_received
 signal PLAYEND_received
+signal ROUNDEND_received
+signal TOTALSCORE_received
 
 
 
@@ -89,7 +91,10 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			PLAY_received.emit(msg["USERID"], msg["CARD"])
 		"PLAYEND":
 			PLAYEND_received.emit(msg["WINNERID"])
-
+		"ROUNDEND":
+			ROUNDEND_received.emit(msg["TEAMASCORE"], msg["TEAMBSCORE"])
+		"TOTALSCORE":
+			TOTALSCORE_received.emit(msg["TEAMASCORE"], msg["TEAMBSCORE"])
 		_:
 			push_error("Invalid or unknown action received from server:" + str(action))
 

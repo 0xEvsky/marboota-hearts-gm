@@ -3,6 +3,7 @@ class_name Table
 
 enum TableState {TABLE_IDLE, TABLE_READY, TABLE_TRUMPING, TABLE_PLAYING}
 var state: TableState = TableState.TABLE_IDLE
+var play_started = false
 
 func _ready() -> void:
 	Globals.table = self
@@ -12,7 +13,8 @@ func _ready() -> void:
 	EventManager.YOURPLAY_received.connect(_on_yourplay)
 	EventManager.PLAY_received.connect(_on_play)
 	EventManager.PLAYEND_received.connect(_on_playend)
-
+	EventManager.ROUNDEND_received.connect(_on_roundend)
+	
 func _on_gamestart():
 	# ! reset at GAMEEND
 	state = TableState.TABLE_READY
@@ -40,7 +42,7 @@ func _on_gamestart():
 
 
 func _on_trumpstart():
-	# ! reset at ROUNDEND
+	play_started = false
 	state = TableState.TABLE_TRUMPING
 	for i in range(4):
 		var score = get_node("Score" + str(i))
@@ -52,12 +54,7 @@ func _on_trumpstart():
 			seat.sitter.state = Globals.player_manager.PLAYER_TRUMPING
 
 func _on_playstart():
-	# ! reset at ROUNDEND
 	state = TableState.TABLE_PLAYING
-	for i in range(4):
-		var score = get_node("Score" + str(i))
-		score.get_node("Label").text = "0"
-		score.show()
 	for i in range(4):
 		var seat = get_node("Seat" + str(i)) as Seat
 		if seat.sitter:
@@ -82,7 +79,6 @@ func _on_playend(winner_id: String):
 		tween.tween_property(card, "global_position", winning_hand.global_position, 0.25)
 		tween.parallel().tween_property(card, "rotation", 0, 0.5)
 		tween.tween_callback(func():
-			# TODO: Use this for score counter display
 			card.queue_free()
 		)
 	var player = Globals.player_manager.get_player_by_id(winner_id)
@@ -92,7 +88,12 @@ func _on_playend(winner_id: String):
 	score += 1
 	label.text = str(score)
 	
-	
+func _on_roundend(_team_a_score: String, _team_b_score: String):
+	state = TableState.TABLE_READY
+	for i in range(4):
+		var seat = get_node("Seat" + str(i)) as Seat
+		if seat.sitter:
+			seat.sitter.state = Globals.player_manager.PLAYER_READY
 
 func rotate_table() -> void:
 	var _offset = 4 - Globals.my_player.seat.seat_num
