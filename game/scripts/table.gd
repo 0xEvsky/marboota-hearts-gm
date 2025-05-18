@@ -14,9 +14,9 @@ func _ready() -> void:
 	EventManager.PLAY_received.connect(_on_play)
 	EventManager.PLAYEND_received.connect(_on_playend)
 	EventManager.ROUNDEND_received.connect(_on_roundend)
-	
+	EventManager.GAMEEND_received.connect(_on_gameend)
+
 func _on_gamestart():
-	# ! reset at GAMEEND
 	state = TableState.TABLE_READY
 	for i in range(4):
 		var score = get_node("Score" + str(i))
@@ -95,6 +95,27 @@ func _on_roundend(_team_a_score: String, _team_b_score: String):
 		if seat.sitter:
 			seat.sitter.state = Globals.player_manager.PLAYER_READY
 
+func _on_gameend(winner_1_id: String, winner_2_id: String):
+	state = TableState.TABLE_IDLE
+	for i in range(4):
+		var seat = get_node("Seat" + str(i)) as Seat
+		if seat.sitter:
+			seat.sitter.state = Globals.player_manager.PLAYER_IDLE
+		
+	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
+		un_rotate_table()
+
+		var leaveButton = $"LeaveButton"
+		leaveButton.show()
+
+		var readyButton = $"ReadyButton"
+		readyButton.show()
+
+		Globals.my_player.show()
+		Globals.my_player.seat.show()
+		Globals.my_player.hand.scale = Vector2(0.25, 0.25)
+		Globals.my_player.hand.position.y = 225
+
 func rotate_table() -> void:
 	var _offset = 4 - Globals.my_player.seat.seat_num
 
@@ -118,7 +139,7 @@ func rotate_table() -> void:
 				Globals.my_player.hand = hand
 				hand.player = Globals.my_player
 
-func unRotate_table():
+func un_rotate_table():
 	for i in range(4):
 		var current_seat_str = "Seat" + str(i)
 		var current_seat = get_node(current_seat_str) as Seat

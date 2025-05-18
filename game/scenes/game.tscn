@@ -272,6 +272,7 @@ offset_left = 1031.0
 offset_top = 570.0
 offset_right = 1260.0
 offset_bottom = 670.0
+scale = Vector2(0.979248, 0.993334)
 alignment = 1
 
 [node name="Label" type="Label" parent="ScoreUI/TotalScoreRow"]

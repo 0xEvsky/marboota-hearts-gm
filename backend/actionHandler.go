@@ -428,6 +428,6 @@ func endGame(i *Instance, winner Team) {
 	// Reset table newTable
 	i.table = newTable()
 	for j := range 4 {
-		i.table.players[j] = curPlayers[j]
+		i.table.seatPlayer(curPlayers[j].client, j)
 	}
 }

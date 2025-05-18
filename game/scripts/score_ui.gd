@@ -8,6 +8,8 @@ func _ready() -> void:
 	EventManager.TOTALSCORE_received.connect(_on_totalscore)
 
 func _on_playstart():
+	for row in get_node("ScoreContainer").get_children():
+		row.queue_free()
 	show()
 
 func _on_roundend(team_a_score: String, team_b_score: String):
