@@ -29,17 +29,17 @@ export const Activity = () => {
 		console.log('set', window.discord)
 	}, [discordSdk, status, accessToken, session])
 
-	const { startGame, loading } = useGodot('/Game/Testing', { pck: 1779104, wasm: 43016933 })
+	const { startGame, loading } = useGodot('/Game/marboota-game')
 
 	return (
 		<div>
 			<img src="/Logo.png" className="logo" alt="Logo" />
-			<h1>Hello, Godot</h1>
+			<h1>Marboota</h1>
 			{loading ? (
 				<progress value={typeof loading === 'number' ? loading : undefined} max={100}></progress>
 			) : (
 				<div className="game">
-					<button onClick={() => startGame()}>Start</button>
+					<button onClick={() => startGame()}>Play</button>
 					<canvas id="godot-canvas" tabIndex={-1} />
 				</div>
 			)}

@@ -3,9 +3,9 @@ extends Node
 var instance_id = "1234"
 var username = "Player"
 var user_id = str(randi_range(1,1000000))
-var icon_url = "https://placehold.co/120x120.png?text=" + username + user_id
+var icon_url = "https://placehold.co/128x128.png?text=" + username + user_id
 
-var _backend_url = "ws://localhost:3000/ws"
+var _backend_url_suffix = "/.proxy/backend/ws"
 
 var _socket = WebSocketPeer.new()
 var authenticated = false
@@ -17,7 +17,10 @@ signal AUTH_accepted
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# TODO: Get data from JSbridge
-	var err = _socket.connect_to_url(_backend_url)
+	var _backend_url = JavaScriptBridge.eval("window.location.hostname", true) # true = safe
+	var full_url = "wss://" + _backend_url + _backend_url_suffix
+	$"../Game/LoadingUI/Label".text = full_url
+	var err = _socket.connect_to_url(full_url)
 	if err != OK:
 		push_error("Unable to connect")
 		set_process(false)

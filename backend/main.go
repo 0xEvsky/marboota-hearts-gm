@@ -88,13 +88,13 @@ func (s *Server) read(ws *websocket.Conn) {
 var server = newServer()
 
 func main() {
-	const PORT = "3000"
+	const PORT = "3001"
 	//const HOST = "localhost"
 
 	http.HandleFunc("/auth", server.authHandler)
 	http.HandleFunc("/ws", server.wsHandler)
 
 	clog.Printf("Server is up and listening on port: %s\n", PORT)
-	err := http.ListenAndServe(":"+PORT, nil)
+	err := http.ListenAndServeTLS(":"+PORT, nil)
 	clog.Fatal(err)
 }
