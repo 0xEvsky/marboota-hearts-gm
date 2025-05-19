@@ -21,7 +21,13 @@ func newServer() *Server {
 	}
 }
 
-var upgrader = websocket.Upgrader{} // use default options
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		// TODO: fix for prod
+		// ! fix for prod
+		return true // ⚠️ WARNING: Accepts all origins, not secure for production!
+	},
+} // use default options
 
 func (s *Server) authHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: handle auth

@@ -1,4 +1,4 @@
-FROM node:20-alpine3.20 AS build
+FROM node:23-alpine AS build
 
 COPY . /frontend
 
@@ -9,7 +9,7 @@ RUN npm ci
 RUN npm run build
 
 
-FROM node:20-alpine3.20
+FROM node:23-alpine
 
 COPY --from=build /frontend/build /frontend/build
 COPY --from=build /frontend/package.json /frontend/package.json
