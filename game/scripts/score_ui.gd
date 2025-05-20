@@ -3,7 +3,7 @@ extends CanvasLayer
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	EventManager.GAMESTART_received_received.connect(_on_gamestart)
+	EventManager.GAMESTART_received.connect(_on_gamestart)
 	EventManager.ROUNDEND_received.connect(_on_roundend)
 	EventManager.TOTALSCORE_received.connect(_on_totalscore)
 
