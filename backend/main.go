@@ -95,6 +95,6 @@ func main() {
 	http.HandleFunc("/ws", server.wsHandler)
 
 	clog.Printf("Server is up and listening on port: %s\n", PORT)
-	err := http.ListenAndServeTLS(":"+PORT, nil)
+	err := http.ListenAndServe(":"+PORT, nil)
 	clog.Fatal(err)
 }

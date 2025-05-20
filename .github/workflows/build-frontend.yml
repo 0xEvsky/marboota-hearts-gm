@@ -40,7 +40,7 @@ jobs:
         relative_project_path: ./game
         use_preset_export_path: true
     
-    - name: Move game to Svelcordot
+    - name: Move game to frontend
       run: mv ./game/build/marboota-game/*.{js,wasm,pck} ./frontend/public/game/marboota-game
     
     - name: Setup client vars
