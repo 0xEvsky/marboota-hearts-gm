@@ -1,4 +1,4 @@
 FROM scratch
-COPY . /app
+COPY backend /app
 EXPOSE 3001
 CMD ["/app/backend"]
