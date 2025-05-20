@@ -29,7 +29,7 @@ export const Activity = () => {
 		console.log('set', window.discord)
 	}, [discordSdk, status, accessToken, session])
 
-	const { startGame, loading } = useGodot('/game/marboota-game')
+	const { startGame, loading } = useGodot('/Game/marboota-game')
 
 	return (
 		<div>
