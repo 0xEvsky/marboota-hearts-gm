@@ -1,24 +1,31 @@
-FROM node:23-alpine AS build
+# ~~~~~ Base ~~~~~
+FROM node:23-alpine AS base
 
-COPY . /frontend
+RUN apk add --no-cache curl g++ make python3 py3-pip tini
 
-WORKDIR /frontend
+# Uncomment the below to use PNPM
+# RUN curl -L https://unpkg.com/@pnpm/self-installer | node
 
-RUN npm ci
+WORKDIR /usr/src/app
+
+COPY --chown=node:node . /usr/src/app/
+
+# ~~~~~ Build ~~~~~
+FROM base AS build
+
+RUN npm install
 
 RUN npm run build
 
+RUN npm prune --omit=dev --silent
 
-FROM node:23-alpine
+# ~~~~~ Release ~~~~~
+FROM base AS release
 
-COPY --from=build /frontend/build /frontend/build
-COPY --from=build /frontend/package.json /frontend/package.json
-COPY --from=build /frontend/package-lock.json /frontend/package-lock.json
+COPY --from=build /usr/src/app/ /usr/src/app/
 
-WORKDIR /frontend
-
-RUN npm ci --omit dev
+USER node
 
 EXPOSE 3000
 
-CMD [ "node", "build" ]
+CMD [ "tini", "--", "npm", "start" ]
