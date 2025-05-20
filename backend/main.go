@@ -89,7 +89,6 @@ var server = newServer()
 
 func main() {
 	const PORT = "3000"
-	//const HOST = "localhost"
 
 	http.HandleFunc("/auth", server.authHandler)
 	http.HandleFunc("/ws", server.wsHandler)
