@@ -8,7 +8,7 @@ on:
     branches: [ "main" ]
     paths:
       - game/**
-      - Svelcordot/**
+      - frontend/**
 #   tags:
 #     - 'v*.*.*'
   workflow_dispatch:
@@ -29,7 +29,7 @@ jobs:
       with:
         sparse-checkout: |
             game
-            Svelcordot
+            frontend
     
     - name: Build game
       id: build
@@ -40,14 +40,17 @@ jobs:
         relative_project_path: ./game
         use_preset_export_path: true
     
-    - name: Move game to Svelcordot
-      run: mv ./game/build/marboota-game/* ./Svelcordot/static
+    - name: Move game to frontend
+      run: mv ./game/build/marboota-game/*.{js,wasm,pck} ./frontend/public/Game/marboota-game
     
     - name: Setup client vars
       run: |
-        touch ./Svelcordot/.env
-        echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> ./Svelcordot/.env
-        echo "CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}" >> ./Svelcordot/.env
+        touch ./frontend/.env
+        echo "DISCORD_CLIENT_ID=${{ secrets.CLIENT_ID }}" >> ./frontend/.env
+        echo "VITE_DISCORD_CLIENT_ID=${{ secrets.CLIENT_ID }}" >> ./frontend/.env
+        echo "DISCORD_CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}" >> ./frontend/.env
+        echo "NODE_OPTIONS="--enable-source-maps"" >> ./frontend/.env
+        echo "PORT="3000"" >> ./frontend/.env
   
     - name: Login to ghcr
       uses: docker/login-action@v3
@@ -65,7 +68,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v6
       with:
-            context: ./Svelcordot
+            context: ./frontend
             push: true
             tags: ${{ steps.meta.outputs.tags }}
             labels: ${{ steps.meta.outputs.labels }}

@@ -1,4 +1,5 @@
 FROM scratch
-COPY . /app
-EXPOSE 3000
-CMD ["/app/backend"]
+COPY backend /app/backend
+WORKDIR /app
+EXPOSE 3001
+CMD ["./backend"]
