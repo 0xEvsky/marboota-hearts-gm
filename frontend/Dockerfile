@@ -1,12 +1,33 @@
 # ~~~~~ Base ~~~~~
 FROM node:23-alpine AS base
 
-COPY . /app/frontend
+RUN apk add --no-cache curl g++ make python3 py3-pip tini
 
-WORKDIR /app/frontend
+# Uncomment the below to use PNPM
+RUN curl -L https://unpkg.com/@pnpm/self-installer | node
+
+WORKDIR /usr/src/app
+
+COPY --chown=node:node . /usr/src/app/
+
+# ~~~~~ Build ~~~~~
+FROM base AS build
 
 RUN npm install
 
+RUN npm run build
+
+RUN npm prune --omit=dev --silent
+
+# ~~~~~ Release ~~~~~
+FROM base AS release
+
+COPY --from=build /usr/src/app/ /usr/src/app/
+
+RUN cp /usr/src/app/public/Game/marboota-game/marboota-game* /usr/src/app/public/Game/
+
+USER node
+
 EXPOSE 3000
 
-CMD [ "npm", "run", "devnotunnel" ]
+CMD [ "tini", "--", "npm", "start" ]
