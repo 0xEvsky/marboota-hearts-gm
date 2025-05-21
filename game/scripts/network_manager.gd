@@ -20,8 +20,9 @@ func _ready() -> void:
 	var _backend_url = JavaScriptBridge.eval("window.location.hostname", true) # true = safe
 	var full_url = "wss://" + _backend_url + _backend_url_suffix
 	#$"../Game/LoadingUI/Label".text = full_url
-	#var discord = JavaScriptBridge.get_interface("discord")
-	#icon_url = "https://cdn.discordapp.com/avatars/" + discord.session.id + "/" + discord.session.avatar + ".png?size=128"
+	
+	var discord = JavaScriptBridge.get_interface("discord")
+	icon_url = "https://cdn.discordapp.com/avatars/" + discord.session.id + "/" + discord.session.avatar + ".png?size=128"
 	var err = _socket.connect_to_url(full_url)
 	if err != OK:
 		push_error("Unable to connect")

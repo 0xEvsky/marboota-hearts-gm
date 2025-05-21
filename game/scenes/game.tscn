@@ -236,26 +236,35 @@ text = "pass"
 visible = false
 script = ExtResource("6_tl6g1")
 
+[node name="Panel" type="Panel" parent="ScoreUI"]
+offset_left = 1028.0
+offset_top = 26.0
+offset_right = 1056.0
+offset_bottom = 66.0
+scale = Vector2(8.83556, 12.7334)
+
 [node name="HeaderRow" type="HBoxContainer" parent="ScoreUI"]
 custom_minimum_size = Vector2(0, 100)
-offset_left = 1031.0
-offset_top = 46.0
-offset_right = 1260.0
-offset_bottom = 146.0
+offset_left = 1036.0
+offset_top = 9.0
+offset_right = 1265.0
+offset_bottom = 109.0
 alignment = 1
 
 [node name="Label" type="Label" parent="ScoreUI/HeaderRow"]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 16
 text = "Team A"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Label2" type="Label" parent="ScoreUI/HeaderRow"]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 16
 text = "Team B"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -266,20 +275,20 @@ anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -249.0
-offset_top = -216.0
-offset_right = -20.0
-offset_bottom = 284.0
+offset_left = -244.0
+offset_top = -253.0
+offset_right = -15.0
+offset_bottom = 247.0
 grow_horizontal = 0
 grow_vertical = 2
-scale = Vector2(1, 0.88)
+scale = Vector2(1, 0.68)
 
 [node name="TotalScoreRow" type="HBoxContainer" parent="ScoreUI"]
 custom_minimum_size = Vector2(0, 100)
-offset_left = 1031.0
-offset_top = 570.0
-offset_right = 1260.0
-offset_bottom = 670.0
+offset_left = 1036.0
+offset_top = 452.0
+offset_right = 1265.0
+offset_bottom = 552.0
 scale = Vector2(0.979248, 0.993334)
 alignment = 1
 
@@ -304,6 +313,7 @@ position = Vector2(640, 360)
 
 [node name="PlayerManager" type="Node2D" parent="."]
 position = Vector2(81, 73)
+scale = Vector2(0.75, 0.75)
 script = ExtResource("5_xiyoe")
 
 [connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/7Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["7"]]
