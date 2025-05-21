@@ -24,6 +24,8 @@ FROM base AS release
 
 COPY --from=build /usr/src/app/ /usr/src/app/
 
+RUN cp /usr/src/app/public/Game/marboota-game/marboota-game* /usr/src/app/public/Game/
+
 USER node
 
 EXPOSE 3000

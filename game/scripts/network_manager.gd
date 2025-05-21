@@ -22,7 +22,9 @@ func _ready() -> void:
 	#$"../Game/LoadingUI/Label".text = full_url
 	
 	var discord = JavaScriptBridge.get_interface("discord")
-	icon_url = "https://cdn.discordapp.com/avatars/" + discord.session.id + "/" + discord.session.avatar + ".png?size=128"
+	instance_id = discord.sdk.instanceId
+	icon_url = "https://cdn.discordapp.com/avatars/" + discord.session.user.id + "/" + discord.session.user.avatar + ".png?size=128"
+	username = discord.session.user.global_name
 	var err = _socket.connect_to_url(full_url)
 	if err != OK:
 		push_error("Unable to connect")
