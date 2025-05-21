@@ -41,7 +41,7 @@ jobs:
         use_preset_export_path: true
     
     - name: Move game to frontend
-      run: mv ./game/build/marboota-game/*.{js,wasm,pck} ./frontend/public/game/marboota-game
+      run: mv ./game/build/marboota-game/*.{js,wasm,pck} ./frontend/public/Game/marboota-game
     
     - name: Setup client vars
       run: |
