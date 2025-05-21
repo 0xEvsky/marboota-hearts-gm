@@ -46,11 +46,11 @@ jobs:
     - name: Setup client vars
       run: |
         touch ./frontend/.env
-        echo "DISCORD_CLIENT_ID=${{ secrets.CLIENT_ID }}" >> ./frontend/.env
-        echo "VITE_DISCORD_CLIENT_ID=${{ secrets.CLIENT_ID }}" >> ./frontend/.env
-        echo "DISCORD_CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}" >> ./frontend/.env
-        echo "NODE_OPTIONS="--enable-source-maps"" >> ./frontend/.env
-        echo "PORT="3000"" >> ./frontend/.env
+        echo "DISCORD_CLIENT_ID=\"${{ secrets.CLIENT_ID }}\"" >> ./frontend/.env
+        echo "VITE_DISCORD_CLIENT_ID=\"${{ secrets.CLIENT_ID }}\"" >> ./frontend/.env
+        echo "DISCORD_CLIENT_SECRET=\"${{ secrets.CLIENT_SECRET }}\"" >> ./frontend/.env
+        echo "NODE_OPTIONS=\"--enable-source-maps\"" >> ./frontend/.env
+        echo "PORT=\"3000\"" >> ./frontend/.env
   
     - name: Login to ghcr
       uses: docker/login-action@v3
