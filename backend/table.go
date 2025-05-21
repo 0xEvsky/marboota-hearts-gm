@@ -212,6 +212,7 @@ func (t *Table) startTrump() {
 	for _, p := range t.players {
 		p.client.writeJson(map[string]string{"ACTION": "DEAL", "CARDS": p.getHandString()})
 	}
+	// TODO: announce to all
 
 	t.instance.Broadcast(map[string]string{"ACTION": "TRUMPSTART"})
 	clog.Debugf("(i:%s) trump started", t.instance.id)
