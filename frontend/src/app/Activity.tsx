@@ -30,6 +30,11 @@ export const Activity = () => {
 	}, [discordSdk, status, accessToken, session])
 
 	const { startGame, loading } = useGodot('/Game/marboota-game')
+	let isStarted = false
+	if (!loading && !isStarted) {
+		startGame()
+		isStarted = true
+	}
 
 	return (
 		<div>
@@ -39,7 +44,6 @@ export const Activity = () => {
 				<progress value={typeof loading === 'number' ? loading : undefined} max={100}></progress>
 			) : (
 				<div className="game">
-					<button onClick={() => startGame()}>Play</button>
 					<canvas id="godot-canvas" tabIndex={-1} />
 				</div>
 			)}

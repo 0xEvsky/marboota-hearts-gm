@@ -75,6 +75,18 @@ func _on_playend(winner_id: String):
 	var winning_hand = Globals.player_manager.get_player_by_id(winner_id).hand as Hand
 	for i in range(4):
 		var card = get_node("CardAnchor" + str(i)).get_child(0)
+
+		# Show on last play
+		var anchor := get_node("../LastAnchor" + str(i))
+		if anchor.get_child_count() > 0:
+			anchor.get_child(0).queue_free()
+
+		var card_dupe := card.duplicate()
+		anchor.add_child(card_dupe)
+		card_dupe.position = Vector2.ZERO
+		card_dupe.global_position = anchor.global_position
+		card_dupe.scale = anchor.scale
+
 		var tween = card.create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		tween.tween_property(card, "global_position", winning_hand.global_position, 0.25)
 		tween.parallel().tween_property(card, "rotation", 0, 0.5)

@@ -3,11 +3,14 @@ extends CanvasLayer
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	hide()
 	EventManager.GAMESTART_received.connect(_on_gamestart)
 	EventManager.ROUNDEND_received.connect(_on_roundend)
 	EventManager.TOTALSCORE_received.connect(_on_totalscore)
 
 func _on_gamestart():
+	$"HeaderRow/Label".text = $"../Table/Seat0".sitter.username + "\n" + $"../Table/Seat2".sitter.username
+	$"HeaderRow/Label2".text = $"../Table/Seat1".sitter.username + "\n" + $"../Table/Seat3".sitter.username
 	for row in get_node("ScoreContainer").get_children():
 		row.queue_free()
 	show()

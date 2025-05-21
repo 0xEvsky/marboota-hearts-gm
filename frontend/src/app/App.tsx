@@ -14,7 +14,7 @@ import './App.css'
  */
 export default function App() {
 	return (
-		<DiscordContextProvider authenticate scope={['identify', 'guilds']} loadingScreen={<div>Authorizing...</div>}>
+		<DiscordContextProvider authenticate scope={['identify']} loadingScreen={<div>Authorizing...</div>}>
 			<Activity />
 		</DiscordContextProvider>
 	)
