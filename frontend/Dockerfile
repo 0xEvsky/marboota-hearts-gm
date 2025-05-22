@@ -4,7 +4,7 @@ FROM node:23-alpine AS base
 RUN apk add --no-cache curl g++ make python3 py3-pip tini
 
 # Uncomment the below to use PNPM
-RUN curl -L https://unpkg.com/@pnpm/self-installer | node
+# RUN curl -L https://unpkg.com/@pnpm/self-installer | node
 
 WORKDIR /usr/src/app
 
@@ -23,8 +23,6 @@ RUN npm prune --omit=dev --silent
 FROM base AS release
 
 COPY --from=build /usr/src/app/ /usr/src/app/
-
-RUN cp /usr/src/app/public/Game/marboota-game/marboota-game* /usr/src/app/public/Game/
 
 USER node
 

@@ -49,7 +49,6 @@ _data = {
 [node name="Game" type="Node2D"]
 
 [node name="LoadingUI" type="CanvasLayer" parent="."]
-visible = false
 script = ExtResource("1_w3f0r")
 
 [node name="LoadingScreen" type="Control" parent="LoadingUI"]
@@ -234,6 +233,7 @@ theme_override_font_sizes/font_size = 86
 text = "pass"
 
 [node name="ScoreUI" type="CanvasLayer" parent="."]
+visible = false
 script = ExtResource("6_tl6g1")
 
 [node name="Panel" type="Panel" parent="ScoreUI"]
@@ -316,17 +316,17 @@ position = Vector2(81, 73)
 scale = Vector2(0.75, 0.75)
 script = ExtResource("5_xiyoe")
 
-[node name="Anchor0" type="Node2D" parent="."]
+[node name="LastAnchor0" type="Node2D" parent="."]
 position = Vector2(1152, 663)
 scale = Vector2(0.5, 0.5)
 
-[node name="Anchor1" type="Node2D" parent="."]
+[node name="LastAnchor1" type="Node2D" parent="."]
 position = Vector2(1114, 624)
 
-[node name="Anchor2" type="Node2D" parent="."]
+[node name="LastAnchor2" type="Node2D" parent="."]
 position = Vector2(1152, 585)
 
-[node name="Anchor3" type="Node2D" parent="."]
+[node name="LastAnchor3" type="Node2D" parent="."]
 position = Vector2(1196, 625)
 
 [connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/7Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["7"]]
