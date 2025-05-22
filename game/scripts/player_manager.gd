@@ -19,30 +19,30 @@ func _init_my_player() -> void:
 
 
 func _on_player_join(id: String, username: String, url: String, is_me: bool = false) -> void:
-	var player_scene = preload("res://scenes/player.tscn")
-	var new_player = player_scene.instantiate() as Player
+	var player_scene := preload("res://scenes/player.tscn")
+	var new_player := player_scene.instantiate() as Player
 
 	new_player.name = id
 	new_player.id = id
 	new_player.username = username
 
 	# Get icon from URL
-	var http_request = HTTPRequest.new()
+	var http_request := HTTPRequest.new()
 	add_child(http_request)
-	http_request.request_completed.connect(func(result, _response_code, _headers, body):
+	http_request.request_completed.connect(func(result: int, _response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
 		if result != HTTPRequest.RESULT_SUCCESS:
 			push_error("Image couldn't be downloaded. Try a different image.")
 
-		var image = Image.new()
-		var err = image.load_png_from_buffer(body)
+		var image := Image.new()
+		var err := image.load_png_from_buffer(body)
 		if err != OK:
 			push_error("Couldn't load the image.")
 
-		var texture = ImageTexture.create_from_image(image)
+		var texture := ImageTexture.create_from_image(image)
 		new_player.icon.texture = texture
 	)
 
-	var error = http_request.request(url)
+	var error := http_request.request(url)
 	if error != OK:
 		push_error("An error occurred in the HTTP request.")
 	
@@ -53,7 +53,7 @@ func _on_player_join(id: String, username: String, url: String, is_me: bool = fa
 
 
 func _on_player_leave(id: String) -> void:
-	var leaving_player = get_node(id) as Player
+	var leaving_player := get_node(id) as Player
 
 	if leaving_player.seat != null:
 		leaving_player.seat.unseat_player()
@@ -64,24 +64,24 @@ func _on_player_leave(id: String) -> void:
 
 
 func _on_player_sit(id: String, seat_num: String) -> void:
-	var seat_str = "../Table/Seat" + seat_num
-	var seat = get_node(seat_str) as Seat
+	var seat_str := "../Table/Seat" + seat_num
+	var seat := get_node(seat_str) as Seat
 	seat.seat_player(id)
 
 
 func _on_player_unsit(id: String) -> void:
-	var player = get_node(id) as Player
+	var player := get_node(id) as Player
 	player.seat.unseat_player()
 
 
 func move_player(id: String, pos: Vector2) -> void:
-	var player = get_node(id) as Player
+	var player := get_node(id) as Player
 	player.global_position = pos
 
 
 func _update_pinned_players() -> void:
 	for i in pinned_players.size():
-		var player = pinned_players[i]
+		var player := pinned_players[i]
 		move_player(player.name, Vector2(global_position.x, global_position.y + (i * 120)))
 	pass
 
@@ -100,7 +100,7 @@ func unpin_player(player: Player) -> void:
 	_update_pinned_players()
 
 func get_player_by_id(id: String) -> Player:
-	var player = get_node(id) as Player
+	var player := get_node(id) as Player
 	if player == null:
 		return Globals.my_player
 	return player

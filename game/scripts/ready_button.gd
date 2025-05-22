@@ -10,7 +10,7 @@ func _on_toggled(toggled_on: bool) -> void:
 		Globals.my_player.state = Globals.player_manager.PLAYER_READY
 		EventManager.send_request(EventManager.ready_request()
 		# on error
-		,func(error):
+		,func(error: String) -> void:
 			print_debug(error)
 			Globals.my_player.state = Globals.player_manager.PLAYER_WAITING
 		)
@@ -18,10 +18,10 @@ func _on_toggled(toggled_on: bool) -> void:
 		if Globals.my_player.state == Globals.player_manager.PLAYER_READY:
 			Globals.my_player.state = Globals.player_manager.PLAYER_WAITING
 			EventManager.send_request(EventManager.unready_request()
-			,func(error):
+			,func(error: String) -> void:
 				print_debug(error)
 				Globals.my_player.state = Globals.player_manager.PLAYER_READY
 			)
 
-func _on_gameend(_1, _2):
+func _on_gameend(_1: String, _2: String) -> void:
 	button_pressed = false

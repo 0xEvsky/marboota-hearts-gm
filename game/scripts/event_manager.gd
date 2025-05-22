@@ -31,7 +31,7 @@ func _process(_delta: float) -> void:
 	pass
 
 func send_request(msg: Dictionary, on_error: Callable) -> void:
-	var request_id = _generate_request_id()
+	var request_id := _generate_request_id()
 	msg["REQUESTID"] = request_id
 	_request_queue.append({"message": msg, "request_id": request_id, "on_error": on_error})
 	print_debug("request: ", msg)
@@ -45,7 +45,7 @@ func _handle_message(msg: Dictionary) -> void:
 	_process_response_queue()
 
 func _process_response_queue() -> void:
-	var res = _response_queue.pop_front() as Dictionary
+	var res := _response_queue.pop_front() as Dictionary
 	print_debug("response: ", res)
 	for req in _request_queue:
 		if !res.has("REQUESTID"):

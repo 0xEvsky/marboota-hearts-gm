@@ -1,6 +1,6 @@
 extends Node
 
-var card_dict = {
+var card_dict: Dictionary = {
     "S_14": "res://assets/graphics/cards/cardSpadesA.png",
     "S_13": "res://assets/graphics/cards/cardSpadesK.png",
     "S_12": "res://assets/graphics/cards/cardSpadesQ.png",
@@ -59,6 +59,6 @@ var card_dict = {
 }
 
 
-func _ready():
-    for k in card_dict:
+func _ready() -> void:
+    for k: String in card_dict:
         load(card_dict[k])

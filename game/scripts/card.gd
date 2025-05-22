@@ -3,18 +3,18 @@ class_name Card
 
 enum Suit {SPADES, HEARTS, CLUBS, DIAMONDS}
 
-var is_face_up = false
+var is_face_up := false
 var suit: Suit
 var value: int
-var is_playable = false
+var is_playable := false
 var hover_index: int
-var is_played = false
+var is_played := false
 
-func set_card(cardStr: String):
+func set_card(cardStr: String) -> void:
 	if cardStr == "":
 		return
 	name = cardStr
-	var params = cardStr.split("_")
+	var params := cardStr.split("_")
 	match params[0]:
 		"S":
 			suit = Suit.SPADES
@@ -29,15 +29,15 @@ func set_card(cardStr: String):
 
 	# var image = Image.load_from_file(CardMap.card_dict[cardStr])
 	# var texture = ImageTexture.create_from_image(image)
-	var texture = load(CardMap.card_dict[cardStr])
+	var texture := load(CardMap.card_dict[cardStr])
 	$"Sprite2D".texture = texture
 	is_face_up = true
 	$"Sprite2DBack".hide()
 
-func set_shroud(shroud: bool):
+func set_shroud(shroud: bool) -> void:
 	$"Panel".visible = shroud
 
-func set_playable(playable: bool):
+func set_playable(playable: bool) -> void:
 	set_shroud(!playable)
 	is_playable = playable
 
@@ -49,7 +49,7 @@ func _on_area_2d_mouse_exited() -> void:
 	if !is_played && $"..".is_mine:
 		$"..".card_unhovered(self)
 
-func hover(b: bool):
+func hover(b: bool) -> void:
 	if !is_played:
 		# var tween = create_tween()
 		if b:

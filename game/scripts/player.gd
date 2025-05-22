@@ -1,13 +1,14 @@
 extends Node2D
 class_name Player
 
-var username = "Player"
-var id = ""
+var username := "Player"
+var id := "123"
 
 @onready var manager: PlayerManager = get_parent()
 @onready var icon: Sprite2D = $Icon
+# go down one more level and add parent clipping
 
-var state = manager.PLAYER_IDLE
+var state := manager.PLAYER_IDLE
 var seat: Seat = null
 var hand: Hand = null
 

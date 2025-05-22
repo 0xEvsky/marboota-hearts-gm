@@ -7,8 +7,8 @@ func _ready() -> void:
 
 
 func _on_button_up() -> void:
-	var player = Globals.my_player
-	var manager = Globals.player_manager
+	var player := Globals.my_player
+	var manager := Globals.player_manager
 	var seat: Seat = player.seat
 	var seat_ready_button: Button = $"../ReadyButton"
 
@@ -17,10 +17,10 @@ func _on_button_up() -> void:
 		self.hide()
 		seat_ready_button.hide()
 		EventManager.send_request(EventManager.unsit_request()
-		,func(error):
+		,func(error: String) -> void:
 			print_debug(error)
 			seat.seat_player(player.name)
 		)
 
-func _on_gameend(_1, _2):
+func _on_gameend(_1: String, _2: String) -> void:
 	button_pressed = false

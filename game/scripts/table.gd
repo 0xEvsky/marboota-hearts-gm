@@ -3,7 +3,7 @@ class_name Table
 
 enum TableState {TABLE_IDLE, TABLE_READY, TABLE_TRUMPING, TABLE_PLAYING}
 var state: TableState = TableState.TABLE_IDLE
-var play_started = false
+var play_started := false
 
 func _ready() -> void:
 	Globals.table = self
@@ -16,19 +16,19 @@ func _ready() -> void:
 	EventManager.ROUNDEND_received.connect(_on_roundend)
 	EventManager.GAMEEND_received.connect(_on_gameend)
 
-func _on_gamestart():
+func _on_gamestart() -> void:
 	state = TableState.TABLE_READY
 	for i in range(4):
-		var score = get_node("Score" + str(i))
+		var score := get_node("Score" + str(i))
 		score.get_node("Label").text = ""
 		score.show()
 	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
 		rotate_table()
 
-		var leaveButton = $"LeaveButton"
+		var leaveButton := $"LeaveButton"
 		leaveButton.hide()
 
-		var readyButton = $"ReadyButton"
+		var readyButton := $"ReadyButton"
 		readyButton.hide()
 
 		Globals.my_player.hide()
@@ -37,90 +37,90 @@ func _on_gamestart():
 		Globals.my_player.hand.position.y = 260
 	else:
 		for i in range(4):
-			var hand = get_node("Hand" + str(i)) as Hand
+			var hand := get_node("Hand" + str(i)) as Hand
 			hand._on_deal("")
 
 
-func _on_trumpstart():
+func _on_trumpstart() -> void:
 	play_started = false
 	state = TableState.TABLE_TRUMPING
 	for i in range(4):
-		var score = get_node("Score" + str(i))
+		var score := get_node("Score" + str(i))
 		score.get_node("Label").text = ""
 		score.show()
 	for i in range(4):
-		var seat = get_node("Seat" + str(i)) as Seat
+		var seat := get_node("Seat" + str(i)) as Seat
 		if seat.sitter:
 			seat.sitter.state = Globals.player_manager.PLAYER_TRUMPING
 
-func _on_playstart():
+func _on_playstart() -> void:
 	state = TableState.TABLE_PLAYING
 	for i in range(4):
-		var seat = get_node("Seat" + str(i)) as Seat
+		var seat := get_node("Seat" + str(i)) as Seat
 		if seat.sitter:
 			seat.sitter.state = Globals.player_manager.PLAYER_PLAYING
 
-func _on_yourplay(playable: String):
+func _on_yourplay(playable: String) -> void:
 	Globals.my_player.hand.playable = playable
 	for cardStr in playable.split(","):
 		Globals.my_player.hand.set_playable(cardStr)
 
-func _on_play(user_id: String, card_str: String):
-	var player = Globals.player_manager.get_node(user_id) as Player
-	var hand = player.hand
+func _on_play(user_id: String, card_str: String) -> void:
+	var player := Globals.player_manager.get_node(user_id) as Player
+	var hand := player.hand
 	hand.on_play(card_str)
 
-func _on_playend(winner_id: String):
+func _on_playend(winner_id: String) -> void:
 	#var cards: Array[Card] = []
-	var winning_hand = Globals.player_manager.get_player_by_id(winner_id).hand as Hand
+	var winning_hand := Globals.player_manager.get_player_by_id(winner_id).hand as Hand
 	for i in range(4):
-		var card = get_node("CardAnchor" + str(i)).get_child(0)
+		var card := get_node("CardAnchor" + str(i)).get_child(0)
 
-		# Show on last play
-		var anchor := get_node("../LastAnchor" + str(i))
-		if anchor.get_child_count() > 0:
-			anchor.get_child(0).queue_free()
+		# Fixme: Show on last play
+		# var anchor := get_node("../LastAnchor" + str(i))
+		# if anchor.get_child_count() > 0:
+		# 	anchor.get_child(0).queue_free()
 
-		var card_dupe := card.duplicate()
-		anchor.add_child(card_dupe)
-		card_dupe.position = Vector2.ZERO
-		card_dupe.global_position = anchor.global_position
-		card_dupe.scale = anchor.scale
+		# var card_dupe := card.duplicate()
+		# anchor.add_child(card_dupe)
+		# card_dupe.position = Vector2.ZERO
+		# card_dupe.global_position = anchor.global_position
+		# card_dupe.scale = anchor.scale
 
-		var tween = card.create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		var tween := card.create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		tween.tween_property(card, "global_position", winning_hand.global_position, 0.25)
 		tween.parallel().tween_property(card, "rotation", 0, 0.5)
-		tween.tween_callback(func():
+		tween.tween_callback(func() -> void:
 			card.queue_free()
 		)
-	var player = Globals.player_manager.get_player_by_id(winner_id)
-	var panel = player.hand.score
-	var label = panel.get_node("Label") as Label
-	var score = int(label.text)
+	var player := Globals.player_manager.get_player_by_id(winner_id)
+	var panel := player.hand.score
+	var label := panel.get_node("Label") as Label
+	var score := int(label.text)
 	score += 1
 	label.text = str(score)
 	
-func _on_roundend(_team_a_score: String, _team_b_score: String):
+func _on_roundend(_team_a_score: String, _team_b_score: String) -> void:
 	state = TableState.TABLE_READY
 	for i in range(4):
-		var seat = get_node("Seat" + str(i)) as Seat
+		var seat := get_node("Seat" + str(i)) as Seat
 		if seat.sitter:
 			seat.sitter.state = Globals.player_manager.PLAYER_READY
 
-func _on_gameend(winner_1_id: String, winner_2_id: String):
+func _on_gameend(winner_1_id: String, winner_2_id: String) -> void:
 	state = TableState.TABLE_IDLE
 	for i in range(4):
-		var seat = get_node("Seat" + str(i)) as Seat
+		var seat := get_node("Seat" + str(i)) as Seat
 		if seat.sitter:
 			seat.sitter.state = Globals.player_manager.PLAYER_IDLE
 		
 	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
 		un_rotate_table()
 
-		var leaveButton = $"LeaveButton"
+		var leaveButton := $"LeaveButton"
 		leaveButton.show()
 
-		var readyButton = $"ReadyButton"
+		var readyButton := $"ReadyButton"
 		readyButton.show()
 
 		Globals.my_player.show()
@@ -129,21 +129,21 @@ func _on_gameend(winner_1_id: String, winner_2_id: String):
 		Globals.my_player.hand.position.y = 225
 
 func rotate_table() -> void:
-	var _offset = 4 - Globals.my_player.seat.seat_num
+	var _offset := 4 - Globals.my_player.seat.seat_num
 
 	for i in range(4):
-		var next_anchor_str = "Anchor" + str((i + _offset) % 4)
-		var next_anchor = get_node(next_anchor_str) as Node2D
+		var next_anchor_str := "Anchor" + str((i + _offset) % 4)
+		var next_anchor := get_node(next_anchor_str) as Node2D
 
-		var current_seat_str = "Seat" + str(i)
-		var current_seat = get_node(current_seat_str) as Seat
+		var current_seat_str := "Seat" + str(i)
+		var current_seat := get_node(current_seat_str) as Seat
 
 		current_seat.global_position = next_anchor.global_position
 		
 		if current_seat.sitter:
 			current_seat.sitter.global_position = current_seat.global_position
-			var hand_str = "Hand" + str((i + _offset) % 4)
-			var hand = get_node(hand_str) as Hand
+			var hand_str := "Hand" + str((i + _offset) % 4)
+			var hand := get_node(hand_str) as Hand
 			current_seat.sitter.hand = hand
 			hand.player = current_seat.sitter
 			if current_seat.sitter == Globals.my_player:
@@ -151,13 +151,13 @@ func rotate_table() -> void:
 				Globals.my_player.hand = hand
 				hand.player = Globals.my_player
 
-func un_rotate_table():
+func un_rotate_table() -> void:
 	for i in range(4):
-		var current_seat_str = "Seat" + str(i)
-		var current_seat = get_node(current_seat_str) as Seat
+		var current_seat_str := "Seat" + str(i)
+		var current_seat := get_node(current_seat_str) as Seat
 
-		var anchor_str = "Anchor" + str(i)
-		var anchor = get_node(anchor_str) as Node2D
+		var anchor_str := "Anchor" + str(i)
+		var anchor := get_node(anchor_str) as Node2D
 
 		current_seat.global_position = anchor.global_position
 
