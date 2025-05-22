@@ -18,13 +18,19 @@ func _ready() -> void:
 
 func _on_gamestart() -> void:
 	state = TableState.TABLE_READY
+	rotate_table()
 	for i in range(4):
 		var score := get_node("Score" + str(i))
 		score.get_node("Label").text = ""
+		
+		if i == 0:
+			if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
+				score.position = Vector2(-51, 303)
+			else:
+				score.position = Vector2(92, 249)
+
 		score.show()
 	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
-		rotate_table()
-
 		var leaveButton := $"LeaveButton"
 		leaveButton.hide()
 
@@ -35,10 +41,6 @@ func _on_gamestart() -> void:
 		Globals.my_player.seat.hide()
 		Globals.my_player.hand.scale = Vector2(1, 1)
 		Globals.my_player.hand.position.y = 260
-	else:
-		for i in range(4):
-			var hand := get_node("Hand" + str(i)) as Hand
-			hand._on_deal("")
 
 
 func _on_trumpstart() -> void:
@@ -68,24 +70,27 @@ func _on_yourplay(playable: String) -> void:
 func _on_play(user_id: String, card_str: String) -> void:
 	var player := Globals.player_manager.get_node(user_id) as Player
 	var hand := player.hand
-	hand.on_play(card_str)
+	if player != Globals.my_player:
+		hand.on_play(card_str)
 
 func _on_playend(winner_id: String) -> void:
 	#var cards: Array[Card] = []
 	var winning_hand := Globals.player_manager.get_player_by_id(winner_id).hand as Hand
 	for i in range(4):
-		var card := get_node("CardAnchor" + str(i)).get_child(0)
+		var card := get_node("CardAnchor" + str(i)).get_child(0) as Card
 
 		# Fixme: Show on last play
-		# var anchor := get_node("../LastAnchor" + str(i))
-		# if anchor.get_child_count() > 0:
-		# 	anchor.get_child(0).queue_free()
+		var anchor := get_node("../LastAnchor" + str(i))
+		if anchor.get_child_count() > 0:
+			anchor.get_child(0).queue_free()
 
-		# var card_dupe := card.duplicate()
-		# anchor.add_child(card_dupe)
-		# card_dupe.position = Vector2.ZERO
-		# card_dupe.global_position = anchor.global_position
-		# card_dupe.scale = anchor.scale
+		var card_dupe := card.duplicate() as Card
+		anchor.add_child(card_dupe)
+		card_dupe.position = Vector2.ZERO
+		card_dupe.rotation = 0
+		card_dupe.is_played = true
+		card_dupe.global_position = anchor.global_position
+		card_dupe.scale = anchor.scale
 
 		var tween := card.create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		tween.tween_property(card, "global_position", winning_hand.global_position, 0.25)
@@ -109,14 +114,13 @@ func _on_roundend(_team_a_score: String, _team_b_score: String) -> void:
 
 func _on_gameend(winner_1_id: String, winner_2_id: String) -> void:
 	state = TableState.TABLE_IDLE
+	un_rotate_table()
 	for i in range(4):
 		var seat := get_node("Seat" + str(i)) as Seat
 		if seat.sitter:
 			seat.sitter.state = Globals.player_manager.PLAYER_IDLE
 		
 	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
-		un_rotate_table()
-
 		var leaveButton := $"LeaveButton"
 		leaveButton.show()
 
@@ -129,7 +133,9 @@ func _on_gameend(winner_1_id: String, winner_2_id: String) -> void:
 		Globals.my_player.hand.position.y = 225
 
 func rotate_table() -> void:
-	var _offset := 4 - Globals.my_player.seat.seat_num
+	var _offset := 0
+	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
+		_offset = 4 - Globals.my_player.seat.seat_num
 
 	for i in range(4):
 		var next_anchor_str := "Anchor" + str((i + _offset) % 4)

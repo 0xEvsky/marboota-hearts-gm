@@ -170,10 +170,15 @@ func (t *Table) startTrump() {
 	for {
 		var deck = newDeck()
 
+		clog.Println("Shuffling deck...")
 		// Shuffle deck
 		for i := range deck {
 			j := rand.IntN(i + 1)
 			deck[i], deck[j] = deck[j], deck[i]
+		}
+
+		for _, p := range t.players {
+			p.hand = []Card{}
 		}
 
 		// Deal hands
@@ -181,11 +186,17 @@ func (t *Table) startTrump() {
 			t.players[i/13].hand = append(t.players[i/13].hand, deck[i])
 		}
 
+		var reshuffle = false
+
 		// Check hand validity
 		for _, p := range t.players {
 			if p.isHandInvalid() {
-				continue
+				reshuffle = true
 			}
+		}
+
+		if reshuffle {
+			continue
 		}
 		break
 	}
@@ -215,7 +226,7 @@ func (t *Table) startTrump() {
 	// Announce to all
 	for _, c := range t.instance.clients {
 		if c.state == ClientIdle {
-			c.writeJson(map[string]string{"ACTION": "DEAL"})
+			c.writeJson(map[string]string{"ACTION": "DEAL", "CARDS": ""})
 		}
 	}
 
@@ -310,21 +321,21 @@ func (p *Player) isHandInvalid() bool {
 		}
 
 		if faceCardCounts >= 8 {
-			return false
+			return true
 		}
 	}
 
 	if faceCardCounts == 0 {
-		return false
+		return true
 	}
 
 	for i := range 4 {
 		if suitCardCounts[Suit(i)] >= 8 {
-			return false
+			return true
 		}
 	}
 
-	return true
+	return false
 
 }
 

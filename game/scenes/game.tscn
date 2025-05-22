@@ -313,21 +313,23 @@ position = Vector2(640, 360)
 
 [node name="PlayerManager" type="Node2D" parent="."]
 position = Vector2(81, 73)
-scale = Vector2(0.75, 0.75)
 script = ExtResource("5_xiyoe")
 
 [node name="LastAnchor0" type="Node2D" parent="."]
-position = Vector2(1152, 663)
-scale = Vector2(0.5, 0.5)
+position = Vector2(1152, 643)
+scale = Vector2(0.75, 0.75)
 
 [node name="LastAnchor1" type="Node2D" parent="."]
-position = Vector2(1114, 624)
+position = Vector2(1102, 610)
+scale = Vector2(0.75, 0.75)
 
 [node name="LastAnchor2" type="Node2D" parent="."]
-position = Vector2(1152, 585)
+position = Vector2(1152, 583)
+scale = Vector2(0.75, 0.75)
 
 [node name="LastAnchor3" type="Node2D" parent="."]
-position = Vector2(1196, 625)
+position = Vector2(1202, 613)
+scale = Vector2(0.75, 0.75)
 
 [connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/7Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["7"]]
 [connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/8Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["8"]]
