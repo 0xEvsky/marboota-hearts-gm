@@ -41,12 +41,10 @@ jobs:
         use_preset_export_path: true
     
     - name: Make game directory
-      run: |
-        mkdir ./frontend/public/Game
-        mkdir ./frontend/public/Game/marboota-game
+      run: mkdir ./frontend/public/Game
 
     - name: Move game to frontend
-      run: mv ./game/build/marboota-game/*.{js,wasm,pck} ./frontend/public/Game/marboota-game
+      run: mv ./game/build/marboota-game/*.{js,wasm,pck} ./frontend/public/Game
     
     - name: Setup client vars
       run: |
