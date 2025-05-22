@@ -10,6 +10,8 @@ WORKDIR /usr/src/app
 
 COPY --chown=node:node . /usr/src/app/
 
+RUN cp /usr/src/app/public/Game/marboota-game/marboota-* /usr/src/app/public/Game/
+
 # ~~~~~ Build ~~~~~
 FROM base AS build
 
