@@ -23,21 +23,21 @@ scale = Vector2(0.57963, 0.57963)
 texture = ExtResource("1_4ps2g")
 
 [node name="Seat0" parent="." instance=ExtResource("2_bw1av")]
-scale = Vector2(1.5, 1.5)
+scale = Vector2(1.2, 1.2)
 
 [node name="Seat1" parent="." instance=ExtResource("2_bw1av")]
 position = Vector2(-313, 0)
-scale = Vector2(1.5, 1.5)
+scale = Vector2(1.2, 1.2)
 seat_num = 1
 
 [node name="Seat2" parent="." instance=ExtResource("2_bw1av")]
 position = Vector2(0, -313)
-scale = Vector2(1.5, 1.5)
+scale = Vector2(1.2, 1.2)
 seat_num = 2
 
 [node name="Seat3" parent="." instance=ExtResource("2_bw1av")]
 position = Vector2(313, 0)
-scale = Vector2(1.5, 1.5)
+scale = Vector2(1.2, 1.2)
 seat_num = 3
 
 [node name="Anchor0" type="Node2D" parent="."]
@@ -84,28 +84,28 @@ script = ExtResource("4_y4k8u")
 
 [node name="Hand0" parent="." node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
 position = Vector2(0, 225)
-scale = Vector2(0.25, 0.25)
+scale = Vector2(0.3, 0.3)
 anchor = NodePath("../CardAnchor0")
 score = NodePath("../Score0")
 
 [node name="Hand1" parent="." node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
 position = Vector2(-225, 0)
 rotation = 1.5708
-scale = Vector2(0.25, 0.25)
+scale = Vector2(0.3, 0.3)
 anchor = NodePath("../CardAnchor1")
 score = NodePath("../Score1")
 
 [node name="Hand2" parent="." node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
 position = Vector2(0, -225)
 rotation = 3.14159
-scale = Vector2(0.25, 0.25)
+scale = Vector2(0.3, 0.3)
 anchor = NodePath("../CardAnchor2")
 score = NodePath("../Score2")
 
 [node name="Hand3" parent="." node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
 position = Vector2(225, 0)
 rotation = -1.5708
-scale = Vector2(0.25, 0.25)
+scale = Vector2(0.3, 0.3)
 anchor = NodePath("../CardAnchor3")
 score = NodePath("../Score3")
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strings"
 	"sync"
 
 	"github.com/OmarQurashi868/marboota/backend/clog"
@@ -23,15 +24,13 @@ func newServer() *Server {
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
-		// TODO: fix for prod
-		// ! fix for prod
-		return true // ⚠️ WARNING: Accepts all origins, not secure for production!
+		return strings.Contains(r.URL.Host, "discordsays.com")
 	},
 } // use default options
 
 func (s *Server) authHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: handle auth
-	w.Write([]byte("W.I.P"))
+	// ! Handled by frontend
+	w.Write([]byte("Handled by frontend"))
 }
 
 func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {

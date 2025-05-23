@@ -82,7 +82,7 @@ func move_player(id: String, pos: Vector2) -> void:
 func _update_pinned_players() -> void:
 	for i in pinned_players.size():
 		var player := pinned_players[i]
-		move_player(player.name, Vector2(global_position.x, global_position.y + (i * 110)))
+		move_player(player.name, Vector2(global_position.x, global_position.y + (i * 90)))
 	pass
 
 

@@ -129,7 +129,7 @@ func _on_gameend(winner_1_id: String, winner_2_id: String) -> void:
 
 		Globals.my_player.show()
 		Globals.my_player.seat.show()
-		Globals.my_player.hand.scale = Vector2(0.25, 0.25)
+		Globals.my_player.hand.scale = Vector2(0.30, 0.30)
 		Globals.my_player.hand.position.y = 225
 
 func rotate_table() -> void:

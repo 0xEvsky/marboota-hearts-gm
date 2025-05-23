@@ -18,7 +18,7 @@ signal AUTH_accepted
 func _ready() -> void:
 	var _backend_url := str(JavaScriptBridge.eval("window.location.hostname", true)) # true = safe
 	var full_url := "wss://" + _backend_url + _backend_url_suffix
-	#var full_url := "ws://localhost:3000/ws"
+	# var full_url := "ws://localhost:3000/ws"
 	#$"../Game/LoadingUI/Label".text = full_url
 	
 	# Get data from JSbridge
