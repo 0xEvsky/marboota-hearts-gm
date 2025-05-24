@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"strings"
 	"sync"
 
 	"github.com/OmarQurashi868/marboota/backend/clog"
@@ -24,7 +23,9 @@ func newServer() *Server {
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
-		return strings.Contains(r.URL.Host, "discordsays.com")
+		// return strings.Contains(r.URL.Host, "discordsays.com")
+		// TODO: change in prod
+		return true
 	},
 } // use default options
 

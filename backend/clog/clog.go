@@ -6,7 +6,7 @@ import (
 
 const DEBUG = true
 
-// TODO: Debug logging
+// ! Debug logging
 func Debug(v ...any) {
 	if DEBUG {
 		log.Println(v...)
