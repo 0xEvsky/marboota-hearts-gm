@@ -24,7 +24,7 @@ func newServer() *Server {
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		// return strings.Contains(r.URL.Host, "discordsays.com")
-		// TODO: change in prod
+		// ! Change in prod
 		return true
 	},
 } // use default options
