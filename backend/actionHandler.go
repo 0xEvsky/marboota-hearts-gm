@@ -27,11 +27,16 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 	}
 
 	server.mu.Lock()
-	var instance = server.instances[instanceId]
+	var instance, exists = server.instances[instanceId]
 	server.mu.Unlock()
 
-	if instance != nil && instance.clients[userId] != nil {
-		return errors.New("ID is already authenticated with different client")
+	if exists {
+		instance.mu.Lock()
+		var _, cExists = instance.clients[userId]
+		instance.mu.Unlock()
+		if cExists {
+			return errors.New("ID is already authenticated with different client")
+		}
 	}
 
 	c.id = userId
@@ -40,19 +45,20 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 	c.state = ClientIdle
 	c.isAuthed = true
 
-	if instance != nil {
+	if exists {
 		c.instance = joinInstance(c, instanceId)
 		clog.Debugf("(server) (c:%s) joined existing instance (i:%s)", c.id, instanceId)
 	} else {
 		c.instance = newInstance(c, instanceId)
-		clog.Println("(server) New instance created (" + instanceId + ")")
+		clog.Debugf("(server) (c:%s) new instance created (i:%s)", c.id, instanceId)
 	}
 
 	c.writeOk()
 
 	c.broadcastToMates(map[string]string{"ACTION": "JOIN", "USERID": c.id, "USERNAME": c.name, "ICONURL": c.iconUrl})
+	c.instance.mu.Lock()
 	for _, client := range c.instance.clients {
-		if !client.isAuthed || client == c {
+		if !client.isAuthed || client.id == userId {
 			continue
 		}
 		// Join catch-up
@@ -71,6 +77,7 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 
 		// TODO: Play catchup
 	}
+	c.instance.mu.Unlock()
 
 	return nil
 }

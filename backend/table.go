@@ -226,7 +226,7 @@ func (t *Table) startTrump() {
 	// Announce to all
 	for _, c := range t.instance.clients {
 		if c.state == ClientIdle {
-			// TODO: add card count, docs
+			// TODO: change to otherdeal, docs, frontend
 			c.writeJson(map[string]string{"ACTION": "DEAL", "CARDS": ""})
 		}
 	}
