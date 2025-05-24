@@ -14,25 +14,31 @@ var playable: String = ""
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	EventManager.DEAL_received.connect(_on_deal)
+	EventManager.OTHERDEAL_received.connect(_on_otherdeal)
 
-func _on_deal(cardStr: String) -> void:
-	if player == Globals.my_player:
-		var cardStrArr := cardStr.split(",")
+func _on_deal(card_str: String) -> void:
+	if is_mine:
+		var cardStrArr := card_str.split(",")
 		var i := 0
 		for card in cardStrArr:
 			add_card(card, i)
 			i += 1
-	else:
-		for i in range(13):
-			add_card("", -1)
-	rearrange()
+		rearrange()
 
-func add_card(cardStr: String, index: int) -> void:
+func _on_otherdeal(count_str: String) -> void:
+	if !is_mine:
+		var count := int(count_str)
+		for i in range(count):
+			add_card("", i)
+		rearrange()
+
+
+func add_card(card_str: String, index: int) -> void:
 	var cardScene := preload("res://scenes/card.tscn")
 	var card := cardScene.instantiate() as Card
 	cards.append(card)
 	add_child(card)
-	card.set_card(cardStr)
+	card.set_card(card_str)
 	card.hover_index = index
 	if index == -1:
 		card.set_shroud(true)
@@ -50,8 +56,8 @@ func rearrange() -> void:
 	for i in range(len(cards)):
 		cards[i].position.x = (i - half) * GAP
 
-func set_playable(cardStr: String) -> void:
-	var card := get_node(cardStr) as Card
+func set_playable(card_str: String) -> void:
+	var card := get_node(card_str) as Card
 	card.set_playable(true)
 
 func card_hovered(card: Card) -> void:

@@ -204,6 +204,15 @@ Notifies the player of which cards they were dealt randomly, the card names are 
 }
 ```
 
+### OTHERDEAL
+Notifies a client that all other players at the table have been dealt `COUNT` amount of cards. If the client is a spectator this refers to all 4 players at the table. If the client is one of the players at the table, this refers to the remaining 3 players.
+```json
+{
+    "ACTION": "OTHERDEAL",
+    "COUNT": "13"
+}
+```
+
 ### TRUMPSTART
 Notifies all clients that trumping has started.
 ```json

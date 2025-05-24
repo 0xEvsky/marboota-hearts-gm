@@ -223,13 +223,9 @@ func (t *Table) startTrump() {
 	for _, p := range t.players {
 		p.client.writeJson(map[string]string{"ACTION": "DEAL", "CARDS": p.getHandString()})
 	}
+
 	// Announce to all
-	for _, c := range t.instance.clients {
-		if c.state == ClientIdle {
-			// TODO: change to otherdeal, docs, frontend
-			c.writeJson(map[string]string{"ACTION": "DEAL", "CARDS": ""})
-		}
-	}
+	t.instance.Broadcast(map[string]string{"ACTION": "OTHERDEAL", "COUNT": "13"})
 
 	t.instance.Broadcast(map[string]string{"ACTION": "TRUMPSTART"})
 	clog.Debugf("(i:%s) trump started", t.instance.id)

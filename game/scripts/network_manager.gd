@@ -24,15 +24,17 @@ func start() -> void:
 	authenticated = false
 	_auth_requested = false
 
-	# var full_url := "ws://localhost:3000/ws"
+	var full_url := "ws://localhost:3000/ws"
 	
 	# Get data from JSbridge
-	var _backend_url := str(JavaScriptBridge.eval("window.location.hostname", true)) # true = safe
-	var full_url := "wss://" + _backend_url + _backend_url_suffix
-	var discord := JavaScriptBridge.get_interface("discord")
-	instance_id = discord.sdk.instanceId
-	icon_url = "https://cdn.discordapp.com/avatars/" + discord.session.user.id + "/" + discord.session.user.avatar + ".png?size=128"
-	username = discord.session.user.global_name
+	if OS.has_feature("web"):
+		var _backend_url := str(JavaScriptBridge.eval("window.location.hostname", true)) # true = safe
+		full_url = "wss://" + _backend_url + _backend_url_suffix
+		var discord := JavaScriptBridge.get_interface("discord")
+		if discord != null:
+			instance_id = discord.sdk.instanceId
+			icon_url = "https://cdn.discordapp.com/avatars/" + discord.session.user.id + "/" + discord.session.user.avatar + ".png?size=128"
+			username = discord.session.user.global_name
 
 	#$"../Game/LoadingUI/Label".text = full_url
 	var err := _socket.connect_to_url(full_url)

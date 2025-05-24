@@ -9,6 +9,7 @@ signal READY_received
 signal UNREADY_received
 signal GAMESTART_received
 signal DEAL_received
+signal OTHERDEAL_received
 signal TRUMPSTART_received
 signal TRUMPCALL_received
 signal YOURTRUMPCALL_received
@@ -78,6 +79,8 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			GAMESTART_received.emit()
 		"DEAL": 
 			DEAL_received.emit(msg["CARDS"])
+		"OTHERDEAL":
+			OTHERDEAL_received.emit(msg["COUNT"])
 		"TRUMPSTART":
 			TRUMPSTART_received.emit()
 		"TRUMPCALL":
