@@ -16,6 +16,7 @@ func _on_button_up() -> void:
 		seat.unseat_player()
 		self.hide()
 		seat_ready_button.hide()
+		seat_ready_button.button_pressed = false
 		EventManager.send_request(EventManager.unsit_request()
 		,func(error: String) -> void:
 			print_debug(error)

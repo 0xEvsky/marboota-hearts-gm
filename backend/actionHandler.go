@@ -56,7 +56,6 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 	c.writeOk()
 
 	c.broadcastToMates(map[string]string{"ACTION": "JOIN", "USERID": c.id, "USERNAME": c.name, "ICONURL": c.iconUrl})
-	c.instance.mu.Lock()
 	for _, client := range c.instance.clients {
 		if !client.isAuthed || client.id == userId {
 			continue
@@ -73,11 +72,45 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 			}
 		}
 
-		// TODO: Trump catchup
+		// Game catchup
+		if c.instance.table.state > TableWaiting {
+			c.writeJson(map[string]string{"ACTION": "GAMESTART"})
 
-		// TODO: Play catchup
+			// Score catchup
+			for _, r := range c.instance.table.rounds {
+				c.writeJson(map[string]string{"ACTION": "ROUNDEND",
+					"TEAMASCORE": strconv.Itoa(r.teamAScore),
+					"TEAMBSCORE": strconv.Itoa(r.teamBScore)})
+			}
+			c.writeJson(map[string]string{"ACTION": "TOTALSCORE",
+				"TEAMASCORE": strconv.Itoa(c.instance.table.totalScores[TeamA]),
+				"TEAMBSCORE": strconv.Itoa(c.instance.table.totalScores[TeamB])})
+
+			// Trump catchup
+			if c.instance.table.state == TableTrumping {
+				c.writeJson(map[string]string{"ACTION": "OTHERDEAL", "COUNT": "13"})
+				c.writeJson(map[string]string{"ACTION": "TRUMPSTART"})
+				for i := range c.instance.table.trump.calls {
+					c.writeJson(map[string]string{"ACTION": "TRUMPCALL",
+						"USERID": c.instance.table.trump.players[i].client.id,
+						"SCORE":  c.instance.table.trump.calls[i]})
+				}
+			}
+
+			// Play catchup
+			if c.instance.table.state == TablePlaying {
+				var remainingCards = 13 - c.instance.table.playCount
+				c.writeJson(map[string]string{"ACTION": "OTHERDEAL", "COUNT": strconv.Itoa(remainingCards)})
+				c.writeJson(map[string]string{"ACTION": "PLAYSTART"})
+				for i := range c.instance.table.play.cards {
+					c.writeJson(map[string]string{"ACTION": "PLAY",
+						"USERID": c.instance.table.play.players[i].client.id,
+						"CARD":   c.instance.table.play.cards[i].name})
+				}
+			}
+		}
+
 	}
-	c.instance.mu.Unlock()
 
 	return nil
 }
@@ -188,6 +221,9 @@ func advanceTrump(c *Client, scoreStr string) error {
 		return errors.New("not player turn")
 	}
 
+	c.instance.table.trump.calls = append(c.instance.table.trump.calls, scoreStr)
+	c.instance.table.trump.players = append(c.instance.table.trump.players, c.player)
+
 	// Check if player is not passing
 	if scoreStr != "PASS" {
 		var score, err = strconv.Atoi(scoreStr)
@@ -283,6 +319,7 @@ func advancePlay(c *Client, cardStr string) error {
 
 	// Add cards to played cards
 	c.instance.table.play.cards = append(c.instance.table.play.cards, card)
+	c.instance.table.play.players = append(c.instance.table.play.players, c.player)
 
 	// Remove played card from hand
 	c.player.hand = slices.DeleteFunc(c.player.hand, func(ec Card) bool {

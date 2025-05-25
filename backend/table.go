@@ -58,12 +58,15 @@ type Player struct {
 }
 
 type Trump struct {
+	players       []*Player
+	calls         []string
 	highestCall   int
 	highestCaller *Player
 	suit          Suit
 }
 
 type Play struct {
+	players      []*Player
 	cards        []Card
 	curWinCard   Card
 	curWinPlayer *Player
