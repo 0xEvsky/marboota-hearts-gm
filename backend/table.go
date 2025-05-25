@@ -173,7 +173,7 @@ func (t *Table) startTrump() {
 	for {
 		var deck = newDeck()
 
-		clog.Println("Shuffling deck...")
+		clog.Printf("(i:%v) shuffling deck", t.instance.id)
 		// Shuffle deck
 		for i := range deck {
 			j := rand.IntN(i + 1)

@@ -18,6 +18,9 @@ func _ready() -> void:
 
 func _on_deal(card_str: String) -> void:
 	if is_mine:
+		for card in cards:
+			card.free()
+		cards.clear()
 		var cardStrArr := card_str.split(",")
 		var i := 0
 		for card in cardStrArr:
@@ -27,6 +30,9 @@ func _on_deal(card_str: String) -> void:
 
 func _on_otherdeal(count_str: String) -> void:
 	if !is_mine:
+		for card in cards:
+			card.queue_free()
+		cards.clear()
 		var count := int(count_str)
 		for i in range(count):
 			add_card("", i)

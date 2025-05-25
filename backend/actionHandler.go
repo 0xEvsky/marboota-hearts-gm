@@ -267,6 +267,14 @@ func endTrump(i *Instance) error {
 	// // Announce trump end with suit and score
 	// c.instance.Broadcast(map[string]string{"ACTION": "TRUMPEND", "SUIT": suit, "SCORE": strconv.Itoa(c.instance.table.trump.highestCall)})
 
+	// Handle all-pass
+	if i.table.trump.highestCall == 0 {
+		i.table.turnOffset += 1
+		i.table.startTrump()
+		clog.Debugf("(i:%s) trump ended with all pass, skipping", i.id)
+		return nil
+	}
+
 	// Start play
 	i.table.startPlay()
 	clog.Debugf("(i:%s) trump ended (%v)", i.id, i.table.trump.highestCall)
