@@ -60,10 +60,10 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 		if !client.isAuthed || client.id == userId {
 			continue
 		}
-		// Join catch-up
+		// Join catchup
 		c.writeJson(map[string]string{"ACTION": "JOIN", "USERID": client.id, "USERNAME": client.name, "ICONURL": client.iconUrl})
 
-		// Seat catch-up
+		// Seat catchup
 		if client.state == ClientSeated {
 			c.writeJson(map[string]string{"ACTION": "SIT", "USERID": client.id, "SEAT": strconv.Itoa(client.player.seat)})
 			// Ready catchup
@@ -71,45 +71,56 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 				c.writeJson(map[string]string{"ACTION": "READY", "USERID": client.id})
 			}
 		}
+	}
 
-		// Game catchup
-		if c.instance.table.state > TableWaiting {
-			c.writeJson(map[string]string{"ACTION": "GAMESTART"})
+	// Game catchup
+	if c.instance.table.state > TableWaiting {
+		c.writeJson(map[string]string{"ACTION": "GAMESTART"})
 
-			// Score catchup
-			for _, r := range c.instance.table.rounds {
-				c.writeJson(map[string]string{"ACTION": "ROUNDEND",
-					"TEAMASCORE": strconv.Itoa(r.teamAScore),
-					"TEAMBSCORE": strconv.Itoa(r.teamBScore)})
-			}
-			c.writeJson(map[string]string{"ACTION": "TOTALSCORE",
-				"TEAMASCORE": strconv.Itoa(c.instance.table.totalScores[TeamA]),
-				"TEAMBSCORE": strconv.Itoa(c.instance.table.totalScores[TeamB])})
+		// Score catchup
+		for _, r := range c.instance.table.rounds {
+			c.writeJson(map[string]string{"ACTION": "ROUNDEND",
+				"TEAMASCORE": strconv.Itoa(r.teamAScore),
+				"TEAMBSCORE": strconv.Itoa(r.teamBScore)})
+		}
+		c.writeJson(map[string]string{"ACTION": "TOTALSCORE",
+			"TEAMASCORE": strconv.Itoa(c.instance.table.totalScores[TeamA]),
+			"TEAMBSCORE": strconv.Itoa(c.instance.table.totalScores[TeamB])})
 
-			// Trump catchup
-			if c.instance.table.state == TableTrumping {
-				c.writeJson(map[string]string{"ACTION": "OTHERDEAL", "COUNT": "13"})
-				c.writeJson(map[string]string{"ACTION": "TRUMPSTART"})
-				for i := range c.instance.table.trump.calls {
-					c.writeJson(map[string]string{"ACTION": "TRUMPCALL",
-						"USERID": c.instance.table.trump.players[i].client.id,
-						"SCORE":  c.instance.table.trump.calls[i]})
-				}
-			}
+		// for _, p := range c.instance.table.players {
+		// 	c.writeJson(map[string]string{"ACTION": "PLAYERSCORE", "USERID": p.client.id, "SCORE": strconv.Itoa(p.score)})
+		// }
 
-			// Play catchup
-			if c.instance.table.state == TablePlaying {
-				var remainingCards = 13 - c.instance.table.playCount
-				c.writeJson(map[string]string{"ACTION": "OTHERDEAL", "COUNT": strconv.Itoa(remainingCards)})
-				c.writeJson(map[string]string{"ACTION": "PLAYSTART"})
-				for i := range c.instance.table.play.cards {
-					c.writeJson(map[string]string{"ACTION": "PLAY",
-						"USERID": c.instance.table.play.players[i].client.id,
-						"CARD":   c.instance.table.play.cards[i].name})
-				}
+		// Trump catchup
+		if c.instance.table.state == TableTrumping {
+			c.writeJson(map[string]string{"ACTION": "OTHERDEAL", "COUNT": "13"})
+			c.writeJson(map[string]string{"ACTION": "TRUMPSTART"})
+			for i := range c.instance.table.trump.calls {
+				c.writeJson(map[string]string{"ACTION": "TRUMPCALL",
+					"USERID": c.instance.table.trump.players[i].client.id,
+					"SCORE":  c.instance.table.trump.calls[i]})
 			}
 		}
 
+		// Play catchup
+		if c.instance.table.state == TablePlaying {
+			var remainingCards = 13 - c.instance.table.playCount
+			c.writeJson(map[string]string{"ACTION": "OTHERDEAL", "COUNT": strconv.Itoa(remainingCards)})
+			c.writeJson(map[string]string{"ACTION": "PLAYSTART"})
+
+			// Playerscore catchup
+			for _, p := range c.instance.table.players {
+				for range p.score {
+					c.writeJson(map[string]string{"ACTION": "PLAYEND", "WINNERID": p.client.id})
+				}
+			}
+
+			for i := range c.instance.table.play.cards {
+				c.writeJson(map[string]string{"ACTION": "PLAY",
+					"USERID": c.instance.table.play.players[i].client.id,
+					"CARD":   c.instance.table.play.cards[i].name})
+			}
+		}
 	}
 
 	return nil
@@ -368,6 +379,9 @@ func advancePlay(c *Client, cardStr string) error {
 			return nil
 		}
 
+		c.instance.table.play.cards = []Card{}
+		c.instance.table.play.players = []*Player{}
+
 		// Set turn to winner
 		c.player.isTurn = false
 		c.instance.table.turn = c.instance.table.play.curWinPlayer.seat
@@ -379,7 +393,7 @@ func advancePlay(c *Client, cardStr string) error {
 		// Announce new turn
 		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": c.instance.table.players[c.instance.table.turn].getHandString()})
 
-		clog.Debugf("(i:%s) play ended, winner (%s)", c.instance.id, c.id)
+		clog.Debugf("(i:%s) play ended, winner (c:%s)", c.instance.id, c.id)
 	} else {
 		// Advance turn
 		c.player.isTurn = false

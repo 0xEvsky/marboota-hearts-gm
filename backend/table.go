@@ -93,7 +93,9 @@ func newTable() Table {
 		trump: Trump{
 			suit: -1,
 		},
-		play:        Play{},
+		play: Play{
+			players: []*Player{},
+		},
 		totalScores: map[Team]int{},
 	}
 }
@@ -158,7 +160,9 @@ func (t *Table) startGame() {
 
 func (t *Table) startTrump() {
 	t.trump = Trump{
-		suit: -1,
+		players: []*Player{},
+		calls:   []string{},
+		suit:    -1,
 	}
 	t.play = Play{}
 	t.playCount = 0

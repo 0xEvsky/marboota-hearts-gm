@@ -70,7 +70,7 @@ func (s *Server) read(ws *websocket.Conn) {
 					s.mu.Lock()
 					delete(s.instances, s.conns[ws].instance.id)
 					s.mu.Unlock()
-					clog.Println("Deleted empty instance (" + c.instance.id + ")")
+					clog.Printf("(c:%v) deleted empty instance", c.instance.id)
 				}
 			}
 

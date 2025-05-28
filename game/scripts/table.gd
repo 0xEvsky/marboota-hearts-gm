@@ -21,7 +21,6 @@ func _on_gamestart() -> void:
 	rotate_table()
 	for i in range(4):
 		var score := get_node("Score" + str(i))
-		score.get_node("Label").text = ""
 		
 		if i == 0:
 			if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
@@ -77,12 +76,19 @@ func _on_playend(winner_id: String) -> void:
 	#var cards: Array[Card] = []
 	var winning_hand := Globals.player_manager.get_player_by_id(winner_id).hand as Hand
 	for i in range(4):
-		var card := get_node("CardAnchor" + str(i)).get_child(0) as Card
+		if get_node("CardAnchor" + str(i)).get_child_count() == 0:
+			continue
 
-		# Fixme: Show on last play
+		var card := get_node("CardAnchor" + str(i)).get_child(-1) as Card
+
+		for c in get_node("CardAnchor" + str(i)).get_children():
+			if c != card:
+				c.queue_free()
+
+		# Show on last play
 		var anchor := get_node("../LastAnchor" + str(i))
-		if anchor.get_child_count() > 0:
-			anchor.get_child(0).queue_free()
+		for child in anchor.get_children():
+			child.queue_free()
 
 		var card_dupe := card.duplicate() as Card
 		anchor.add_child(card_dupe)
@@ -104,6 +110,13 @@ func _on_playend(winner_id: String) -> void:
 	var score := int(label.text)
 	score += 1
 	label.text = str(score)
+
+func _on_playerscore(user_id: String, score_str: String) -> void:
+	var player := Globals.player_manager.get_player_by_id(user_id)
+	var panel := player.hand.score
+	var label := panel.get_node("Label") as Label
+	var score := int(score_str)
+	label.text = str(score)
 	
 func _on_roundend(_team_a_score: String, _team_b_score: String) -> void:
 	state = TableState.TABLE_READY
@@ -116,6 +129,8 @@ func _on_gameend(winner_1_id: String, winner_2_id: String) -> void:
 	state = TableState.TABLE_IDLE
 	un_rotate_table()
 	for i in range(4):
+		var score := get_node("Score" + str(i))
+		score.get_node("Label").text = ""
 		var seat := get_node("Seat" + str(i)) as Seat
 		if seat.sitter:
 			seat.sitter.state = Globals.player_manager.PLAYER_IDLE

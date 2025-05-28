@@ -26,11 +26,6 @@ signal GAMEEND_received
 var _request_queue: Array[Dictionary] = []
 var _response_queue: Array[Dictionary] = []
 
-func _process(_delta: float) -> void:
-	#if !_response_queue.is_empty():
-		#_process_response_queue()
-	pass
-
 func send_request(msg: Dictionary, on_error: Callable) -> void:
 	var request_id := _generate_request_id()
 	msg["REQUESTID"] = request_id

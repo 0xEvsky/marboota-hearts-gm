@@ -299,6 +299,16 @@ Notifies all clients that the current hand round (13 plays) has ended. With it a
 }
 ```
 
+### PLAYERSCORE
+Used to notify late clients with the current score of a specific player (`USERID`) during this round.
+```json
+{
+    "ACTION": "PLAYERSCORE",
+    "USERID":  "11223344",
+    "SCORE":  "5",
+}
+```
+
 ### TOTALSCORE
 Notifies all clients of the total scores for each team at the moment; `TEAMASCORE` & `TEAMBSCORE`, (sent with `ROUNDEND`).
 ```json
