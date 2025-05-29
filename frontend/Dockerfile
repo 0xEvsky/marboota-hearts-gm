@@ -1,5 +1,5 @@
 # ~~~~~ Base ~~~~~
-FROM node:23-alpine AS base
+FROM node:slim AS base
 
 RUN apk add --no-cache curl g++ make python3 py3-pip tini
 

@@ -31,7 +31,7 @@ var upgrader = websocket.Upgrader{
 
 func (s *Server) authHandler(w http.ResponseWriter, r *http.Request) {
 	// ! Handled by frontend
-	w.Write([]byte("Handled by frontend"))
+	w.Write([]byte("Handled by fronten\n"))
 }
 
 func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
