@@ -16,12 +16,12 @@ signal AUTH_accepted
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	if OS.has_feature("web"):
-		start()
+	#if OS.has_feature("web"):
+	start()
 	
-func _input(event: InputEvent) -> void:
-	if !OS.has_feature("web") && event.is_action_released("ui_accept"):
-		start()
+# func _input(event: InputEvent) -> void:
+# 	if !OS.has_feature("web") && event.is_action_released("ui_accept"):
+# 		start()
 
 func start() -> void:
 	_socket = WebSocketPeer.new()
