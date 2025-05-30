@@ -26,7 +26,7 @@ signal GAMEEND_received
 var _request_queue: Array[Dictionary] = []
 var _response_queue: Array[Dictionary] = []
 
-func send_request(msg: Dictionary, on_error: Callable) -> void:
+func send_request(msg: Dictionary, on_error: Callable = func() -> void: pass) -> void:
 	var request_id := _generate_request_id()
 	msg["REQUESTID"] = request_id
 	_request_queue.append({"message": msg, "request_id": request_id, "on_error": on_error})
@@ -49,7 +49,8 @@ func _process_response_queue() -> void:
 			return
 		if res["REQUESTID"] == req["request_id"]:
 			if res["ACTION"] == "OK":
-				print_debug("OK")
+				#print_debug("OK")
+				pass
 			elif res["ACTION"] == "ERROR":
 				req["on_error"].call(res["MESSAGE"])
 			_request_queue.pop_front()
@@ -100,6 +101,8 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			push_error("Invalid or unknown action received from server:" + str(action))
 
 # Requests
+func ping_request() -> Dictionary:
+	return {"ACTION": "PING"}
 
 func sit_request(seat: int) -> Dictionary:
 	return {"ACTION": "SIT", "SEAT": str(seat)}

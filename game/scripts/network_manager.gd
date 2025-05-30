@@ -2,7 +2,7 @@ extends Node
 
 var instance_id := "1234"
 var username := "Player"
-var user_id := str(randi_range(1,1000000))
+var user_id := str(randi_range(1, 1000000))
 var icon_url := "https://placehold.co/128x128.png?text=" + username + user_id
 
 var _backend_url_suffix := "/.proxy/backend/ws"
@@ -11,6 +11,9 @@ var _socket := WebSocketPeer.new()
 var connected := false
 var authenticated := false
 var _auth_requested := false
+
+const BEAT_INTERVAL = 30 # seconds
+var timer: float = BEAT_INTERVAL
 
 signal AUTH_accepted
 
@@ -48,9 +51,8 @@ func start() -> void:
 		set_process(false)
 
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_socket.poll()
 	var state := _socket.get_ready_state()
 
@@ -60,6 +62,11 @@ func _process(_delta: float) -> void:
 			_handle_auth()
 			return
 
+		# Heartbeat
+		timer -= delta
+		if timer <= 0.0:
+			EventManager.send_request(EventManager.ping_request())
+			timer = BEAT_INTERVAL
 		_read_loop()
 
 	elif connected && state == WebSocketPeer.STATE_CLOSED:
@@ -67,10 +74,9 @@ func _process(_delta: float) -> void:
 		start()
 
 
-
 func _handle_auth() -> void:
 	if !_auth_requested:
-		var authMsg := {"ACTION": "AUTH", "INSTANCEID": instance_id,"USERID": user_id, "USERNAME": username, "ICONURL": icon_url}
+		var authMsg := {"ACTION": "AUTH", "INSTANCEID": instance_id, "USERID": user_id, "USERNAME": username, "ICONURL": icon_url}
 		_write_json(authMsg)
 		_auth_requested = true
 		return

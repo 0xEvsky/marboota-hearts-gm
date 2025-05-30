@@ -16,6 +16,11 @@ func msgHandler(c *Client, rawMsg []byte) {
 
 	c.requestId = msg["REQUESTID"]
 
+	if msg["ACTION"] == "PING" {
+		c.writeOk()
+		return
+	}
+
 	if msg["ACTION"] == "AUTH" {
 		err := authClient(c, msg["INSTANCEID"], msg["USERID"], msg["USERNAME"], msg["ICONURL"])
 		if err != nil {
