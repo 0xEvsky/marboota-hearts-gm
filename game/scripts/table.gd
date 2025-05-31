@@ -147,10 +147,16 @@ func _on_gameend(winner_1_id: String, winner_2_id: String) -> void:
 		Globals.my_player.hand.scale = Vector2(0.30, 0.30)
 		Globals.my_player.hand.position.y = 225
 
+func rotate_four_values(values: Array, offset: int) -> Array:
+	offset = offset % 4  # Keep it within 0-3
+	return values.slice(4 - offset, 4) + values.slice(0, 4 - offset)
+
 func rotate_table() -> void:
 	var _offset := 0
 	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
 		_offset = 4 - Globals.my_player.seat.seat_num
+	var scores: Array[String] = []
+	var cards: Array[Card] = []
 
 	for i in range(4):
 		var next_anchor_str := "Anchor" + str((i + _offset) % 4)
@@ -160,6 +166,27 @@ func rotate_table() -> void:
 		var current_seat := get_node(current_seat_str) as Seat
 
 		current_seat.global_position = next_anchor.global_position
+
+		var score: Label = get_node("Hand" + str(i)).score.get_node("Label")
+		var card_anchor := get_node("CardAnchor" + str(i))
+		# var next_score: Label = get_node("Hand" + str((i + _offset) % 4)).score.get_node("Label")
+
+		# Rotate score labels
+		scores.append(score.text)
+		# Rotate cards
+		if card_anchor.get_child_count() > 0:
+			var card: Card = card_anchor.get_child(-1)
+			cards.append(card)
+		else:
+			cards.append(null)
+		# if i == 0:
+		# 	tmp_score = next_score.text
+		# 	next_score.text = cur_score.text
+		# elif i != 3:
+		# 	next_score.text = cur_score.text
+		# else:
+		# 	next_score.text = tmp_score
+		
 		
 		if current_seat.sitter:
 			current_seat.sitter.global_position = current_seat.global_position
@@ -171,6 +198,18 @@ func rotate_table() -> void:
 				hand.is_mine = true
 				Globals.my_player.hand = hand
 				hand.player = Globals.my_player
+	
+	for i in range(4):
+		var new_index := (i - _offset) % 4
+
+		var score: Label = get_node("Hand" + str(i)).score.get_node("Label")
+		score.text = scores[new_index]
+
+		if cards[new_index]:
+			var card_anchor: Node2D = get_node("CardAnchor" + str(i))
+			cards[new_index].reparent(card_anchor)
+			cards[new_index].global_position = card_anchor.global_position
+			cards[new_index].global_rotation = card_anchor.global_rotation
 
 func un_rotate_table() -> void:
 	for i in range(4):

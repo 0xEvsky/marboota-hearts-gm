@@ -114,12 +114,15 @@ position = Vector2(0, 75)
 
 [node name="CardAnchor1" type="Node2D" parent="."]
 position = Vector2(-75, 0)
+rotation = 1.5708
 
 [node name="CardAnchor2" type="Node2D" parent="."]
 position = Vector2(0, -75)
+rotation = 3.14159
 
 [node name="CardAnchor3" type="Node2D" parent="."]
 position = Vector2(75, 0)
+rotation = -1.5708
 
 [node name="Score0" type="Panel" parent="."]
 visible = false

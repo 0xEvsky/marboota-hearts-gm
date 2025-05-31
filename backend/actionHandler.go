@@ -149,9 +149,14 @@ func seatClient(c *Client, seatStr string) error {
 		return err
 	}
 
-	// TODO: If game was already running, show player their hand
-
 	c.broadcastToMates(map[string]string{"ACTION": "SIT", "USERID": c.id, "SEAT": seatStr})
+
+	// TODO: If game was already running, show player their hand
+	if c.instance.table.state > TableWaiting {
+		c.writeJson(map[string]string{"ACTION": "GAMESTART"})
+		c.writeJson(map[string]string{"ACTION": "DEAL", "CARDS": c.player.getHandString()})
+	}
+
 	return nil
 }
 
@@ -207,6 +212,10 @@ func unsetReady(c *Client) error {
 
 	if c.player.state != PlayerReady {
 		return errors.New("not ready")
+	}
+
+	if c.instance.table.state != TableWaiting {
+		return errors.New("game has started")
 	}
 
 	c.player.state = PlayerWaiting

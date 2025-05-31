@@ -21,6 +21,7 @@ func _on_deal(card_str: String) -> void:
 		for card in cards:
 			card.free()
 		cards.clear()
+		hovered_cards.clear()
 		var cardStrArr := card_str.split(",")
 		var i := 0
 		for card in cardStrArr:
@@ -33,6 +34,7 @@ func _on_otherdeal(count_str: String) -> void:
 		for card in cards:
 			card.queue_free()
 		cards.clear()
+		hovered_cards.clear()
 		var count := int(count_str)
 		for i in range(count):
 			add_card("", i)

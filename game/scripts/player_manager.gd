@@ -67,6 +67,12 @@ func _on_player_sit(id: String, seat_num: String) -> void:
 	var seat_str := "../Table/Seat" + seat_num
 	var seat := get_node(seat_str) as Seat
 	seat.seat_player(id)
+	if Globals.table.state > Globals.table.TableState.TABLE_IDLE:
+		var _offset := 0
+		if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
+			_offset = 4 - Globals.my_player.seat.seat_num
+		var hand := Globals.table.get_node("Hand" + str((seat.seat_num + _offset) % 4)) as Hand
+		Globals.player_manager.get_player_by_id(id).hand = hand
 
 
 func _on_player_unsit(id: String) -> void:

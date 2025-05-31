@@ -21,6 +21,8 @@ func _on_button_up() -> void:
 		,func(error: String) -> void:
 			print_debug(error)
 			seat.seat_player(player.name)
+			self.show()
+			seat_ready_button.show()
 		)
 
 func _on_gameend(_1: String, _2: String) -> void:
