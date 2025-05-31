@@ -28,7 +28,6 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 
 	server.mu.Lock()
 	var instance, exists = server.instances[instanceId]
-	server.mu.Unlock()
 
 	if exists {
 		instance.mu.Lock()
@@ -53,6 +52,7 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 		clog.Debugf("(server) (c:%s) new instance created (i:%s)", c.id, instanceId)
 	}
 
+	server.mu.Unlock()
 	c.writeOk()
 
 	c.broadcastToMates(map[string]string{"ACTION": "JOIN", "USERID": c.id, "USERNAME": c.name, "ICONURL": c.iconUrl})
