@@ -8,6 +8,9 @@ Each message must have an `ACTION` key describing the type of event. Furthermore
 It only serves as a way for clients to keep track of which response belongs to which request, which is useful in situations with bad connections (high latency, packetloss...etc).
 The `REQUESTID` is expected to be unique for each request, either incremented or random, so the client can actually match request-response pairs even if responses arrive out of order. The server, however, does **NOT** ensure that in any way, it simply echoes back the `REQUESTID` it gets 🤷‍♀️.
 
+### Catch-up
+When a client joins after the game has already started for a while, they need to be caught up with the current state of the game; This is done using catch-up messages. The server will quickly send all important past game events one after the other to the client that just joined, things like players joining, cards played, score counts...etc. This is all done using the pre-existing messages for the events themselves so no new handlers are needed in the client.
+
 ## Server responses
 The server responds with either of these to client requests.
 
@@ -92,9 +95,6 @@ The server will *- without prompt -* send these messages that contain event upda
 
 ### JOIN
 Whenever a new client authenticates, this message is sent to all other clients in the same instance to inform them of the new client.
-
-> [!NOTE]
-> The server will also send multiple JOIN messages to the new client, informing it of the members that were already connected before (catch-up).
 ```json
 {
     "ACTION": "JOIN",
@@ -115,8 +115,6 @@ Sent to all clients in the instance when a client disconnects announcing its use
 
 ### SIT
 This is sent to all other clients in an instance when a client is successfully seated, alongside its information.
-> [!NOTE]
-> This is also catch-up sent just like `JOIN`
 ```json
 {
     "ACTION": "SIT",
@@ -136,8 +134,6 @@ This is sent to all other clients in an instance when a client is Unseated, alon
 
 ### READY
 This is sent to all other clients in an instance when a client is successfully set as ready, alongside its information.
-> [!NOTE]
-> This is also catch-up sent just like `JOIN`
 ```json
 {
     "ACTION": "READY",

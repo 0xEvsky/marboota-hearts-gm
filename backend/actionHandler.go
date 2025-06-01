@@ -155,6 +155,10 @@ func seatClient(c *Client, seatStr string) error {
 	if c.instance.table.state > TableWaiting {
 		c.writeJson(map[string]string{"ACTION": "GAMESTART"})
 		c.writeJson(map[string]string{"ACTION": "DEAL", "CARDS": c.player.getHandString()})
+
+		if c.player.isTurn {
+			c.writeJson(c.player.lastPrompt)
+		}
 	}
 
 	return nil
@@ -276,7 +280,9 @@ func advanceTrump(c *Client, scoreStr string) error {
 		c.instance.table.turn %= 4
 
 		c.instance.table.players[c.instance.table.turn].isTurn = true
-		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": strconv.Itoa(c.instance.table.trump.highestCall + 1), "MAXSCORE": "13"})
+		var prompt = map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": strconv.Itoa(c.instance.table.trump.highestCall + 1), "MAXSCORE": "13"}
+		c.instance.table.players[c.instance.table.turn].lastPrompt = prompt
+		c.instance.table.players[c.instance.table.turn].client.writeJson(prompt)
 	}
 
 	clog.Debugf("(i:%s) (c:%s) trump advanced, called %s", c.instance.id, c.id, scoreStr)
@@ -400,7 +406,9 @@ func advancePlay(c *Client, cardStr string) error {
 		c.instance.table.play = Play{}
 
 		// Announce new turn
-		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": c.instance.table.players[c.instance.table.turn].getHandString()})
+		var prompt = map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": c.instance.table.players[c.instance.table.turn].getHandString()}
+		c.instance.table.players[c.instance.table.turn].lastPrompt = prompt
+		c.instance.table.players[c.instance.table.turn].client.writeJson(prompt)
 
 		clog.Debugf("(i:%s) play ended, winner (c:%s)", c.instance.id, c.id)
 	} else {
@@ -411,7 +419,9 @@ func advancePlay(c *Client, cardStr string) error {
 		c.instance.table.players[c.instance.table.turn].isTurn = true
 
 		var _, nextPlayables = c.instance.table.players[c.instance.table.turn].getPlayableCards()
-		c.instance.table.players[c.instance.table.turn].client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": nextPlayables})
+		var prompt = map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": nextPlayables}
+		c.instance.table.players[c.instance.table.turn].lastPrompt = prompt
+		c.instance.table.players[c.instance.table.turn].client.writeJson(prompt)
 
 		clog.Debugf("(i:%s) play advanced", c.instance.id)
 	}
