@@ -47,14 +47,15 @@ const (
 )
 
 type Player struct {
-	client  *Client
-	state   PlayerState
-	hand    []Card
-	seat    int
-	team    Team
-	score   int
-	partner *Player
-	isTurn  bool
+	client     *Client
+	state      PlayerState
+	hand       []Card
+	seat       int
+	team       Team
+	score      int
+	partner    *Player
+	isTurn     bool
+	lastPrompt map[string]string
 }
 
 type Trump struct {
@@ -236,11 +237,15 @@ func (t *Table) startTrump() {
 
 	t.instance.Broadcast(map[string]string{"ACTION": "TRUMPSTART"})
 	clog.Debugf("(i:%s) trump started", t.instance.id)
-	t.state = TableTrumping
-	t.turn = t.turnOffset
 
+	t.state = TableTrumping
+	t.players[t.turn].isTurn = false
+	t.turn = t.turnOffset
 	t.players[t.turn].isTurn = true
-	t.players[t.turn].client.writeJson(map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": "7", "MAXSCORE": "11"})
+
+	var prompt = map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": "7", "MAXSCORE": "11"}
+	t.players[t.turn].lastPrompt = prompt
+	t.players[t.turn].client.writeJson(prompt)
 }
 
 func (t *Table) startPlay() {
@@ -270,7 +275,9 @@ func (t *Table) startPlay() {
 		playableCards = cardsStr
 	}
 
-	t.trump.highestCaller.client.writeJson(map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": playableCards})
+	var prompt = map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": playableCards}
+	t.trump.highestCaller.lastPrompt = prompt
+	t.trump.highestCaller.client.writeJson(prompt)
 }
 
 func (p *Player) getPlayableCards() ([]Card, string) {
