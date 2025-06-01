@@ -60,6 +60,8 @@ type Player struct {
 
 type Trump struct {
 	players       []*Player
+	gobool        *Player
+	beIstifada    bool
 	calls         []string
 	highestCall   int
 	highestCaller *Player
@@ -261,23 +263,29 @@ func (t *Table) startPlay() {
 	}
 
 	t.players[t.turn].isTurn = false
-	t.turn = t.trump.highestCaller.seat
-	t.trump.highestCaller.isTurn = true
+	var trumpPlayer = t.trump.highestCaller
+
+	if t.trump.beIstifada {
+		trumpPlayer = t.trump.gobool
+	}
+
+	t.turn = trumpPlayer.seat
+	trumpPlayer.isTurn = true
 
 	t.playCount = 0
 
 	var playableCards = ""
 	if t.trump.suit == -1 {
-		var _, trumps = t.trump.highestCaller.getAvailableTrumps()
+		var _, trumps = trumpPlayer.getAvailableTrumps()
 		playableCards = trumps
 	} else {
-		var _, cardsStr = t.trump.highestCaller.getPlayableCards()
+		var _, cardsStr = trumpPlayer.getPlayableCards()
 		playableCards = cardsStr
 	}
 
 	var prompt = map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": playableCards}
-	t.trump.highestCaller.lastPrompt = prompt
-	t.trump.highestCaller.client.writeJson(prompt)
+	trumpPlayer.lastPrompt = prompt
+	trumpPlayer.client.writeJson(prompt)
 }
 
 func (p *Player) getPlayableCards() ([]Card, string) {
@@ -354,11 +362,17 @@ func (p *Player) getAvailableTrumps() ([]Suit, string) {
 	var str = ""
 	var trumps = []Suit{}
 	var suitCounts = map[Suit]int{}
+	var trump = p.client.instance.table.trump
+	var callOffset = 3
+	if p == trump.gobool && trump.beIstifada {
+		callOffset = 2
+	}
+
 	for _, c := range p.hand {
 		suitCounts[c.suit] += 1
 	}
 	for i := range 4 {
-		if suitCounts[Suit(i)]+3 <= p.client.instance.table.trump.highestCall {
+		if suitCounts[Suit(i)]+callOffset <= p.client.instance.table.trump.highestCall {
 			trumps = append(trumps, Suit(i))
 		}
 	}

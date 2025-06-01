@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"math"
 	"slices"
 	"strconv"
 
@@ -261,8 +262,13 @@ func advanceTrump(c *Client, scoreStr string) error {
 		}
 
 		// Check if score is higher than the current highest call
-		if score <= c.instance.table.trump.highestCall {
+		if score < c.instance.table.trump.highestCall {
 			return errors.New("trump call must be higher than the highest one")
+		} else if score == c.instance.table.trump.highestCall {
+			if (c.instance.table.turn+1)%4 == c.instance.table.turnOffset {
+				c.instance.table.trump.gobool = c.player
+				c.instance.table.trump.beIstifada = true
+			}
 		} else {
 			c.instance.table.trump.highestCall = score
 			c.instance.table.trump.highestCaller = p
@@ -280,7 +286,14 @@ func advanceTrump(c *Client, scoreStr string) error {
 		c.instance.table.turn %= 4
 
 		c.instance.table.players[c.instance.table.turn].isTurn = true
-		var prompt = map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": strconv.Itoa(c.instance.table.trump.highestCall + 1), "MAXSCORE": "13"}
+		var minScore = int(math.Max(float64(c.instance.table.trump.highestCall+1), 7))
+
+		// Seed algobool
+		if (c.instance.table.turn+1)%4 == c.instance.table.turnOffset {
+			minScore = int(math.Max(float64(c.instance.table.trump.highestCall), 7))
+		}
+
+		var prompt = map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": strconv.Itoa(minScore), "MAXSCORE": "13"}
 		c.instance.table.players[c.instance.table.turn].lastPrompt = prompt
 		c.instance.table.players[c.instance.table.turn].client.writeJson(prompt)
 	}
