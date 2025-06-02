@@ -35,6 +35,9 @@ func newClient(conn *websocket.Conn) *Client {
 }
 
 func (c *Client) writeJson(msg map[string]string) error {
+	if c == nil {
+		return errors.New("client not available")
+	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	return c.conn.WriteJSON(msg)

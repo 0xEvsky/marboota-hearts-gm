@@ -407,9 +407,6 @@ func advancePlay(c *Client, cardStr string) error {
 			return nil
 		}
 
-		c.instance.table.play.cards = []Card{}
-		c.instance.table.play.players = []*Player{}
-
 		// Set turn to winner
 		c.player.isTurn = false
 		c.instance.table.turn = c.instance.table.play.curWinPlayer.seat
@@ -417,6 +414,8 @@ func advancePlay(c *Client, cardStr string) error {
 
 		// Wipe play
 		c.instance.table.play = Play{}
+		c.instance.table.play.cards = []Card{}
+		c.instance.table.play.players = []*Player{}
 
 		// Announce new turn
 		var prompt = map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": c.instance.table.players[c.instance.table.turn].getHandString()}
@@ -524,7 +523,7 @@ func endGame(i *Instance, winner Team) {
 	}
 
 	// Reset table newTable
-	i.table = newTable()
+	i.table = newTable(i)
 	for j := range 4 {
 		i.table.seatPlayer(curPlayers[j].client, j)
 	}

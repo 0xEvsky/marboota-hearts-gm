@@ -26,10 +26,8 @@ func newInstance(c *Client, id string) *Instance {
 	var newInstance = &Instance{
 		id:      id,
 		clients: map[string]*Client{c.id: c},
-		table:   newTable(),
 	}
-
-	newInstance.table.instance = newInstance
+	newInstance.table = newTable(newInstance)
 
 	// server.mu.Lock()
 	// defer server.mu.Unlock()

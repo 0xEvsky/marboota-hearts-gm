@@ -48,6 +48,7 @@ const (
 
 type Player struct {
 	client     *Client
+	instance   *Instance
 	state      PlayerState
 	hand       []Card
 	seat       int
@@ -80,19 +81,21 @@ type Round struct {
 	teamBScore int
 }
 
-func newTable() Table {
+func newTable(instance *Instance) Table {
 	var players = [4]*Player{}
 	for i := range players {
 		players[i] = &Player{
-			seat:    i,
-			team:    Team(i % 2),
-			partner: players[(i+2)%4],
+			instance: instance,
+			seat:     i,
+			team:     Team(i % 2),
+			partner:  players[(i+2)%4],
 		}
 	}
 
 	return Table{
-		players: players,
-		state:   TableWaiting,
+		instance: instance,
+		players:  players,
+		state:    TableWaiting,
 		trump: Trump{
 			suit: -1,
 		},
@@ -289,13 +292,13 @@ func (t *Table) startPlay() {
 }
 
 func (p *Player) getPlayableCards() ([]Card, string) {
-	if p.state != PlayerPlaying {
-		return []Card{}, ""
-	}
+	// if p.state != PlayerPlaying {
+	// 	return []Card{}, ""
+	// }
 
 	var cards = []Card{}
 	for _, c := range p.hand {
-		if c.suit == p.client.instance.table.play.cards[0].suit {
+		if c.suit == p.instance.table.play.cards[0].suit {
 			cards = append(cards, c)
 		}
 	}
@@ -362,7 +365,7 @@ func (p *Player) getAvailableTrumps() ([]Suit, string) {
 	var str = ""
 	var trumps = []Suit{}
 	var suitCounts = map[Suit]int{}
-	var trump = p.client.instance.table.trump
+	var trump = p.instance.table.trump
 	var callOffset = 3
 	if p == trump.gobool && trump.beIstifada {
 		callOffset = 2
