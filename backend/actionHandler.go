@@ -309,6 +309,7 @@ func endTrump(i *Instance) error {
 	// Handle all-pass
 	if i.table.trump.highestCall == 0 {
 		i.table.turnOffset += 1
+		i.table.turnOffset %= 4
 		i.table.startTrump()
 		clog.Debugf("(i:%s) trump ended with all pass, skipping", i.id)
 		return nil
@@ -381,12 +382,13 @@ func advancePlay(c *Client, cardStr string) error {
 		c.instance.table.play.curWinCard = card
 		c.instance.table.play.curWinPlayer = c.player
 	} else {
-		if card.suit == c.instance.table.play.curWinCard.suit {
+		switch card.suit {
+		case c.instance.table.play.curWinCard.suit:
 			if card.value > c.instance.table.play.curWinCard.value {
 				c.instance.table.play.curWinCard = card
 				c.instance.table.play.curWinPlayer = c.player
 			}
-		} else if card.suit == c.instance.table.trump.suit {
+		case c.instance.table.trump.suit:
 			c.instance.table.play.curWinCard = card
 			c.instance.table.play.curWinPlayer = c.player
 		}
@@ -512,7 +514,7 @@ func endRound(i *Instance) {
 func endGame(i *Instance, winner Team) {
 	// Announce game end
 	var winner1 = i.table.players[winner]
-	var winner2 = winner1.partner
+	var winner2 = i.table.players[winner1.partner]
 	i.Broadcast(map[string]string{"ACTION": "GAMEEND", "WINNER1ID": winner1.client.id, "WINNER2ID": winner2.client.id})
 	clog.Debugf("(i:%s) game ended (scoreA:%v, scoreB:%v)", i.id, i.table.totalScores[TeamA], i.table.totalScores[TeamB])
 

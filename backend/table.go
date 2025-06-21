@@ -54,7 +54,7 @@ type Player struct {
 	seat       int
 	team       Team
 	score      int
-	partner    *Player
+	partner    int
 	isTurn     bool
 	lastPrompt map[string]string
 }
@@ -88,7 +88,7 @@ func newTable(instance *Instance) Table {
 			instance: instance,
 			seat:     i,
 			team:     Team(i % 2),
-			partner:  players[(i+2)%4],
+			partner:  (i + 2) % 4,
 		}
 	}
 
