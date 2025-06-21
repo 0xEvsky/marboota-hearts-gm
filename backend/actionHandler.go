@@ -97,8 +97,12 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 			c.writeJson(map[string]string{"ACTION": "OTHERDEAL", "COUNT": "13"})
 			c.writeJson(map[string]string{"ACTION": "TRUMPSTART"})
 			for i := range c.instance.table.trump.calls {
+				var userId = ""
+				if c.instance.table.trump.players[i].client != nil {
+					userId = c.instance.table.trump.players[i].client.id
+				}
 				c.writeJson(map[string]string{"ACTION": "TRUMPCALL",
-					"USERID": c.instance.table.trump.players[i].client.id,
+					"USERID": userId,
 					"SCORE":  c.instance.table.trump.calls[i]})
 			}
 		}
@@ -111,14 +115,22 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 
 			// Playerscore catchup
 			for _, p := range c.instance.table.players {
+				var pClientId = ""
+				if p.client != nil {
+					pClientId = p.client.id
+				}
 				for range p.score {
-					c.writeJson(map[string]string{"ACTION": "PLAYEND", "WINNERID": p.client.id})
+					c.writeJson(map[string]string{"ACTION": "PLAYEND", "WINNERID": pClientId})
 				}
 			}
 
 			for i := range c.instance.table.play.cards {
+				var clientId = ""
+				if c.instance.table.play.players[i].client != nil {
+					clientId = c.instance.table.play.players[i].client.id
+				}
 				c.writeJson(map[string]string{"ACTION": "PLAY",
-					"USERID": c.instance.table.play.players[i].client.id,
+					"USERID": clientId,
 					"CARD":   c.instance.table.play.cards[i].name})
 			}
 		}
