@@ -127,13 +127,8 @@ func _on_roundend(_team_a_score: String, _team_b_score: String) -> void:
 
 func _on_gameend(winner_1_id: String, winner_2_id: String) -> void:
 	state = TableState.TABLE_IDLE
+
 	un_rotate_table()
-	for i in range(4):
-		var score := get_node("Score" + str(i))
-		score.get_node("Label").text = ""
-		var seat := get_node("Seat" + str(i)) as Seat
-		if seat.sitter:
-			seat.sitter.state = Globals.player_manager.PLAYER_IDLE
 		
 	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
 		var leaveButton := $"LeaveButton"
@@ -146,6 +141,14 @@ func _on_gameend(winner_1_id: String, winner_2_id: String) -> void:
 		Globals.my_player.seat.show()
 		Globals.my_player.hand.scale = Vector2(0.30, 0.30)
 		Globals.my_player.hand.position.y = 225
+	
+	for i in range(4):
+		var score := get_node("Score" + str(i))
+		score.get_node("Label").text = ""
+		score.hide()
+		var seat := get_node("Seat" + str(i)) as Seat
+		if seat.sitter:
+			seat.sitter.state = Globals.player_manager.PLAYER_IDLE
 
 func rotate_four_values(values: Array, offset: int) -> Array:
 	offset = offset % 4  # Keep it within 0-3

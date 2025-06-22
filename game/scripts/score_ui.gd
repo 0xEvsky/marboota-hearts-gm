@@ -11,6 +11,8 @@ func _ready() -> void:
 func _on_gamestart() -> void:
 	$"HeaderRow/Label".text = $"../Table/Seat0".sitter.username + "\n" + $"../Table/Seat2".sitter.username
 	$"HeaderRow/Label2".text = $"../Table/Seat1".sitter.username + "\n" + $"../Table/Seat3".sitter.username
+	$"TotalScoreRow/Label".text = "0"
+	$"TotalScoreRow/Label2".text = "0"
 	for row in get_node("ScoreContainer").get_children():
 		row.queue_free()
 	show()

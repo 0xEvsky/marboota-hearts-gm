@@ -26,4 +26,5 @@ func _on_button_up() -> void:
 		)
 
 func _on_gameend(_1: String, _2: String) -> void:
-	button_pressed = false
+	#button_pressed = false
+	pass
