@@ -9,13 +9,14 @@ func _ready() -> void:
 	EventManager.TOTALSCORE_received.connect(_on_totalscore)
 
 func _on_gamestart() -> void:
-	$"HeaderRow/Label".text = $"../Table/Seat0".sitter.username + "\n" + $"../Table/Seat2".sitter.username
-	$"HeaderRow/Label2".text = $"../Table/Seat1".sitter.username + "\n" + $"../Table/Seat3".sitter.username
-	$"TotalScoreRow/Label".text = "0"
-	$"TotalScoreRow/Label2".text = "0"
-	for row in get_node("ScoreContainer").get_children():
-		row.queue_free()
-	show()
+	if Globals.table.state <= Globals.table.TableState.TABLE_READY:
+		$"HeaderRow/Label".text = $"../Table/Seat0".sitter.username + "\n" + $"../Table/Seat2".sitter.username
+		$"HeaderRow/Label2".text = $"../Table/Seat1".sitter.username + "\n" + $"../Table/Seat3".sitter.username
+		$"TotalScoreRow/Label".text = "0"
+		$"TotalScoreRow/Label2".text = "0"
+		for row in get_node("ScoreContainer").get_children():
+			row.queue_free()
+		show()
 
 func _on_roundend(team_a_score: String, team_b_score: String) -> void:
 	var score_row_scene := preload("res://scenes/score_row.tscn")

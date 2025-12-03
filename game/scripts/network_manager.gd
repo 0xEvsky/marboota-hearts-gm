@@ -5,7 +5,7 @@ var username := "Player"
 var user_id := str(randi_range(1, 1000000))
 var icon_url := "https://placehold.co/128x128.png?text=" + username + user_id
 
-var _backend_url_suffix := "/.proxy/backend/ws"
+var _backend_url_suffix := "/backend/ws"
 
 var _socket := WebSocketPeer.new()
 var connected := false
@@ -21,7 +21,7 @@ signal AUTH_accepted
 func _ready() -> void:
 	#if OS.has_feature("web"):
 	start()
-	
+
 # func _input(event: InputEvent) -> void:
 # 	if !OS.has_feature("web") && event.is_action_released("ui_accept"):
 # 		start()
@@ -33,7 +33,7 @@ func start() -> void:
 	_auth_requested = false
 
 	var full_url := "ws://localhost:3000/ws"
-	
+
 	# Get data from JSbridge
 	if OS.has_feature("web"):
 		var _backend_url := str(JavaScriptBridge.eval("window.location.hostname", true)) # true = safe
@@ -80,11 +80,11 @@ func _handle_auth() -> void:
 		_write_json(authMsg)
 		_auth_requested = true
 		return
-	
+
 	var msg := _read_json()
 	if msg == {}:
 		return
-	
+
 	if msg["ACTION"] == "OK":
 		authenticated = true
 		AUTH_accepted.emit()
@@ -98,7 +98,7 @@ func _read_loop() -> void:
 	var msg := _read_json()
 	if msg == {}:
 		return
-		
+
 	EventManager._handle_message(msg)
 
 func _write_json(msg: Dictionary) -> void:

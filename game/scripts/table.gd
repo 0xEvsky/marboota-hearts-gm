@@ -124,6 +124,14 @@ func _on_roundend(_team_a_score: String, _team_b_score: String) -> void:
 		var seat := get_node("Seat" + str(i)) as Seat
 		if seat.sitter:
 			seat.sitter.state = Globals.player_manager.PLAYER_READY
+	
+	# Delete last card play after 3 seconds on roundend
+	get_tree().create_timer(3.0).timeout.connect(func() -> void: 
+		for i in range(4):
+			var anchor := get_node("../LastAnchor" + str(i))
+			for child in anchor.get_children():
+				child.queue_free()
+		)
 
 func _on_gameend(winner_1_id: String, winner_2_id: String) -> void:
 	state = TableState.TABLE_IDLE
