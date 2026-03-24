@@ -24,7 +24,7 @@ func _ready() -> void:
 
 # func _input(event: InputEvent) -> void:
 # 	if !OS.has_feature("web") && event.is_action_released("ui_accept"):
-# 		start()
+# 		start()(none found)
 
 func start() -> void:
 	_socket = WebSocketPeer.new()

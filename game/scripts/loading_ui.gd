@@ -7,5 +7,3 @@ func _ready() -> void:
 	NetworkManager.AUTH_accepted.connect(func() -> void:
 		hide()
 	)
-
-

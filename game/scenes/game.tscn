@@ -49,6 +49,7 @@ _data = {
 [node name="Game" type="Node2D"]
 
 [node name="LoadingUI" type="CanvasLayer" parent="."]
+visible = false
 script = ExtResource("1_w3f0r")
 
 [node name="LoadingScreen" type="Control" parent="LoadingUI"]
