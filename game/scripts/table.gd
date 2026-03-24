@@ -5,15 +5,8 @@ enum TableState {TABLE_IDLE, TABLE_READY, TABLE_TRUMPING, TABLE_PLAYING}
 var state: TableState = TableState.TABLE_IDLE
 var play_started := false
 
-func _process(_delta: float) -> void:
-	#scale.y = DisplayServer.window_get_size().y/720.0
-	#scale.x = DisplayServer.window_get_size().x/720.0
-	#scale = Vector2(min(scale.y, scale.x), min(scale.y, scale.x))
-	#global_position.x = DisplayServer.window_get_size().x/2.0
-	print(global_position)
-
 func _ready() -> void:
-	global_position = DisplayServer.window_get_size()/2.0
+	#global_position = DisplayServer.window_get_size()/2.0
 	Globals.table = self
 	EventManager.GAMESTART_received.connect(_on_gamestart)
 	EventManager.TRUMPSTART_received.connect(_on_trumpstart)
