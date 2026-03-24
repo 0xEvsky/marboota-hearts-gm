@@ -6,7 +6,6 @@ var state: TableState = TableState.TABLE_IDLE
 var play_started := false
 
 func _ready() -> void:
-	#global_position = DisplayServer.window_get_size()/2.0
 	Globals.table = self
 	EventManager.GAMESTART_received.connect(_on_gamestart)
 	EventManager.TRUMPSTART_received.connect(_on_trumpstart)
