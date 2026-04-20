@@ -74,8 +74,13 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 		}
 	}
 
-	// Game catchup
+	// Mode selection catchup
 	if c.instance.table.state > TableWaiting {
+		c.writeJson(map[string]string{"ACTION": "SELECTMODE"})
+	}
+
+	// Game catchup
+	if c.instance.table.state > TableModeSelecting {
 		c.writeJson(map[string]string{"ACTION": "GAMESTART"})
 
 		// Score catchup
@@ -216,7 +221,7 @@ func setReady(c *Client) error {
 
 	// Check if all players are ready
 	if c.instance.table.isEveryoneReady() {
-		c.instance.table.startGame()
+		c.instance.table.selectMode()
 	}
 
 	return nil

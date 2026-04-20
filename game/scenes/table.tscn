@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dt1krqrueaayu" path="res://scripts/leave_button.gd" id="4_y4k8u"]
 [ext_resource type="PackedScene" uid="uid://d1bq52be6pou0" path="res://scenes/hand.tscn" id="6_605ca"]
 [ext_resource type="Script" uid="uid://c22evetbkpuhh" path="res://scripts/wist_button.gd" id="6_ov7a8"]
+[ext_resource type="Script" uid="uid://fisk36er7v7c" path="res://scenes/hearts_button.gd" id="7_docs3"]
 
 [sub_resource type="Theme" id="Theme_67dwn"]
 
@@ -57,7 +58,6 @@ position = Vector2(0, -313)
 position = Vector2(313, 0)
 
 [node name="ReadyButton" type="Button" parent="." unique_id=1225678904]
-visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -78,7 +78,6 @@ text = "Ready"
 script = ExtResource("3_n1v42")
 
 [node name="LeaveButton" type="Button" parent="." unique_id=1742485182]
-visible = false
 offset_left = -91.0
 offset_top = 108.0
 offset_right = 84.0
@@ -89,6 +88,7 @@ text = "Leave"
 script = ExtResource("4_y4k8u")
 
 [node name="WistButton" type="Button" parent="." unique_id=41997090]
+visible = false
 offset_left = -189.0
 offset_top = -135.0
 offset_right = 193.0
@@ -97,13 +97,15 @@ theme = SubResource("Theme_2f5gb")
 text = "Wist"
 script = ExtResource("6_ov7a8")
 
-[node name="WistButton2" type="Button" parent="." unique_id=1124119041]
+[node name="HeartsButton" type="Button" parent="." unique_id=1124119041]
+visible = false
 offset_left = -188.0
 offset_top = 34.0
 offset_right = 194.0
 offset_bottom = 160.0
 theme = SubResource("Theme_2f5gb")
 text = "Hearts"
+script = ExtResource("7_docs3")
 
 [node name="Hand0" parent="." unique_id=931061931 node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
 position = Vector2(0, 225)
@@ -254,3 +256,4 @@ vertical_alignment = 1
 [connection signal="toggled" from="ReadyButton" to="ReadyButton" method="_on_toggled"]
 [connection signal="button_up" from="LeaveButton" to="LeaveButton" method="_on_button_up"]
 [connection signal="button_up" from="WistButton" to="WistButton" method="_on_button_up"]
+[connection signal="pressed" from="HeartsButton" to="HeartsButton" method="_on_pressed"]

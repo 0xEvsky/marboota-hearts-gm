@@ -1,12 +1,13 @@
 extends Node2D
 class_name Table
 
-enum TableState {TABLE_IDLE, TABLE_READY, TABLE_TRUMPING, TABLE_PLAYING}
+enum TableState {TABLE_IDLE, TABLE_SELECTING, TABLE_READY, TABLE_TRUMPING, TABLE_PLAYING}
 var state: TableState = TableState.TABLE_IDLE
 var play_started := false
 
 func _ready() -> void:
 	Globals.table = self
+	EventManager.SELECTMODE_recevied.connect(_on_gamemode_selection)
 	EventManager.GAMESTART_received.connect(_on_gamestart)
 	EventManager.TRUMPSTART_received.connect(_on_trumpstart)
 	EventManager.PLAYSTART_received.connect(_on_playstart)
@@ -17,7 +18,19 @@ func _ready() -> void:
 	EventManager.GAMEEND_received.connect(_on_gameend)
 	
 func _on_gamemode_selection() -> void:
-	pass
+	state = TableState.TABLE_SELECTING
+	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
+		var leaveButton := $"LeaveButton"
+		leaveButton.hide()
+
+		var readyButton := $"ReadyButton"
+		readyButton.hide()
+		
+		var wistButton := $"WistButton"
+		wistButton.show()
+		
+		var heartsButton := $"HeartsButton"
+		heartsButton.show()
 
 func _on_gamestart() -> void:
 	state = TableState.TABLE_READY
@@ -32,13 +45,6 @@ func _on_gamestart() -> void:
 				score.position = Vector2(92, 249)
 
 		score.show()
-	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
-		var leaveButton := $"LeaveButton"
-		leaveButton.hide()
-
-		var readyButton := $"ReadyButton"
-		readyButton.hide()
-
 		Globals.my_player.hide()
 		Globals.my_player.seat.hide()
 		Globals.my_player.hand.scale = Vector2(1, 1)

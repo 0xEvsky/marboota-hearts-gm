@@ -7,6 +7,7 @@ signal SIT_received
 signal UNSIT_received
 signal READY_received
 signal UNREADY_received
+signal SELECTMODE_recevied
 signal GAMESTART_received
 signal DEAL_received
 signal OTHERDEAL_received
@@ -71,6 +72,8 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			READY_received.emit()
 		"UNREADY":
 			UNREADY_received.emit()
+		"SELECTMODE":
+			SELECTMODE_recevied.emit()
 		"GAMESTART":
 			GAMESTART_received.emit()
 		"DEAL": 
@@ -115,6 +118,9 @@ func ready_request() -> Dictionary:
 
 func unready_request() -> Dictionary:
 	return {"ACTION": "UNREADY"}
+	
+func setmode_request(mode: String) -> Dictionary:
+	return {"ACTION": "SETMODE", "MODE": mode}
 
 func trumpcall_request(score: String) -> Dictionary:
 	return {"ACTION": "TRUMPCALL", "SCORE": score}

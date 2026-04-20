@@ -12,8 +12,16 @@ type TableState int
 
 const (
 	TableWaiting TableState = iota
+	TableModeSelecting
 	TableTrumping
 	TablePlaying
+)
+
+type GameMode int
+
+const (
+	WistMode GameMode = iota
+	HeartsMode
 )
 
 type Table struct {
@@ -27,6 +35,7 @@ type Table struct {
 	playCount   int
 	rounds      []Round
 	totalScores map[Team]int
+	gameMode    GameMode
 }
 
 type PlayerState int
@@ -156,6 +165,12 @@ func (t *Table) isEveryoneReady() bool {
 	}
 	clog.Debugf("(i:%s) everyone ready", t.instance.id)
 	return true
+}
+
+func (t *Table) selectMode() {
+	t.state = TableModeSelecting
+	t.instance.Broadcast(map[string]string{"ACTION": "SELECTMODE"})
+	clog.Debugf("(i:%s) selecting mode", t.instance.id)
 }
 
 func (t *Table) startGame() {

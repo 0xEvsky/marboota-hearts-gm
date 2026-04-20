@@ -142,16 +142,6 @@ This is sent to all other clients in an instance when a client is successfully s
 ```
 
 
-### SELECTMODE
-This is sent to all other clients in an instance when all clients are successfully set as ready, alongside its information.
-```json
-{
-    "ACTION": "SELECTMODE",
-    "USERID": "11223344"
-}
-```
-
-
 ### UNREADY
 This is sent to all other clients in an instance when a client is set as unready, alongside its information.
 ```json
@@ -194,8 +184,17 @@ Request to play a card after being prompted by the server with `YOURPLAY`.
 ## Server -> client event messages
 The server will *- without prompt -* send these messages that contain event updates about game state, other players...etc. Such as notifying all other clients when a client does something (joins, sits..etc).
 
+
+### SELECTMODE
+Once all players in a table are ready, this is sent to all clients in that instance signaling to select game mode.
+```json
+{
+    "ACTION": "SELECTMODE",
+}
+```
+
 ### GAMESTART
-Once all players in a table are ready, this is sent to all clients in that instance signaling the game has started.
+Once the game mode is selected, this is sent to all clients in that instance signaling the game has started.
 ```json
 {
     "ACTION": "GAMESTART"
