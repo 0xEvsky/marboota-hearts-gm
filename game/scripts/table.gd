@@ -15,6 +15,9 @@ func _ready() -> void:
 	EventManager.PLAYEND_received.connect(_on_playend)
 	EventManager.ROUNDEND_received.connect(_on_roundend)
 	EventManager.GAMEEND_received.connect(_on_gameend)
+	
+func _on_gamemode_selection() -> void:
+	pass
 
 func _on_gamestart() -> void:
 	state = TableState.TABLE_READY

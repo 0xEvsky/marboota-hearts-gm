@@ -1,0 +1,49 @@
+config_version=5
+
+[application]
+
+config/name="marboota-game (4.3)"
+run/main_scene="res://scenes/game.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[autoload]
+
+NetworkManager="*res://scripts/network_manager.gd"
+EventManager="*res://scripts/event_manager.gd"
+Globals="*res://scripts/globals.gd"
+CardMap="*res://scripts/card_map.gd"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=2
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep_width"
+
+[file_customization]
+
+folder_colors={
+"res://build/": "gray"
+}
+
+[gui]
+
+theme/custom_font="res://assets/ui/basefont.tres"
+
+[input]
+
+click={
+"deadzone": 0.5,
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":1,"canceled":false,"pressed":false,"double_click":false,"script":null)
+]
+}
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

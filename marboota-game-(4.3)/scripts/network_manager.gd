@@ -1,0 +1,111 @@
+extends Node
+
+var instance_id := "1234"
+var username := "Player"
+var user_id := str(randi_range(1, 1000000))
+var icon_url := "https://placehold.co/128x128.png?text=" + username + user_id
+
+var _backend_url_suffix := "/backend/ws"
+
+var _socket := WebSocketPeer.new()
+var connected := false
+var authenticated := false
+var _auth_requested := false
+
+const BEAT_INTERVAL = 30 # seconds
+var timer: float = BEAT_INTERVAL
+
+signal AUTH_accepted
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	#if OS.has_feature("web"):
+	start()
+
+# func _input(event: InputEvent) -> void:
+# 	if !OS.has_feature("web") && event.is_action_released("ui_accept"):
+# 		start()(none found)
+
+func start() -> void:
+	_socket = WebSocketPeer.new()
+	connected = false
+	authenticated = false
+	_auth_requested = false
+
+	var full_url := "ws://localhost:3000/ws"
+
+	# Get data from JSbridge
+	if OS.has_feature("web"):
+		var _backend_url := str(JavaScriptBridge.eval("window.location.hostname", true)) # true = safe
+		full_url = "wss://" + _backend_url + _backend_url_suffix
+		var discord := JavaScriptBridge.get_interface("discord")
+		if discord != null:
+			instance_id = discord.sdk.instanceId
+			icon_url = "https://cdn.discordapp.com/avatars/" + discord.session.user.id + "/" + discord.session.user.avatar + ".png?size=128"
+			username = discord.session.user.global_name
+
+	#$"../Game/LoadingUI/Label".text = full_url
+	var err := _socket.connect_to_url(full_url)
+	if err != OK:
+		push_error("Unable to connect")
+		set_process(false)
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	_socket.poll()
+	var state := _socket.get_ready_state()
+
+	if state == WebSocketPeer.STATE_OPEN:
+		connected = true
+		if !authenticated:
+			_handle_auth()
+			return
+
+		# Heartbeat
+		timer -= delta
+		if timer <= 0.0:
+			EventManager.send_request(EventManager.ping_request())
+			timer = BEAT_INTERVAL
+		_read_loop()
+
+	elif connected && state == WebSocketPeer.STATE_CLOSED:
+		get_tree().change_scene_to_file("res://scenes/game.tscn")
+		start()
+
+
+func _handle_auth() -> void:
+	if !_auth_requested:
+		var authMsg := {"ACTION": "AUTH", "INSTANCEID": instance_id, "USERID": user_id, "USERNAME": username, "ICONURL": icon_url}
+		_write_json(authMsg)
+		_auth_requested = true
+		return
+
+	var msg := _read_json()
+	if msg == {}:
+		return
+
+	if msg["ACTION"] == "OK":
+		authenticated = true
+		AUTH_accepted.emit()
+		print_debug("Authenticated!")
+	elif msg["ACTION"] == "ERROR":
+		# TODO: handle error
+		push_error("Authentication failed: " + msg["MESSAGE"] + ", exiting...")
+		set_process(false)
+
+func _read_loop() -> void:
+	var msg := _read_json()
+	if msg == {}:
+		return
+
+	EventManager._handle_message(msg)
+
+func _write_json(msg: Dictionary) -> void:
+	var msgJson := JSON.stringify(msg)
+	_socket.send_text(msgJson)
+
+func _read_json() -> Dictionary:
+	if _socket.get_available_packet_count():
+		return JSON.parse_string(_socket.get_packet().get_string_from_utf8())
+	return {}

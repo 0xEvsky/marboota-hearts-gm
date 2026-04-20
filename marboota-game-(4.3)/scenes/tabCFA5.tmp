@@ -1,0 +1,51 @@
+[gd_scene load_steps=6 format=3 uid="uid://belne7lgw02p3"]
+
+[ext_resource type="Texture2D" uid="uid://buqxed4qdih7p" path="res://assets/graphics/table.png" id="1_4ps2g"]
+[ext_resource type="PackedScene" uid="uid://cur6qosdw6bdc" path="res://scenes/seat.tscn" id="2_bw1av"]
+[ext_resource type="Script" path="res://scripts/ready_button.gd" id="3_n1v42"]
+
+[sub_resource type="Theme" id="Theme_67dwn"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j3pjb"]
+bg_color = Color(0, 0.701961, 0.0470588, 1)
+
+[node name="Table" type="Node2D"]
+
+[node name="TableSprite" type="Sprite2D" parent="."]
+position = Vector2(0, -0.000141511)
+scale = Vector2(0.57963, 0.57963)
+texture = ExtResource("1_4ps2g")
+
+[node name="Seat1" parent="." instance=ExtResource("2_bw1av")]
+seat_num = null
+
+[node name="Seat2" parent="." instance=ExtResource("2_bw1av")]
+position = Vector2(313, 0)
+seat_num = 2
+
+[node name="Seat3" parent="." instance=ExtResource("2_bw1av")]
+position = Vector2(0, -313)
+seat_num = 3
+
+[node name="Seat4" parent="." instance=ExtResource("2_bw1av")]
+position = Vector2(-313, 0)
+seat_num = 4
+
+[node name="ReadyButton" type="Button" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -189.0
+offset_top = 3.0
+offset_right = 188.0
+offset_bottom = 103.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_67dwn")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 66
+theme_override_styles/pressed = SubResource("StyleBoxFlat_j3pjb")
+text = "Ready"
+script = ExtResource("3_n1v42")

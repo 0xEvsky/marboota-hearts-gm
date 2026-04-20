@@ -1,0 +1,232 @@
+[gd_scene load_steps=10 format=3 uid="uid://belne7lgw02p3"]
+
+[ext_resource type="Texture2D" uid="uid://buqxed4qdih7p" path="res://assets/graphics/table.png" id="1_4ps2g"]
+[ext_resource type="Script" path="res://scripts/table.gd" id="1_er5af"]
+[ext_resource type="PackedScene" uid="uid://cur6qosdw6bdc" path="res://scenes/seat.tscn" id="2_bw1av"]
+[ext_resource type="Script" path="res://scripts/ready_button.gd" id="3_n1v42"]
+[ext_resource type="Script" path="res://scripts/leave_button.gd" id="4_y4k8u"]
+[ext_resource type="PackedScene" uid="uid://d1bq52be6pou0" path="res://scenes/hand.tscn" id="6_605ca"]
+
+[sub_resource type="Theme" id="Theme_67dwn"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j3pjb"]
+bg_color = Color(0, 0.701961, 0.0470588, 1)
+
+[sub_resource type="Theme" id="Theme_m6cxa"]
+
+[node name="Table" type="Node2D"]
+script = ExtResource("1_er5af")
+
+[node name="TableSprite" type="Sprite2D" parent="."]
+position = Vector2(0, -0.000141511)
+scale = Vector2(0.57963, 0.57963)
+texture = ExtResource("1_4ps2g")
+
+[node name="Seat0" parent="." instance=ExtResource("2_bw1av")]
+scale = Vector2(1.2, 1.2)
+
+[node name="Seat1" parent="." instance=ExtResource("2_bw1av")]
+position = Vector2(-313, 0)
+scale = Vector2(1.2, 1.2)
+seat_num = 1
+
+[node name="Seat2" parent="." instance=ExtResource("2_bw1av")]
+position = Vector2(0, -313)
+scale = Vector2(1.2, 1.2)
+seat_num = 2
+
+[node name="Seat3" parent="." instance=ExtResource("2_bw1av")]
+position = Vector2(313, 0)
+scale = Vector2(1.2, 1.2)
+seat_num = 3
+
+[node name="Anchor0" type="Node2D" parent="."]
+position = Vector2(0, 313)
+
+[node name="Anchor1" type="Node2D" parent="."]
+position = Vector2(-313, 0)
+
+[node name="Anchor2" type="Node2D" parent="."]
+position = Vector2(0, -313)
+
+[node name="Anchor3" type="Node2D" parent="."]
+position = Vector2(313, 0)
+
+[node name="ReadyButton" type="Button" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -189.0
+offset_top = 3.0
+offset_right = 188.0
+offset_bottom = 103.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_67dwn")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 66
+theme_override_styles/pressed = SubResource("StyleBoxFlat_j3pjb")
+toggle_mode = true
+text = "Ready"
+script = ExtResource("3_n1v42")
+
+[node name="LeaveButton" type="Button" parent="."]
+offset_left = -91.0
+offset_top = 108.0
+offset_right = 84.0
+offset_bottom = 154.0
+theme = SubResource("Theme_m6cxa")
+theme_override_font_sizes/font_size = 31
+text = "Leave"
+script = ExtResource("4_y4k8u")
+
+[node name="Hand0" parent="." node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
+position = Vector2(0, 225)
+scale = Vector2(0.3, 0.3)
+anchor = NodePath("../CardAnchor0")
+score = NodePath("../Score0")
+
+[node name="Hand1" parent="." node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
+position = Vector2(-225, 0)
+rotation = 1.5708
+scale = Vector2(0.3, 0.3)
+anchor = NodePath("../CardAnchor1")
+score = NodePath("../Score1")
+
+[node name="Hand2" parent="." node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
+position = Vector2(0, -225)
+rotation = 3.14159
+scale = Vector2(0.3, 0.3)
+anchor = NodePath("../CardAnchor2")
+score = NodePath("../Score2")
+
+[node name="Hand3" parent="." node_paths=PackedStringArray("anchor", "score") instance=ExtResource("6_605ca")]
+position = Vector2(225, 0)
+rotation = -1.5708
+scale = Vector2(0.3, 0.3)
+anchor = NodePath("../CardAnchor3")
+score = NodePath("../Score3")
+
+[node name="CardAnchor0" type="Node2D" parent="."]
+position = Vector2(0, 75)
+
+[node name="CardAnchor1" type="Node2D" parent="."]
+position = Vector2(-75, 0)
+rotation = 1.5708
+
+[node name="CardAnchor2" type="Node2D" parent="."]
+position = Vector2(0, -75)
+rotation = 3.14159
+
+[node name="CardAnchor3" type="Node2D" parent="."]
+position = Vector2(75, 0)
+rotation = -1.5708
+
+[node name="Score0" type="Panel" parent="."]
+visible = false
+offset_left = -51.0
+offset_top = 303.0
+offset_right = 51.0
+offset_bottom = 369.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Score0"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -27.0
+offset_right = 47.0
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Score1" type="Panel" parent="."]
+visible = false
+offset_left = -314.0
+offset_top = 97.0
+offset_right = -212.0
+offset_bottom = 163.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Score1"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -27.0
+offset_right = 47.0
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Score2" type="Panel" parent="."]
+visible = false
+offset_left = -203.0
+offset_top = -314.0
+offset_right = -101.0
+offset_bottom = -248.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Score2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -27.0
+offset_right = 47.0
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Score3" type="Panel" parent="."]
+visible = false
+offset_left = 211.0
+offset_top = -166.0
+offset_right = 313.0
+offset_bottom = -100.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Score3"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -27.0
+offset_right = 47.0
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="toggled" from="ReadyButton" to="ReadyButton" method="_on_toggled"]
+[connection signal="button_up" from="LeaveButton" to="LeaveButton" method="_on_button_up"]

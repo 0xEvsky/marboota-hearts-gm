@@ -141,6 +141,17 @@ This is sent to all other clients in an instance when a client is successfully s
 }
 ```
 
+
+### SELECTMODE
+This is sent to all other clients in an instance when all clients are successfully set as ready, alongside its information.
+```json
+{
+    "ACTION": "SELECTMODE",
+    "USERID": "11223344"
+}
+```
+
+
 ### UNREADY
 This is sent to all other clients in an instance when a client is set as unready, alongside its information.
 ```json
