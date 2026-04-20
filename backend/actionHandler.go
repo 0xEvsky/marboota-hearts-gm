@@ -237,12 +237,32 @@ func unsetReady(c *Client) error {
 	}
 
 	if c.instance.table.state != TableWaiting {
-		return errors.New("game has started")
+		return errors.New("cannot unset now")
 	}
 
 	c.player.state = PlayerWaiting
 	c.broadcastToMates(map[string]string{"ACTION": "UNREADY", "USERID": c.id})
 	return nil
+}
+
+func setMode(c *Client, mode string) error {
+	if c.instance.table.state != TableModeSelecting {
+		return errors.New("game has started")
+	}
+
+	var instance = c.instance
+	if instance.host != c {
+		return errors.New("game mode can only be selected by host")
+	}
+
+	switch mode {
+	case "WHIST":
+		c.instance.table.gameMode = WhistMode
+	case "HEARTS":
+		c.instance.table.gameMode = HeartsMode
+	}
+	return nil
+
 }
 
 func advanceTrump(c *Client, scoreStr string) error {

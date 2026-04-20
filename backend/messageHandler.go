@@ -82,6 +82,16 @@ func msgHandler(c *Client, rawMsg []byte) {
 		c.writeOk()
 		clog.Debugf("(i:%s) (c:%s) UNREADY request accepted", c.instance.id, c.id)
 
+	case "SETMODE":
+		err := setMode(c, msg["MODE"])
+		if err != nil {
+			c.writeError(err.Error())
+			clog.Debugf("(i:%s) (c:%s) SETMODE request refused: %s\n", c.instance.id, c.id, err)
+			return
+		}
+		c.writeOk()
+		clog.Printf("Game mode: %s", msg["MODE"])
+
 	case "TRUMPCALL":
 		err := advanceTrump(c, msg["SCORE"])
 		if err != nil {

@@ -1,7 +1,7 @@
 extends Node2D
 class_name PlayerManager
 
-enum {PLAYER_UNAVAILABLE, PLAYER_IDLE, PLAYER_WAITING, PLAYER_READY, PLAYER_TRUMPING, PLAYER_PLAYING}
+enum {PLAYER_UNAVAILABLE, PLAYER_IDLE, PLAYER_WAITING, PLAYER_READY, PLAYER_TRUMPING, PLAYER_PLAYING, PLAYER_SELECTING}
 var pinned_players: Array[Player] = []
 
 # Called when the node enters the scene tree for the first time.

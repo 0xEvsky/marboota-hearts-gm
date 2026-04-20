@@ -87,14 +87,14 @@ theme_override_font_sizes/font_size = 31
 text = "Leave"
 script = ExtResource("4_y4k8u")
 
-[node name="WistButton" type="Button" parent="." unique_id=41997090]
+[node name="WhistButton" type="Button" parent="." unique_id=41997090]
 visible = false
 offset_left = -189.0
 offset_top = -135.0
 offset_right = 193.0
 offset_bottom = -9.0
 theme = SubResource("Theme_2f5gb")
-text = "Wist"
+text = "Whist"
 script = ExtResource("6_ov7a8")
 
 [node name="HeartsButton" type="Button" parent="." unique_id=1124119041]
@@ -255,5 +255,5 @@ vertical_alignment = 1
 
 [connection signal="toggled" from="ReadyButton" to="ReadyButton" method="_on_toggled"]
 [connection signal="button_up" from="LeaveButton" to="LeaveButton" method="_on_button_up"]
-[connection signal="button_up" from="WistButton" to="WistButton" method="_on_button_up"]
+[connection signal="button_up" from="WhistButton" to="WhistButton" method="_on_button_up"]
 [connection signal="pressed" from="HeartsButton" to="HeartsButton" method="_on_pressed"]

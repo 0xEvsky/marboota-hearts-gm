@@ -26,8 +26,8 @@ func _on_gamemode_selection() -> void:
 		var readyButton := $"ReadyButton"
 		readyButton.hide()
 		
-		var wistButton := $"WistButton"
-		wistButton.show()
+		var whistButton := $"WhistButton"
+		whistButton.show()
 		
 		var heartsButton := $"HeartsButton"
 		heartsButton.show()

@@ -20,7 +20,7 @@ const (
 type GameMode int
 
 const (
-	WistMode GameMode = iota
+	WhistMode GameMode = iota
 	HeartsMode
 )
 

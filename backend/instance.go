@@ -3,10 +3,12 @@ package main
 import "sync"
 
 type Instance struct {
-	mu      sync.Mutex
-	id      string
-	clients map[string]*Client // key is userid
-	table   Table
+	mu        sync.Mutex
+	id        string
+	clients   map[string]*Client // key is userid
+	table     Table
+	joinQueue Queue
+	host      *Client
 }
 
 func joinInstance(c *Client, id string) *Instance {
@@ -16,6 +18,7 @@ func joinInstance(c *Client, id string) *Instance {
 		instance.mu.Lock()
 		defer instance.mu.Unlock()
 		instance.clients[c.id] = c
+		instance.joinQueue.Enqueue(c)
 		return instance
 	}
 
@@ -28,6 +31,8 @@ func newInstance(c *Client, id string) *Instance {
 		clients: map[string]*Client{c.id: c},
 	}
 	newInstance.table = newTable(newInstance)
+	newInstance.joinQueue.Enqueue(c)
+	newInstance.setHost()
 
 	// server.mu.Lock()
 	// defer server.mu.Unlock()
@@ -43,4 +48,8 @@ func (i *Instance) Broadcast(msg map[string]string) {
 		}
 		c.writeJson(msg)
 	}
+}
+
+func (i *Instance) setHost() {
+	i.host, _ = i.joinQueue.Peek()
 }
