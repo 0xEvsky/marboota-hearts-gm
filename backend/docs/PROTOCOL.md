@@ -90,6 +90,18 @@ Requests to set the client at the game table as NOT ready. Returns an error if t
 }
 ```
 
+### SETMODE
+Requests the server to set the current game mode.
+> [!NOTE]
+> Valid modes are `"WHIST"` and `"HEARTS"`
+```json
+{
+    "ACTION": "SETMODE",
+    "MODE": "WHIST",
+    "REQUESTID": "request000123"
+}
+```
+
 ## Server -> client event messages
 The server will *- without prompt -* send these messages that contain event updates about game state, other players...etc. Such as notifying all other clients when a client does something (joins, sits..etc).
 
@@ -219,6 +231,13 @@ Notifies a client that all other players at the table have been dealt `COUNT` am
 }
 ```
 
+### PASSCARDS
+Notifies all clients that cards passing phase has started.
+```json
+{
+    "ACTION": "PASSCARDS"
+}
+
 ### TRUMPSTART
 Notifies all clients that trumping has started.
 ```json
@@ -287,10 +306,11 @@ Notifies all clients that the user with id `USERID` has played the card `CARD`.
 ```
 
 ### PLAYEND
-Notifies all clients that the current hand play has ended, alongside the winner's userid.
+Notifies all clients that the current hand play has ended, alongside the winner's userid and their penalty.
 ```json
 {
     "ACTION": "PLAYEND",
+    "PLAYSCORE": "4",
     "WINNERID": "11223344"
 }
 ```

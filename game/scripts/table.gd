@@ -49,6 +49,12 @@ func _on_gamestart() -> void:
 		Globals.my_player.seat.hide()
 		Globals.my_player.hand.scale = Vector2(1, 1)
 		Globals.my_player.hand.position.y = 260
+		
+		var whistButton := $"WhistButton"
+		whistButton.hide()
+		
+		var heartsButton := $"HeartsButton"
+		heartsButton.hide()
 
 
 func _on_trumpstart() -> void:
@@ -81,7 +87,7 @@ func _on_play(user_id: String, card_str: String) -> void:
 	if player != Globals.my_player:
 		hand.on_play(card_str)
 
-func _on_playend(winner_id: String) -> void:
+func _on_playend(play_score: String, winner_id: String) -> void:
 	#var cards: Array[Card] = []
 	var winning_hand := Globals.player_manager.get_player_by_id(winner_id).hand as Hand
 	for i in range(4):
@@ -117,7 +123,7 @@ func _on_playend(winner_id: String) -> void:
 	var panel := player.hand.score
 	var label := panel.get_node("Label") as Label
 	var score := int(label.text)
-	score += 1
+	score = int(play_score)
 	label.text = str(score)
 
 func _on_playerscore(user_id: String, score_str: String) -> void:

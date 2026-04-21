@@ -257,10 +257,13 @@ func setMode(c *Client, mode string) error {
 
 	switch mode {
 	case "WHIST":
+		c.instance.table.gameMode.id = WhistModeID
 		c.instance.table.gameMode = WhistMode
 	case "HEARTS":
+		c.instance.table.gameMode.id = HeartsModeID
 		c.instance.table.gameMode = HeartsMode
 	}
+	c.instance.table.startGame()
 	return nil
 
 }
@@ -347,7 +350,7 @@ func endTrump(i *Instance) error {
 	if i.table.trump.highestCall == 0 {
 		i.table.turnOffset += 1
 		i.table.turnOffset %= 4
-		i.table.startTrump()
+		// i.table.startTrump()
 		clog.Debugf("(i:%s) trump ended with all pass, skipping", i.id)
 		return nil
 	}
@@ -381,7 +384,7 @@ func advancePlay(c *Client, cardStr string) error {
 		return err
 	}
 
-	if len(c.instance.table.play.cards) == 0 {
+	if c.instance.table.withTrump && len(c.instance.table.play.cards) == 0 {
 		if c.instance.table.trump.suit == -1 {
 			// Check if first play ever is a valid trump
 			var playables, _ = c.player.getAvailableTrumps()
@@ -434,11 +437,16 @@ func advancePlay(c *Client, cardStr string) error {
 	// Check if play is complete
 	if len(c.instance.table.play.cards) == 4 {
 		// Add score & advance round
-		c.instance.table.play.curWinPlayer.score += 1
+		var playScore = c.instance.table.gameMode.calcRoundScore(&c.instance.table)
+		// clog.Debug("score: ", c.instance.table.play.curWinPlayer.score)
 		c.instance.table.playCount += 1
 
 		// Announce play round end
-		c.instance.Broadcast(map[string]string{"ACTION": "PLAYEND", "WINNERID": c.instance.table.play.curWinPlayer.client.id})
+		c.instance.Broadcast(map[string]string{
+			"ACTION":    "PLAYEND",
+			"PLAYSCORE": strconv.Itoa(playScore),
+			"WINNERID":  c.instance.table.play.curWinPlayer.client.id,
+		})
 
 		// End round if playRound == 13
 		if c.instance.table.playCount == 13 {
@@ -545,7 +553,7 @@ func endRound(i *Instance) {
 	i.table.turnOffset += 1
 	i.table.turnOffset %= 4
 
-	i.table.startTrump()
+	// i.table.startTrump()
 }
 
 func endGame(i *Instance, winner Team) {

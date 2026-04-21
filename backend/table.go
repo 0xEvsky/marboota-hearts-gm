@@ -13,15 +13,9 @@ type TableState int
 const (
 	TableWaiting TableState = iota
 	TableModeSelecting
+	TableCardsPassing
 	TableTrumping
 	TablePlaying
-)
-
-type GameMode int
-
-const (
-	WhistMode GameMode = iota
-	HeartsMode
 )
 
 type Table struct {
@@ -31,6 +25,7 @@ type Table struct {
 	turn        int
 	turnOffset  int
 	trump       Trump
+	withTrump   bool
 	play        Play
 	playCount   int
 	rounds      []Round
@@ -176,19 +171,13 @@ func (t *Table) selectMode() {
 func (t *Table) startGame() {
 	t.instance.Broadcast(map[string]string{"ACTION": "GAMESTART"})
 	clog.Debugf("(i:%s) game started", t.instance.id)
-	t.startTrump()
+	t.startShuffle()
 }
 
-func (t *Table) startTrump() {
-	t.trump = Trump{
-		players: []*Player{},
-		calls:   []string{},
-		suit:    -1,
-	}
+func (t *Table) startShuffle() {
 	t.play = Play{}
 	t.playCount = 0
 	for _, p := range t.players {
-		p.state = PlayerTrumping
 		p.score = 0
 		p.hand = []Card{}
 		p.isTurn = false
@@ -254,18 +243,7 @@ func (t *Table) startTrump() {
 
 	// Announce to all
 	t.instance.Broadcast(map[string]string{"ACTION": "OTHERDEAL", "COUNT": "13"})
-
-	t.instance.Broadcast(map[string]string{"ACTION": "TRUMPSTART"})
-	clog.Debugf("(i:%s) trump started", t.instance.id)
-
-	t.state = TableTrumping
-	t.players[t.turn].isTurn = false
-	t.turn = t.turnOffset
-	t.players[t.turn].isTurn = true
-
-	var prompt = map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": "7", "MAXSCORE": "11"}
-	t.players[t.turn].lastPrompt = prompt
-	t.players[t.turn].client.writeJson(prompt)
+	t.gameMode.onShuffleEnd(t)
 }
 
 func (t *Table) startPlay() {
@@ -312,9 +290,13 @@ func (p *Player) getPlayableCards() ([]Card, string) {
 	// }
 
 	var cards = []Card{}
-	for _, c := range p.hand {
-		if c.suit == p.instance.table.play.cards[0].suit {
-			cards = append(cards, c)
+	if len(p.instance.table.play.cards) == 0 {
+		cards = p.hand
+	} else {
+		for _, c := range p.hand {
+			if c.suit == p.instance.table.play.cards[0].suit {
+				cards = append(cards, c)
+			}
 		}
 	}
 

@@ -93,7 +93,7 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 		"PLAY":
 			PLAY_received.emit(msg["USERID"], msg["CARD"])
 		"PLAYEND":
-			PLAYEND_received.emit(msg["WINNERID"])
+			PLAYEND_received.emit(msg["PLAYSCORE"], msg["WINNERID"])
 		"ROUNDEND":
 			ROUNDEND_received.emit(msg["TEAMASCORE"], msg["TEAMBSCORE"])
 		"TOTALSCORE":
