@@ -19,9 +19,12 @@ signal PLAYSTART_received
 signal YOURPLAY_received
 signal PLAY_received
 signal PLAYEND_received
-signal ROUNDEND_received
-signal TOTALSCORE_received
-signal GAMEEND_received
+signal TEAMROUNDEND_received
+signal TEAMTOTALSCORE_received
+signal TEAMGAMEEND_received
+signal FFAROUNDEND_received
+signal FFATOTALSCORE_received
+signal FFAGAMEEND_received
 
 
 
@@ -97,12 +100,18 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			PLAY_received.emit(msg["USERID"], msg["CARD"])
 		"PLAYEND":
 			PLAYEND_received.emit(msg["PLAYSCORE"], msg["WINNERID"])
-		"ROUNDEND":
-			ROUNDEND_received.emit(msg["TEAMASCORE"], msg["TEAMBSCORE"])
-		"TOTALSCORE":
-			TOTALSCORE_received.emit(msg["TEAMASCORE"], msg["TEAMBSCORE"])
-		"GAMEEND":
-			GAMEEND_received.emit(msg["WINNER1ID"], msg["WINNER2ID"])
+		"TEAMROUNDEND":
+			TEAMROUNDEND_received.emit(msg["TEAMASCORE"], msg["TEAMBSCORE"])
+		"TEAMTOTALSCORE":
+			TEAMTOTALSCORE_received.emit(msg["TEAMASCORE"], msg["TEAMBSCORE"])
+		"TEAMGAMEEND":
+			TEAMGAMEEND_received.emit(msg["WINNER1ID"], msg["WINNER2ID"])
+		"FFAROUNDEND":
+			FFAROUNDEND_received.emit(msg["0"], msg["1"], msg["2"], msg["3"])
+		"FFATOTALSCORE":
+			FFATOTALSCORE_received.emit(msg["0"], msg["1"], msg["2"], msg["3"])
+		"FFAGAMEEND":
+			FFAGAMEEND_received.emit(msg["WINNERID"])
 		_:
 			push_error("Invalid or unknown action received from server:" + str(action))
 

@@ -2,7 +2,7 @@ extends Button
 
 func _ready() -> void:
 	visible = false
-	EventManager.GAMEEND_received.connect(_on_gameend)
+	EventManager.TEAMGAMEEND_received.connect(_on_gameend)
 
 
 func _on_toggled(toggled_on: bool) -> void:

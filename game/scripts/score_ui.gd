@@ -5,8 +5,8 @@ extends CanvasLayer
 func _ready() -> void:
 	hide()
 	EventManager.GAMESTART_received.connect(_on_gamestart)
-	EventManager.ROUNDEND_received.connect(_on_roundend)
-	EventManager.TOTALSCORE_received.connect(_on_totalscore)
+	EventManager.TEAMROUNDEND_received.connect(_on_roundend)
+	EventManager.TEAMTOTALSCORE_received.connect(_on_totalscore)
 
 func _on_gamestart() -> void:
 	if Globals.table.state <= Globals.table.TableState.TABLE_READY:

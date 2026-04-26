@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/OmarQurashi868/marboota/backend/clog"
 )
 
@@ -21,7 +23,49 @@ type GameMode struct {
 	id             GameModeID
 	penaltyConfig  *PenaltyConfig
 	onShuffleEnd   func(t *Table)
-	calcRoundScore func(t *Table) int
+	calcPlayScore  func(t *Table) int
+	modeRoundScore RoundScore
+	onRoundEnd     func(i *Instance)
+}
+
+type RoundScore interface {
+	addScore(i *Instance)
+	getScores(i *Instance) map[string]int
+}
+
+type TeamRound struct {
+	teamAScore int
+	teamBScore int
+}
+
+type FFARound struct {
+	scores map[int]int // seat -> score
+}
+
+func (r *TeamRound) addScore(i *Instance) {
+	r.teamAScore = i.table.players[0].score + i.table.players[2].score
+	r.teamBScore = i.table.players[1].score + i.table.players[3].score
+}
+
+func (r *TeamRound) getScores(i *Instance) map[string]int {
+	return map[string]int{
+		"TEAMASCORE": r.teamAScore,
+		"TEAMBSCORE": r.teamBScore,
+	}
+}
+
+func (r *FFARound) addScore(i *Instance) {
+	for _, p := range i.table.players {
+		r.scores[p.seat] = p.score
+	}
+}
+func (r *FFARound) getScores(i *Instance) map[string]int {
+	return map[string]int{
+		"0": r.scores[0],
+		"1": r.scores[1],
+		"2": r.scores[2],
+		"3": r.scores[3],
+	}
 }
 
 var heartsPenaltyConfig = PenaltyConfig{
@@ -34,13 +78,18 @@ var HeartsMode = GameMode{
 	id:             HeartsModeID,
 	penaltyConfig:  &heartsPenaltyConfig,
 	onShuffleEnd:   startCardsPassing,
-	calcRoundScore: calculatePlayScore,
+	calcPlayScore:  calculatePlayScore,
+	modeRoundScore: &FFARound{},
+	onRoundEnd:     onFFARoundEnd,
 }
 
 var WhistMode = GameMode{
-	id:            WhistModeID,
-	penaltyConfig: nil,
-	onShuffleEnd:  startTrump,
+	id:             WhistModeID,
+	penaltyConfig:  nil,
+	onShuffleEnd:   startTrump,
+	calcPlayScore:  calculatePlayScore,
+	modeRoundScore: &TeamRound{},
+	onRoundEnd:     onTeamRoundEnd,
 }
 
 func startTrump(t *Table) {
@@ -122,4 +171,128 @@ func calculatePlayScore(t *Table) int {
 	}
 
 	return t.play.curWinPlayer.score
+}
+
+func onTeamRoundEnd(i *Instance) {
+	var teamScores = map[Team]int{}
+	teamScores[TeamA] = i.table.gameMode.modeRoundScore.getScores(i)["TEAMASCORE"]
+	teamScores[TeamB] = i.table.gameMode.modeRoundScore.getScores(i)["TEAMBSCORE"]
+
+	i.Broadcast(map[string]string{
+		"ACTION":     "TEAMROUNDEND",
+		"TEAMASCORE": strconv.Itoa(teamScores[TeamA]),
+		"TEAMBSCORE": strconv.Itoa(teamScores[TeamB])},
+	)
+
+	clog.Debugf("(i:%s) round ended (scoreA:%v, scoreB:%v)",
+		i.id,
+		teamScores[TeamA],
+		teamScores[TeamB])
+
+	// Check if one of the teams have 13 score -> endGame (seek)
+	if teamScores[TeamA] == 13 {
+		teamGameEnd(i, TeamA)
+		return
+	}
+	if teamScores[TeamB] == 13 {
+		teamGameEnd(i, TeamB)
+		return
+	}
+
+	// Calculate scores for round
+	var trumpCallerTeam = i.table.trump.highestCaller.team
+	if teamScores[trumpCallerTeam] >= i.table.trump.highestCall {
+		i.table.totalScores[trumpCallerTeam] += teamScores[trumpCallerTeam]
+	} else {
+		var otherTeam = (trumpCallerTeam + 1) % 2
+		i.table.totalScores[otherTeam] += teamScores[otherTeam]
+		i.table.totalScores[trumpCallerTeam] -= i.table.trump.highestCall
+	}
+
+	i.Broadcast(map[string]string{"ACTION": "TOTALSCORE",
+		"TEAMASCORE": strconv.Itoa(i.table.totalScores[TeamA]),
+		"TEAMBSCORE": strconv.Itoa(i.table.totalScores[TeamB])})
+
+	clog.Debugf("(i:%s) total team scores (scoreA:%v, scoreB:%v)",
+		i.id,
+		i.table.totalScores[TeamA],
+		i.table.totalScores[TeamB])
+
+	// Check total scores for winning game
+	if i.table.totalScores[TeamA] >= 25 || i.table.totalScores[TeamB] <= -25 {
+		teamGameEnd(i, TeamA)
+		return
+	}
+	if i.table.totalScores[TeamB] >= 25 || i.table.totalScores[TeamA] <= -25 {
+		teamGameEnd(i, TeamB)
+		return
+	}
+
+	// Start new round
+	i.table.state = TableWaiting
+	i.table.turnOffset += 1
+	i.table.turnOffset %= 4
+
+	i.table.startShuffle()
+}
+
+func teamGameEnd(i *Instance, winner Team) {
+	// Announce game end
+	var winner1 = i.table.players[winner]
+	var winner2 = i.table.players[winner1.partner]
+	i.Broadcast(map[string]string{"ACTION": "TEAMGAMEEND", "WINNER1ID": winner1.client.id, "WINNER2ID": winner2.client.id})
+	clog.Debugf("(i:%s) game ended (scoreA:%v, scoreB:%v)", i.id, i.table.totalScores[TeamA], i.table.totalScores[TeamB])
+
+	// Save current players
+	var curPlayers = [4]*Player{}
+	for j := range 4 {
+		curPlayers[j] = i.table.players[j]
+	}
+
+	// Reset table newTable
+	i.table = newTable(i)
+	for j := range 4 {
+		i.table.seatPlayer(curPlayers[j].client, j)
+	}
+}
+
+func onFFARoundEnd(i *Instance) {
+	var lastRoundScore = map[int]int{
+		0: i.table.gameMode.modeRoundScore.getScores(i)["0"],
+		1: i.table.gameMode.modeRoundScore.getScores(i)["1"],
+		2: i.table.gameMode.modeRoundScore.getScores(i)["2"],
+		3: i.table.gameMode.modeRoundScore.getScores(i)["3"],
+	}
+
+	i.Broadcast(map[string]string{
+		"ACTION": "FFAROUNDEND",
+		"0":      strconv.Itoa(lastRoundScore[0]),
+		"1":      strconv.Itoa(lastRoundScore[1]),
+		"2":      strconv.Itoa(lastRoundScore[2]),
+		"3":      strconv.Itoa(lastRoundScore[3]),
+	})
+
+	for _, val := range lastRoundScore {
+		if val < -35 {
+			endFFAgame(i, lastRoundScore)
+			return
+		}
+	}
+
+	i.table.startShuffle()
+}
+
+func endFFAgame(i *Instance, score map[int]int) {
+	var highest_score = -100
+	var winner_seat = 0
+	for key, val := range score {
+		if val > highest_score {
+			winner_seat = key
+		}
+	}
+	var winner = i.table.players[winner_seat]
+	i.Broadcast(map[string]string{
+		"ACTION":   "FFAROUNDEND",
+		"WINNERID": winner.client.id,
+	})
 }

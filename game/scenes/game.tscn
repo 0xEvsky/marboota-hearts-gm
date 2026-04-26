@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://c6h3yc5jlke10" path="res://scripts/game_ui.gd" id="5_cxi62"]
 [ext_resource type="Script" uid="uid://dlreihisf6b4n" path="res://scripts/player_manager.gd" id="5_xiyoe"]
 [ext_resource type="Script" uid="uid://4326eijvj5sp" path="res://scripts/cards_passing_call.gd" id="6_0tnpc"]
+[ext_resource type="Script" uid="uid://16o3p2f5jrv" path="res://scripts/ffa_score_ui.gd" id="6_kvpfn"]
 [ext_resource type="Script" uid="uid://wkqfy3vxoq4r" path="res://scripts/score_ui.gd" id="6_tl6g1"]
 [ext_resource type="Texture2D" uid="uid://byh74koq051r4" path="res://assets/graphics/cards/cardClubs2.png" id="7_vtaks"]
 
@@ -152,7 +153,6 @@ expand_mode = 2
 stretch_mode = 6
 
 [node name="ScoreUI" type="CanvasLayer" parent="." unique_id=2006102135]
-visible = false
 script = ExtResource("6_tl6g1")
 
 [node name="Panel" type="Panel" parent="ScoreUI" unique_id=1783805548]
@@ -220,6 +220,81 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Label2" type="Label" parent="ScoreUI/TotalScoreRow" unique_id=890845104]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FFAScoreUI" type="CanvasLayer" parent="." unique_id=256560669]
+script = ExtResource("6_kvpfn")
+
+[node name="Panel" type="Panel" parent="FFAScoreUI" unique_id=1134784982]
+offset_left = 1028.0
+offset_top = 26.0
+offset_right = 1056.0
+offset_bottom = 66.0
+scale = Vector2(8.83556, 12.7334)
+
+[node name="HeaderRow" type="HBoxContainer" parent="FFAScoreUI" unique_id=1824576685]
+custom_minimum_size = Vector2(0, 100)
+offset_left = 1036.0
+offset_top = 9.0
+offset_right = 1265.0
+offset_bottom = 109.0
+alignment = 1
+
+[node name="Label" type="Label" parent="FFAScoreUI/HeaderRow" unique_id=688863373]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Team A"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="FFAScoreUI/HeaderRow" unique_id=1988874669]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Team B"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScoreContainer" type="VBoxContainer" parent="FFAScoreUI" unique_id=1042295644]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -244.0
+offset_top = -253.0
+offset_right = -15.0
+offset_bottom = 247.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(1, 0.68)
+
+[node name="TotalScoreRow" type="HBoxContainer" parent="FFAScoreUI" unique_id=718624279]
+custom_minimum_size = Vector2(0, 100)
+offset_left = 1036.0
+offset_top = 452.0
+offset_right = 1265.0
+offset_bottom = 552.0
+scale = Vector2(0.979248, 0.993334)
+alignment = 1
+
+[node name="Label" type="Label" parent="FFAScoreUI/TotalScoreRow" unique_id=1897508417]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="FFAScoreUI/TotalScoreRow" unique_id=1663221468]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 32

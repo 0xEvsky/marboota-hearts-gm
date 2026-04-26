@@ -26,9 +26,9 @@ type Table struct {
 	turnOffset       int
 	trump            Trump
 	withTrump        bool
+	rounds           []Round
 	play             Play
 	playCount        int
-	rounds           []Round
 	totalScores      map[Team]int
 	gameMode         GameMode
 	roundPassedCards [][]Card
@@ -85,8 +85,7 @@ type Play struct {
 }
 
 type Round struct {
-	teamAScore int
-	teamBScore int
+	score RoundScore
 }
 
 func newTable(instance *Instance) Table {

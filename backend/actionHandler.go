@@ -87,8 +87,8 @@ func authClient(c *Client, instanceId, userId, userName, iconUrl string) error {
 		// Score catchup
 		for _, r := range c.instance.table.rounds {
 			c.writeJson(map[string]string{"ACTION": "ROUNDEND",
-				"TEAMASCORE": strconv.Itoa(r.teamAScore),
-				"TEAMBSCORE": strconv.Itoa(r.teamBScore)})
+				"TEAMASCORE": strconv.Itoa(r.score.getScores(c.instance)["TEAMASCORE"]),
+				"TEAMBSCORE": strconv.Itoa(r.score.getScores(c.instance)["TEAMBSCORE"])})
 		}
 		c.writeJson(map[string]string{"ACTION": "TOTALSCORE",
 			"TEAMASCORE": strconv.Itoa(c.instance.table.totalScores[TeamA]),
@@ -500,7 +500,7 @@ func advancePlay(c *Client, cardStr string) error {
 	// Check if play is complete
 	if len(c.instance.table.play.cards) == 4 {
 		// Add score & advance round
-		var playScore = c.instance.table.gameMode.calcRoundScore(&c.instance.table)
+		var playScore = c.instance.table.gameMode.calcPlayScore(&c.instance.table)
 		// clog.Debug("score: ", c.instance.table.play.curWinPlayer.score)
 		c.instance.table.playCount += 1
 
@@ -552,89 +552,11 @@ func advancePlay(c *Client, cardStr string) error {
 }
 
 func endRound(i *Instance) {
-	// Check score of trumpcaller + their partner
-	var teamScores = map[Team]int{}
-	teamScores[TeamA] = i.table.players[0].score + i.table.players[2].score
-	teamScores[TeamB] = i.table.players[1].score + i.table.players[3].score
+	i.table.gameMode.modeRoundScore.addScore(i)
 
-	var lastGameRound = Round{
-		teamAScore: teamScores[TeamA],
-		teamBScore: teamScores[TeamB],
-	}
-	i.table.rounds = append(i.table.rounds, lastGameRound)
+	var lastRound = Round{}
+	lastRound.score = i.table.gameMode.modeRoundScore
+	i.table.rounds = append(i.table.rounds, lastRound)
 
-	i.Broadcast(map[string]string{"ACTION": "ROUNDEND",
-		"TEAMASCORE": strconv.Itoa(teamScores[TeamA]),
-		"TEAMBSCORE": strconv.Itoa(teamScores[TeamB])})
-
-	clog.Debugf("(i:%s) round ended (scoreA:%v, scoreB:%v)",
-		i.id,
-		teamScores[TeamA],
-		teamScores[TeamB])
-
-	// Check if one of the teams have 13 score -> endGame (seek)
-	if teamScores[TeamA] == 13 {
-		endGame(i, TeamA)
-		return
-	}
-	if teamScores[TeamB] == 13 {
-		endGame(i, TeamB)
-		return
-	}
-
-	// Calculate scores for round
-	var trumpCallerTeam = i.table.trump.highestCaller.team
-	if teamScores[trumpCallerTeam] >= i.table.trump.highestCall {
-		i.table.totalScores[trumpCallerTeam] += teamScores[trumpCallerTeam]
-	} else {
-		var otherTeam = (trumpCallerTeam + 1) % 2
-		i.table.totalScores[otherTeam] += teamScores[otherTeam]
-		i.table.totalScores[trumpCallerTeam] -= i.table.trump.highestCall
-	}
-
-	i.Broadcast(map[string]string{"ACTION": "TOTALSCORE",
-		"TEAMASCORE": strconv.Itoa(i.table.totalScores[TeamA]),
-		"TEAMBSCORE": strconv.Itoa(i.table.totalScores[TeamB])})
-
-	clog.Debugf("(i:%s) total team scores (scoreA:%v, scoreB:%v)",
-		i.id,
-		i.table.totalScores[TeamA],
-		i.table.totalScores[TeamB])
-
-	// Check total scores for winning game
-	if i.table.totalScores[TeamA] >= 25 || i.table.totalScores[TeamB] <= -25 {
-		endGame(i, TeamA)
-		return
-	}
-	if i.table.totalScores[TeamB] >= 25 || i.table.totalScores[TeamA] <= -25 {
-		endGame(i, TeamB)
-		return
-	}
-
-	// Start new round
-	i.table.state = TableWaiting
-	i.table.turnOffset += 1
-	i.table.turnOffset %= 4
-
-	// i.table.startTrump()
-}
-
-func endGame(i *Instance, winner Team) {
-	// Announce game end
-	var winner1 = i.table.players[winner]
-	var winner2 = i.table.players[winner1.partner]
-	i.Broadcast(map[string]string{"ACTION": "GAMEEND", "WINNER1ID": winner1.client.id, "WINNER2ID": winner2.client.id})
-	clog.Debugf("(i:%s) game ended (scoreA:%v, scoreB:%v)", i.id, i.table.totalScores[TeamA], i.table.totalScores[TeamB])
-
-	// Save current players
-	var curPlayers = [4]*Player{}
-	for j := range 4 {
-		curPlayers[j] = i.table.players[j]
-	}
-
-	// Reset table newTable
-	i.table = newTable(i)
-	for j := range 4 {
-		i.table.seatPlayer(curPlayers[j].client, j)
-	}
+	i.table.gameMode.onRoundEnd(i)
 }

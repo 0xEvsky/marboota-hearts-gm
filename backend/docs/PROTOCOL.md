@@ -335,32 +335,63 @@ Notifies all clients that the current hand play has ended, alongside the winner'
 }
 ```
 
-### ROUNDEND
+### TEAMROUNDEND
 Notifies all clients that the current hand round (13 plays) has ended. With it are the end scores for the teams for that round `TEAMASCORE` & `TEAMBSCORE`.
 ```json
 {
-    "ACTION": "ROUNDEND",
+    "ACTION": "TEAMROUNDEND",
     "TEAMASCORE":  "8",
     "TEAMBSCORE":  "5",
 }
 ```
 
-### TOTALSCORE
-Notifies all clients of the total scores for each team at the moment; `TEAMASCORE` & `TEAMBSCORE`, (sent with `ROUNDEND`).
+### TEAMTOTALSCORE
+Notifies all clients of the total scores for each team at the moment; `TEAMASCORE` & `TEAMBSCORE`, (sent with `TEAMROUNDEND`).
 ```json
 {
-    "ACTION": "TOTALSCORE",
+    "ACTION": "TEAMTOTALSCORE",
     "TEAMASCORE":  "15",
     "TEAMBSCORE":  "11",
 }
 ```
 
-### GAMEEND
+### TEAMGAMEEND
 Notifies all clients that the game has ended, announcing the USERID of the winning players.
 ```json
 {
-    "ACTION": "GAMEEND",
+    "ACTION": "TEAMGAMEEND",
     "WINNER1ID": "11223344",
     "WINNER2ID": "55667788"
 }
 ```
+
+### FFAROUNDEND
+```json
+{
+    "ACTION": "FFAROUNDEND",
+    "0": "1",
+    "1": "1",
+    "2": "1",
+    "3": "10",
+}
+```
+
+### FFATOTALSCORE
+```json
+{
+    "ACTION": "FFATOTALSCORE",
+    "0":  "15",
+    "1":  "11",
+    "2":  "15",
+    "3":  "11",
+}
+```
+
+### FFAGAMEEND
+```json
+{
+    "ACTION": "FFAGAMEEND",
+    "WINNERID": "11223344",
+}
+```
+

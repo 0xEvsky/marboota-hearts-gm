@@ -15,8 +15,8 @@ func _ready() -> void:
 	EventManager.YOURPLAY_received.connect(_on_yourplay)
 	EventManager.PLAY_received.connect(_on_play)
 	EventManager.PLAYEND_received.connect(_on_playend)
-	EventManager.ROUNDEND_received.connect(_on_roundend)
-	EventManager.GAMEEND_received.connect(_on_gameend)
+	EventManager.TEAMROUNDEND_received.connect(_on_roundend)
+	EventManager.TEAMGAMEEND_received.connect(_on_gameend)
 	
 func _on_gamemode_selection() -> void:
 	state = TableState.TABLE_SELECTING
