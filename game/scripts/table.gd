@@ -9,7 +9,6 @@ func _ready() -> void:
 	Globals.table = self
 	EventManager.SELECTMODE_recevied.connect(_on_gamemode_selection)
 	EventManager.GAMESTART_received.connect(_on_gamestart)
-	EventManager.PASSCARDS_recevied.connect(_on_passcards)
 	EventManager.TRUMPSTART_received.connect(_on_trumpstart)
 	EventManager.PLAYSTART_received.connect(_on_playstart)
 	EventManager.YOURPLAY_received.connect(_on_yourplay)
@@ -17,6 +16,8 @@ func _ready() -> void:
 	EventManager.PLAYEND_received.connect(_on_playend)
 	EventManager.TEAMROUNDEND_received.connect(_on_roundend)
 	EventManager.TEAMGAMEEND_received.connect(_on_gameend)
+	EventManager.FFAROUNDEND_received.connect(_on_roundend)
+	EventManager.FFAGAMEEND_received.connect(_on_gameend)
 	
 func _on_gamemode_selection() -> void:
 	state = TableState.TABLE_SELECTING
@@ -57,9 +58,6 @@ func _on_gamestart() -> void:
 		var heartsButton := $"HeartsButton"
 		heartsButton.hide()
 
-func _on_passcards() -> void:
-	pass
-
 func _on_trumpstart() -> void:
 	play_started = false
 	state = TableState.TABLE_TRUMPING
@@ -78,6 +76,8 @@ func _on_playstart() -> void:
 		var seat := get_node("Seat" + str(i)) as Seat
 		if seat.sitter:
 			seat.sitter.state = Globals.player_manager.PLAYER_PLAYING
+		var score := get_node("Score" + str(i))
+		score.get_node("Label").text = "0"
 
 func _on_yourplay(playable: String) -> void:
 	Globals.my_player.hand.playable = playable
@@ -155,7 +155,8 @@ func _on_gameend(winner_1_id: String, winner_2_id: String) -> void:
 	state = TableState.TABLE_IDLE
 
 	un_rotate_table()
-		
+	
+	print(Globals.my_player.state)
 	if Globals.my_player.state > Globals.player_manager.PLAYER_IDLE:
 		var leaveButton := $"LeaveButton"
 		leaveButton.show()

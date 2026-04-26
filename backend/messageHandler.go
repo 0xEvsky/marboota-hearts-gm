@@ -90,6 +90,11 @@ func msgHandler(c *Client, rawMsg []byte) {
 			return
 		}
 		c.writeOk()
+
+		c.instance.Broadcast(map[string]string{
+			"ACTION": "MODE",
+			"MODE":   msg["MODE"],
+		})
 		clog.Printf("Game mode: %s", msg["MODE"])
 
 	case "TRUMPCALL":
@@ -109,6 +114,7 @@ func msgHandler(c *Client, rawMsg []byte) {
 			clog.Debugf("(i:%s) (c:%s) PASSCARDS request refused: %s\n", c.instance.id, c.id, err)
 		}
 
+		clog.Debug("PASSCARDS request accepted. passed cards: ", msg["CARDS"])
 		c.writeOk()
 		for _, p := range c.instance.table.players {
 			if p.state != PlayerRecievedCards {

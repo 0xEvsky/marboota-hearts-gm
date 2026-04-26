@@ -55,6 +55,10 @@ func (r *TeamRound) getScores(i *Instance) map[string]int {
 }
 
 func (r *FFARound) addScore(i *Instance) {
+	if r.scores == nil {
+		r.scores = make(map[int]int)
+	}
+
 	for _, p := range i.table.players {
 		r.scores[p.seat] = p.score
 	}
@@ -209,7 +213,7 @@ func onTeamRoundEnd(i *Instance) {
 		i.table.totalScores[trumpCallerTeam] -= i.table.trump.highestCall
 	}
 
-	i.Broadcast(map[string]string{"ACTION": "TOTALSCORE",
+	i.Broadcast(map[string]string{"ACTION": "TEAMTOTALSCORE",
 		"TEAMASCORE": strconv.Itoa(i.table.totalScores[TeamA]),
 		"TEAMBSCORE": strconv.Itoa(i.table.totalScores[TeamB])})
 
@@ -258,10 +262,10 @@ func teamGameEnd(i *Instance, winner Team) {
 
 func onFFARoundEnd(i *Instance) {
 	var lastRoundScore = map[int]int{
-		0: i.table.gameMode.modeRoundScore.getScores(i)["0"],
-		1: i.table.gameMode.modeRoundScore.getScores(i)["1"],
-		2: i.table.gameMode.modeRoundScore.getScores(i)["2"],
-		3: i.table.gameMode.modeRoundScore.getScores(i)["3"],
+		0: i.table.rounds[len(i.table.rounds)-1].score.getScores(i)["0"],
+		1: i.table.rounds[len(i.table.rounds)-1].score.getScores(i)["1"],
+		2: i.table.rounds[len(i.table.rounds)-1].score.getScores(i)["2"],
+		3: i.table.rounds[len(i.table.rounds)-1].score.getScores(i)["3"],
 	}
 
 	i.Broadcast(map[string]string{
@@ -272,27 +276,54 @@ func onFFARoundEnd(i *Instance) {
 		"3":      strconv.Itoa(lastRoundScore[3]),
 	})
 
-	for _, val := range lastRoundScore {
+	clog.Debugf("(i:%s) round ended (player0:%v, player1:%v, player2:%v, player3:%v)",
+		i.id,
+		lastRoundScore[0],
+		lastRoundScore[1],
+		lastRoundScore[2],
+		lastRoundScore[3],
+	)
+
+	var gameScores = i.table.gameMode.modeRoundScore.getScores(i)
+
+	i.Broadcast(map[string]string{"ACTION": "FFATOTALSCORE",
+		"0": strconv.Itoa(gameScores["0"]),
+		"1": strconv.Itoa(gameScores["1"]),
+		"2": strconv.Itoa(gameScores["2"]),
+		"3": strconv.Itoa(gameScores["3"]),
+	})
+
+	clog.Debugf("(i:%s) round ended (player0:%v, player1:%v, player2:%v, player3:%v)",
+		i.id,
+		gameScores["0"],
+		gameScores["1"],
+		gameScores["2"],
+		gameScores["3"],
+	)
+
+	for _, val := range gameScores {
 		if val < -35 {
-			endFFAgame(i, lastRoundScore)
+			endFFAgame(i, gameScores)
 			return
 		}
 	}
 
+	i.table.roundPassedCards = make([][]Card, 4)
 	i.table.startShuffle()
 }
 
-func endFFAgame(i *Instance, score map[int]int) {
+func endFFAgame(i *Instance, score map[string]int) {
 	var highest_score = -100
 	var winner_seat = 0
 	for key, val := range score {
 		if val > highest_score {
-			winner_seat = key
+			winner_seat, _ = strconv.Atoi(key)
 		}
 	}
+
 	var winner = i.table.players[winner_seat]
 	i.Broadcast(map[string]string{
-		"ACTION":   "FFAROUNDEND",
+		"ACTION":   "FFAGAMEEND",
 		"WINNERID": winner.client.id,
 	})
 }

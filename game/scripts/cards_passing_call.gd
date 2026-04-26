@@ -7,12 +7,16 @@ var chosen_cards: Array[String] = []
 
 func _ready() -> void:
 	EventManager.PASSCARDS_recevied.connect(_on_passcards)
+	EventManager.FFAROUNDEND_received.connect(_on_ffaRoundEnd)
 	passButton = $"VBoxContainer/PassButton"
 	passButton.disabled = true
 	for button in $VBoxContainer/HBoxContainer.get_children():
 		cards_buttons.append(button as Button)
 		button.toggle_mode = true
 		button.connect("toggled", _on_card_button_toggled.bind(button))
+		
+func _on_ffaRoundEnd() -> void:
+	pass
 	
 func _on_passcards() -> void:
 	for i in range(Globals.my_player.hand.cards.size()):
@@ -52,4 +56,11 @@ func _on_pass_button_button_up() -> void:
 			chosen_cards.append(cards_names[i])
 	var msg := EventManager.passcards_request(", ".join(chosen_cards))
 	EventManager.send_request(msg, func on_error(error: String) -> void: print_debug(error))
+	cards_names = []
+	chosen_cards = []
 	hide()
+	for card_button in cards_buttons:
+		card_button.button_pressed = false
+		card_button.modulate = Color(1, 1, 1, 1)
+		card_button.disabled = false
+	

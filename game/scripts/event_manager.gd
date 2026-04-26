@@ -8,6 +8,7 @@ signal UNSIT_received
 signal READY_received
 signal UNREADY_received
 signal SELECTMODE_recevied
+signal MODE_received
 signal GAMESTART_received
 signal DEAL_received
 signal OTHERDEAL_received
@@ -78,6 +79,8 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			UNREADY_received.emit()
 		"SELECTMODE":
 			SELECTMODE_recevied.emit()
+		"MODE":
+			MODE_received.emit(msg["MODE"])
 		"GAMESTART":
 			GAMESTART_received.emit()
 		"DEAL": 

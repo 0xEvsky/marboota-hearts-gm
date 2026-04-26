@@ -153,6 +153,7 @@ expand_mode = 2
 stretch_mode = 6
 
 [node name="ScoreUI" type="CanvasLayer" parent="." unique_id=2006102135]
+visible = false
 script = ExtResource("6_tl6g1")
 
 [node name="Panel" type="Panel" parent="ScoreUI" unique_id=1783805548]
@@ -295,6 +296,78 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Label2" type="Label" parent="FFAScoreUI/TotalScoreRow" unique_id=1663221468]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Panel2" type="Panel" parent="FFAScoreUI" unique_id=1149385202]
+offset_left = 3.4
+offset_top = 39.0
+offset_right = 31.399202
+offset_bottom = 79.0
+scale = Vector2(8.83556, 12.7334)
+
+[node name="HeaderRow2" type="HBoxContainer" parent="FFAScoreUI" unique_id=1981313424]
+custom_minimum_size = Vector2(0, 100)
+offset_left = 3.4
+offset_top = 22.0
+offset_right = 232.39944
+offset_bottom = 122.0
+alignment = 1
+
+[node name="Label" type="Label" parent="FFAScoreUI/HeaderRow2" unique_id=78183736]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Team A"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="FFAScoreUI/HeaderRow2" unique_id=440004122]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Team B"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScoreContainer2" type="VBoxContainer" parent="FFAScoreUI" unique_id=650327402]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -1276.6
+offset_top = -240.0
+offset_right = -1047.6007
+offset_bottom = 260.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(1, 0.68)
+
+[node name="TotalScoreRow2" type="HBoxContainer" parent="FFAScoreUI" unique_id=1066230154]
+custom_minimum_size = Vector2(0, 100)
+offset_left = 3.4
+offset_top = 465.0
+offset_right = 232.39944
+offset_bottom = 565.0
+scale = Vector2(0.979248, 0.993334)
+alignment = 1
+
+[node name="Label" type="Label" parent="FFAScoreUI/TotalScoreRow2" unique_id=1374788683]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="FFAScoreUI/TotalScoreRow2" unique_id=2009714023]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 32

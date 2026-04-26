@@ -215,6 +215,14 @@ Once all players in a table are ready, this is sent to all clients in that insta
 }
 ```
 
+### MODE
+```json
+{
+    "ACTION": "MODE",
+	"MODE":   "HEARTS",
+}
+```
+
 ### GAMESTART
 Once the game mode is selected, this is sent to all clients in that instance signaling the game has started.
 ```json
