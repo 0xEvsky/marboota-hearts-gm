@@ -183,6 +183,16 @@ When called with the `SCORE` value being `PASS`, the call is considered a pass i
 }
 ```
 
+### PASSCARDS
+After the server notifies all clients with `PASSCARDS`, each client will use this to pass the four cards `CARDS` to the appropriate mate and remove them from their hand.
+```json
+{
+    "ACTION": "PASSCARDS",
+    "CARDS": "S_13, S_7, S_6, C_10",
+}
+```
+
+
 ### PLAY
 Request to play a card after being prompted by the server with `YOURPLAY`.
 ```json
@@ -231,13 +241,6 @@ Notifies a client that all other players at the table have been dealt `COUNT` am
 }
 ```
 
-### PASSCARDS
-Notifies all clients that cards passing phase has started.
-```json
-{
-    "ACTION": "PASSCARDS"
-}
-
 ### TRUMPSTART
 Notifies all clients that trumping has started.
 ```json
@@ -263,6 +266,23 @@ Notifies a player that another player has made a successful trump call, along wi
     "ACTION": "TRUMPCALL",
     "USERID": "11223344",
     "SCORE": "8"
+}
+```
+
+### PASSCARDS
+Notifies all clients that cards passing phase has started.
+```json
+{
+    "ACTION": "PASSCARDS"
+}
+```
+
+### RECIEVECARDS
+Notifies a client to add the passed cards `CARDS` to their hand.
+```json
+{
+    "ACTION": "RECIEVECARDS",
+    "CARDS": "S_13, S_7, S_6, C_10"
 }
 ```
 

@@ -5,6 +5,7 @@ import (
 	"math"
 	"slices"
 	"strconv"
+	"strings"
 
 	"github.com/OmarQurashi868/marboota/backend/clog"
 )
@@ -358,6 +359,68 @@ func endTrump(i *Instance) error {
 	// Start play
 	i.table.startPlay()
 	clog.Debugf("(i:%s) trump ended (%v)", i.id, i.table.trump.highestCall)
+	return nil
+}
+
+func removeCards(from []Card, remove []Card) []Card {
+	result := []Card{}
+	for _, card := range from {
+		found := false
+		for _, r := range remove {
+			if card == r {
+				found = true
+				break
+			}
+		}
+		if !found {
+			result = append(result, card)
+		}
+	}
+	return result
+}
+
+func passAndRecieveCards(c *Client, cardsStr string) error {
+	if c.player.state != PlayerPassingCards {
+		if c.player.state >= PlayerPassedCards {
+			return errors.New("Player has passed cards")
+		}
+
+		return errors.New("Player is ineligible to pass cards")
+	}
+
+	var cardsStrList = strings.Split(cardsStr, ", ")
+	var passedCardsList []Card
+	for _, card_name := range cardsStrList {
+		var card, _ = getCardByName(card_name)
+		passedCardsList = append(passedCardsList, card)
+	}
+
+	var seat = c.player.seat
+	var current_player = c.player
+	var current_player_hand = current_player.hand
+
+	// remove/pass the 4 chosen cards from hand before recieving from mate
+	current_player.hand = removeCards(current_player_hand, passedCardsList)
+	current_player.sortHand()
+	current_player.client.writeJson(map[string]string{"ACTION": "DEAL", "CARDS": current_player.getHandString()})
+
+	current_player.state = PlayerPassedCards
+
+	var cards_reciever_seat_num = (seat + 1) % 4
+	c.instance.table.roundPassedCards[cards_reciever_seat_num] = passedCardsList
+
+	var current_player_cards_reciever = c.instance.table.players[cards_reciever_seat_num]
+	// check if the player on your left has passed his cards and is waiting to recieve
+	if current_player_cards_reciever.state == PlayerPassedCards {
+		current_player_cards_reciever.recievePassedCards() // pass them the cards
+	}
+
+	var current_player_cards_giver = c.instance.table.players[(seat-1+4)%4]
+	// check if the player on your right passed his 4 cards to you
+	if current_player_cards_giver.state >= PlayerPassedCards {
+		current_player.recievePassedCards() // recieve your cards
+	}
+
 	return nil
 }
 

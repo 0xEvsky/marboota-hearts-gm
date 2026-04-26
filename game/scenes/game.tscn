@@ -1,13 +1,15 @@
-[gd_scene load_steps=12 format=3 uid="uid://8xkf68liril2"]
+[gd_scene format=3 uid="uid://8xkf68liril2"]
 
 [ext_resource type="Texture2D" uid="uid://chnhuidtxoexr" path="res://assets/graphics/bg.jpg" id="1_bjwno"]
 [ext_resource type="Texture2D" uid="uid://xudi6b2awstb" path="res://assets/ui/icon_repeat_light.png" id="1_lit6y"]
-[ext_resource type="Script" path="res://scripts/loading_ui.gd" id="1_w3f0r"]
+[ext_resource type="Script" uid="uid://b8y11cee4dpby" path="res://scripts/loading_ui.gd" id="1_w3f0r"]
 [ext_resource type="PackedScene" uid="uid://chi8vcmil521h" path="res://scenes/debug_panel.tscn" id="3_udsek"]
 [ext_resource type="PackedScene" uid="uid://belne7lgw02p3" path="res://scenes/table.tscn" id="4_24tct"]
-[ext_resource type="Script" path="res://scripts/game_ui.gd" id="5_cxi62"]
-[ext_resource type="Script" path="res://scripts/player_manager.gd" id="5_xiyoe"]
-[ext_resource type="Script" path="res://scripts/score_ui.gd" id="6_tl6g1"]
+[ext_resource type="Script" uid="uid://c6h3yc5jlke10" path="res://scripts/game_ui.gd" id="5_cxi62"]
+[ext_resource type="Script" uid="uid://dlreihisf6b4n" path="res://scripts/player_manager.gd" id="5_xiyoe"]
+[ext_resource type="Script" uid="uid://4326eijvj5sp" path="res://scripts/cards_passing_call.gd" id="6_0tnpc"]
+[ext_resource type="Script" uid="uid://wkqfy3vxoq4r" path="res://scripts/score_ui.gd" id="6_tl6g1"]
+[ext_resource type="Texture2D" uid="uid://byh74koq051r4" path="res://assets/graphics/cards/cardClubs2.png" id="7_vtaks"]
 
 [sub_resource type="Animation" id="Animation_5kc0w"]
 length = 0.001
@@ -42,17 +44,19 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ldj1v"]
 _data = {
-"RESET": SubResource("Animation_5kc0w"),
-"spin": SubResource("Animation_x2ysv")
+&"RESET": SubResource("Animation_5kc0w"),
+&"spin": SubResource("Animation_x2ysv")
 }
 
-[node name="Game" type="Node2D"]
+[sub_resource type="Theme" id="Theme_0tnpc"]
 
-[node name="LoadingUI" type="CanvasLayer" parent="."]
+[node name="Game" type="Node2D" unique_id=891459495]
+
+[node name="LoadingUI" type="CanvasLayer" parent="." unique_id=1805108591]
 visible = false
 script = ExtResource("1_w3f0r")
 
-[node name="LoadingScreen" type="Control" parent="LoadingUI"]
+[node name="LoadingScreen" type="Control" parent="LoadingUI" unique_id=1093795502]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -60,7 +64,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="LoadingBackground" type="TextureRect" parent="LoadingUI/LoadingScreen"]
+[node name="LoadingBackground" type="TextureRect" parent="LoadingUI/LoadingScreen" unique_id=1865914942]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -73,7 +77,7 @@ texture = ExtResource("1_bjwno")
 expand_mode = 2
 stretch_mode = 6
 
-[node name="LoadingCenter" type="CenterContainer" parent="LoadingUI/LoadingScreen"]
+[node name="LoadingCenter" type="CenterContainer" parent="LoadingUI/LoadingScreen" unique_id=878529327]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -87,10 +91,10 @@ offset_bottom = 41.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="LoadingUI/LoadingScreen/LoadingCenter"]
+[node name="VBoxContainer" type="VBoxContainer" parent="LoadingUI/LoadingScreen/LoadingCenter" unique_id=1433478357]
 layout_mode = 2
 
-[node name="LoadingText" type="Label" parent="LoadingUI/LoadingScreen/LoadingCenter/VBoxContainer"]
+[node name="LoadingText" type="Label" parent="LoadingUI/LoadingScreen/LoadingCenter/VBoxContainer" unique_id=727431417]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 80
@@ -98,12 +102,12 @@ text = "CONNECTING"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SpinnerControl" type="Control" parent="LoadingUI/LoadingScreen/LoadingCenter/VBoxContainer"]
+[node name="SpinnerControl" type="Control" parent="LoadingUI/LoadingScreen/LoadingCenter/VBoxContainer" unique_id=1265665680]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="LoadingSpinner" type="TextureRect" parent="LoadingUI/LoadingScreen/LoadingCenter/VBoxContainer/SpinnerControl"]
+[node name="LoadingSpinner" type="TextureRect" parent="LoadingUI/LoadingScreen/LoadingCenter/VBoxContainer/SpinnerControl" unique_id=52385274]
 layout_mode = 1
 offset_left = -41.0
 offset_top = 1.0
@@ -115,13 +119,11 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("1_lit6y")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="LoadingUI/LoadingScreen/LoadingCenter/VBoxContainer/SpinnerControl/LoadingSpinner"]
-libraries = {
-"": SubResource("AnimationLibrary_ldj1v")
-}
-autoplay = "spin"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="LoadingUI/LoadingScreen/LoadingCenter/VBoxContainer/SpinnerControl/LoadingSpinner" unique_id=1303333553]
+libraries/ = SubResource("AnimationLibrary_ldj1v")
+autoplay = &"spin"
 
-[node name="Label" type="Label" parent="LoadingUI"]
+[node name="Label" type="Label" parent="LoadingUI" unique_id=654484026]
 visible = false
 offset_right = 1274.0
 offset_bottom = 554.0
@@ -129,15 +131,15 @@ theme_override_font_sizes/font_size = 31
 text = "TEST"
 autowrap_mode = 1
 
-[node name="DebugUI" type="CanvasLayer" parent="."]
+[node name="DebugUI" type="CanvasLayer" parent="." unique_id=329897969]
 visible = false
 
-[node name="DebugPanel" parent="DebugUI" instance=ExtResource("3_udsek")]
+[node name="DebugPanel" parent="DebugUI" unique_id=126541611 instance=ExtResource("3_udsek")]
 
-[node name="BackgroundUI" type="CanvasLayer" parent="."]
+[node name="BackgroundUI" type="CanvasLayer" parent="." unique_id=1656270327]
 layer = -1
 
-[node name="Background" type="TextureRect" parent="BackgroundUI"]
+[node name="Background" type="TextureRect" parent="BackgroundUI" unique_id=99148864]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -149,9 +151,85 @@ texture = ExtResource("1_bjwno")
 expand_mode = 2
 stretch_mode = 6
 
-[node name="GameUI" type="CanvasLayer" parent="."]
+[node name="ScoreUI" type="CanvasLayer" parent="." unique_id=2006102135]
+visible = false
+script = ExtResource("6_tl6g1")
 
-[node name="TrumpCall" type="Panel" parent="GameUI"]
+[node name="Panel" type="Panel" parent="ScoreUI" unique_id=1783805548]
+offset_left = 1028.0
+offset_top = 26.0
+offset_right = 1056.0
+offset_bottom = 66.0
+scale = Vector2(8.83556, 12.7334)
+
+[node name="HeaderRow" type="HBoxContainer" parent="ScoreUI" unique_id=1621733259]
+custom_minimum_size = Vector2(0, 100)
+offset_left = 1036.0
+offset_top = 9.0
+offset_right = 1265.0
+offset_bottom = 109.0
+alignment = 1
+
+[node name="Label" type="Label" parent="ScoreUI/HeaderRow" unique_id=1864725700]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Team A"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="ScoreUI/HeaderRow" unique_id=320079534]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Team B"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScoreContainer" type="VBoxContainer" parent="ScoreUI" unique_id=700883219]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -244.0
+offset_top = -253.0
+offset_right = -15.0
+offset_bottom = 247.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(1, 0.68)
+
+[node name="TotalScoreRow" type="HBoxContainer" parent="ScoreUI" unique_id=2057198939]
+custom_minimum_size = Vector2(0, 100)
+offset_left = 1036.0
+offset_top = 452.0
+offset_right = 1265.0
+offset_bottom = 552.0
+scale = Vector2(0.979248, 0.993334)
+alignment = 1
+
+[node name="Label" type="Label" parent="ScoreUI/TotalScoreRow" unique_id=285617833]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="ScoreUI/TotalScoreRow" unique_id=890845104]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GameUI" type="CanvasLayer" parent="." unique_id=879756347]
+
+[node name="TrumpCall" type="Panel" parent="GameUI" unique_id=1916254980]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -166,7 +244,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("5_cxi62")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/TrumpCall"]
+[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/TrumpCall" unique_id=2106915528]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -174,161 +252,382 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/TrumpCall/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/TrumpCall/VBoxContainer" unique_id=2026938276]
 layout_mode = 2
 size_flags_stretch_ratio = 0.0
 alignment = 1
 
-[node name="7Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+[node name="7Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer" unique_id=312916604]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 86
 disabled = true
 text = "7"
 
-[node name="8Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+[node name="8Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer" unique_id=630794035]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 86
 disabled = true
 text = "8"
 
-[node name="9Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+[node name="9Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer" unique_id=64316583]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 86
 disabled = true
 text = "9"
 
-[node name="10Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+[node name="10Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer" unique_id=322760600]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 86
 disabled = true
 text = "10"
 
-[node name="11Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+[node name="11Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer" unique_id=1151259871]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 86
 disabled = true
 text = "11"
 
-[node name="12Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+[node name="12Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer" unique_id=1161097729]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 86
 disabled = true
 text = "12"
 
-[node name="13Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer"]
+[node name="13Button" type="Button" parent="GameUI/TrumpCall/VBoxContainer/HBoxContainer" unique_id=1576379174]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 86
 disabled = true
 text = "13"
 
-[node name="PassButton" type="Button" parent="GameUI/TrumpCall/VBoxContainer"]
+[node name="PassButton" type="Button" parent="GameUI/TrumpCall/VBoxContainer" unique_id=106028659]
 layout_mode = 2
 theme_override_font_sizes/font_size = 86
 text = "pass"
 
-[node name="ScoreUI" type="CanvasLayer" parent="."]
+[node name="CardsPassingCall" type="Panel" parent="GameUI" unique_id=1387289019]
 visible = false
-script = ExtResource("6_tl6g1")
-
-[node name="Panel" type="Panel" parent="ScoreUI"]
-offset_left = 1028.0
-offset_top = 26.0
-offset_right = 1056.0
-offset_bottom = 66.0
-scale = Vector2(8.83556, 12.7334)
-
-[node name="HeaderRow" type="HBoxContainer" parent="ScoreUI"]
-custom_minimum_size = Vector2(0, 100)
-offset_left = 1036.0
-offset_top = 9.0
-offset_right = 1265.0
-offset_bottom = 109.0
-alignment = 1
-
-[node name="Label" type="Label" parent="ScoreUI/HeaderRow"]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
-text = "Team A"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Label2" type="Label" parent="ScoreUI/HeaderRow"]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
-text = "Team B"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ScoreContainer" type="VBoxContainer" parent="ScoreUI"]
-anchors_preset = 6
-anchor_left = 1.0
+anchors_preset = 8
+anchor_left = 0.5
 anchor_top = 0.5
-anchor_right = 1.0
+anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -244.0
-offset_top = -253.0
-offset_right = -15.0
-offset_bottom = 247.0
-grow_horizontal = 0
+offset_left = -377.0
+offset_top = -125.0
+offset_right = 377.0
+offset_bottom = 125.0
+grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(1, 0.68)
+scale = Vector2(0.785, 0.785)
+pivot_offset_ratio = Vector2(0.495, 0.575)
+script = ExtResource("6_0tnpc")
 
-[node name="TotalScoreRow" type="HBoxContainer" parent="ScoreUI"]
-custom_minimum_size = Vector2(0, 100)
-offset_left = 1036.0
-offset_top = 452.0
-offset_right = 1265.0
-offset_bottom = 552.0
-scale = Vector2(0.979248, 0.993334)
+[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/CardsPassingCall" unique_id=333921705]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -297.0
+offset_right = 297.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/CardsPassingCall/VBoxContainer" unique_id=435261297]
+layout_mode = 2
+size_flags_stretch_ratio = 0.0
 alignment = 1
 
-[node name="Label" type="Label" parent="ScoreUI/TotalScoreRow"]
+[node name="CardButton0" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=1849552526]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 32
-text = "0"
-horizontal_alignment = 1
-vertical_alignment = 1
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
 
-[node name="Label2" type="Label" parent="ScoreUI/TotalScoreRow"]
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton0" unique_id=1873083848]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="CardButton1" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=1772158292]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 32
-text = "0"
-horizontal_alignment = 1
-vertical_alignment = 1
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
 
-[node name="Table" parent="." instance=ExtResource("4_24tct")]
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton1" unique_id=2050522235]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="CardButton2" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=1148418204]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
+
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton2" unique_id=1163139902]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="CardButton3" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=396470503]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
+
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton3" unique_id=525204330]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="CardButton4" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=618056125]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
+
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton4" unique_id=1702379210]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="CardButton5" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=1971532613]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
+
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton5" unique_id=35833680]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="CardButton6" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=663705564]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
+
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton6" unique_id=1280280953]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="CardButton7" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=1241592449]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
+
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton7" unique_id=51164531]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="CardButton8" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=1206623586]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
+
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton8" unique_id=2639388]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="CardButton9" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=1916559325]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
+
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton9" unique_id=66578565]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="CardButton10" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=1659470379]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
+
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton10" unique_id=1352243978]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="CardButton11" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=359908770]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
+
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton11" unique_id=794532264]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="CardButton12" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer" unique_id=1093715111]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme = SubResource("Theme_0tnpc")
+theme_override_font_sizes/font_size = 86
+text = "
+"
+
+[node name="CardTexture" type="TextureRect" parent="GameUI/CardsPassingCall/VBoxContainer/HBoxContainer/CardButton12" unique_id=357643547]
+layout_mode = 0
+offset_left = 30.447
+offset_top = 28.448
+offset_right = 70.44698
+offset_bottom = 82.73371
+scale = Vector2(1.81, 1.81)
+pivot_offset = Vector2(0.135, 0)
+pivot_offset_ratio = Vector2(0.495, 0.495)
+texture = ExtResource("7_vtaks")
+expand_mode = 5
+
+[node name="PassButton" type="Button" parent="GameUI/CardsPassingCall/VBoxContainer" unique_id=1778420705]
+layout_mode = 2
+theme_override_font_sizes/font_size = 86
+text = "pass"
+
+[node name="Table" parent="." unique_id=2088684226 instance=ExtResource("4_24tct")]
 position = Vector2(640, 360)
 
-[node name="PlayerManager" type="Node2D" parent="."]
+[node name="PlayerManager" type="Node2D" parent="." unique_id=196632123]
 position = Vector2(81, 73)
 script = ExtResource("5_xiyoe")
 
-[node name="LastAnchor0" type="Node2D" parent="."]
+[node name="LastAnchor0" type="Node2D" parent="." unique_id=1016089169]
 position = Vector2(1152, 643)
 scale = Vector2(0.75, 0.75)
 
-[node name="LastAnchor1" type="Node2D" parent="."]
+[node name="LastAnchor1" type="Node2D" parent="." unique_id=1715419325]
 position = Vector2(1102, 610)
 scale = Vector2(0.75, 0.75)
 
-[node name="LastAnchor2" type="Node2D" parent="."]
+[node name="LastAnchor2" type="Node2D" parent="." unique_id=917383163]
 position = Vector2(1152, 583)
 scale = Vector2(0.75, 0.75)
 
-[node name="LastAnchor3" type="Node2D" parent="."]
+[node name="LastAnchor3" type="Node2D" parent="." unique_id=2067888940]
 position = Vector2(1202, 613)
 scale = Vector2(0.75, 0.75)
 
@@ -340,3 +639,4 @@ scale = Vector2(0.75, 0.75)
 [connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/12Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["12"]]
 [connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/HBoxContainer/13Button" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["13"]]
 [connection signal="button_up" from="GameUI/TrumpCall/VBoxContainer/PassButton" to="GameUI/TrumpCall" method="_on_trump_button_up" binds= ["PASS"]]
+[connection signal="button_up" from="GameUI/CardsPassingCall/VBoxContainer/PassButton" to="GameUI/CardsPassingCall" method="_on_pass_button_button_up"]

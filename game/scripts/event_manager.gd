@@ -11,6 +11,7 @@ signal SELECTMODE_recevied
 signal GAMESTART_received
 signal DEAL_received
 signal OTHERDEAL_received
+signal PASSCARDS_recevied
 signal TRUMPSTART_received
 signal TRUMPCALL_received
 signal YOURTRUMPCALL_received
@@ -80,6 +81,8 @@ func _dispatch(action: String, msg: Dictionary) -> void:
 			DEAL_received.emit(msg["CARDS"])
 		"OTHERDEAL":
 			OTHERDEAL_received.emit(msg["COUNT"])
+		"PASSCARDS":
+			PASSCARDS_recevied.emit()
 		"TRUMPSTART":
 			TRUMPSTART_received.emit()
 		"TRUMPCALL":
@@ -124,6 +127,9 @@ func setmode_request(mode: String) -> Dictionary:
 
 func trumpcall_request(score: String) -> Dictionary:
 	return {"ACTION": "TRUMPCALL", "SCORE": score}
+	
+func passcards_request(cards: String) -> Dictionary:
+	return {"ACTION": "PASSCARDS", "CARDS": cards}
 
 func play_request(card: String) -> Dictionary:
 	return {"ACTION": "PLAY", "CARD": card}

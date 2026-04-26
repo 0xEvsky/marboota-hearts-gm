@@ -9,6 +9,7 @@ func _ready() -> void:
 	Globals.table = self
 	EventManager.SELECTMODE_recevied.connect(_on_gamemode_selection)
 	EventManager.GAMESTART_received.connect(_on_gamestart)
+	EventManager.PASSCARDS_recevied.connect(_on_passcards)
 	EventManager.TRUMPSTART_received.connect(_on_trumpstart)
 	EventManager.PLAYSTART_received.connect(_on_playstart)
 	EventManager.YOURPLAY_received.connect(_on_yourplay)
@@ -56,6 +57,8 @@ func _on_gamestart() -> void:
 		var heartsButton := $"HeartsButton"
 		heartsButton.hide()
 
+func _on_passcards() -> void:
+	pass
 
 func _on_trumpstart() -> void:
 	play_started = false

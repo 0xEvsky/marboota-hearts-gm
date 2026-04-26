@@ -1,25 +1,25 @@
-[gd_scene load_steps=4 format=3 uid="uid://bi8r7wvcfhkx3"]
+[gd_scene format=3 uid="uid://bi8r7wvcfhkx3"]
 
-[ext_resource type="Script" path="res://scripts/card.gd" id="1_6newa"]
+[ext_resource type="Script" uid="uid://b8yh1rqdpu5kw" path="res://scripts/card.gd" id="1_6newa"]
 [ext_resource type="Texture2D" uid="uid://56ntuy864yuw" path="res://assets/graphics/cards/cardBack_red4.png" id="2_63jcn"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n2k4x"]
 size = Vector2(138, 188)
 
-[node name="Card" type="Node2D"]
+[node name="Card" type="Node2D" unique_id=253744585]
 script = ExtResource("1_6newa")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=165210393]
 
-[node name="Sprite2DBack" type="Sprite2D" parent="."]
+[node name="Sprite2DBack" type="Sprite2D" parent="." unique_id=395562562]
 texture = ExtResource("2_63jcn")
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Area2D" type="Area2D" parent="." unique_id=1068542821]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=857990026]
 shape = SubResource("RectangleShape2D_n2k4x")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="Panel" parent="." unique_id=2093156029]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5

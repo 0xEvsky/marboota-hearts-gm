@@ -19,18 +19,19 @@ const (
 )
 
 type Table struct {
-	instance    *Instance
-	players     [4]*Player
-	state       TableState
-	turn        int
-	turnOffset  int
-	trump       Trump
-	withTrump   bool
-	play        Play
-	playCount   int
-	rounds      []Round
-	totalScores map[Team]int
-	gameMode    GameMode
+	instance         *Instance
+	players          [4]*Player
+	state            TableState
+	turn             int
+	turnOffset       int
+	trump            Trump
+	withTrump        bool
+	play             Play
+	playCount        int
+	rounds           []Round
+	totalScores      map[Team]int
+	gameMode         GameMode
+	roundPassedCards [][]Card
 }
 
 type PlayerState int
@@ -40,6 +41,9 @@ const (
 	PlayerWaiting
 	PlayerReady
 	PlayerTrumping
+	PlayerPassingCards
+	PlayerPassedCards
+	PlayerRecievedCards
 	PlayerPlaying
 )
 
@@ -220,21 +224,7 @@ func (t *Table) startShuffle() {
 
 	// Sort hands
 	for _, p := range t.players {
-		slices.SortFunc(p.hand, func(i Card, j Card) int {
-			if i.suit < j.suit {
-				return -1
-			}
-
-			if i.suit == j.suit {
-				if i.value > j.value {
-					return -1
-				} else {
-					return 1
-				}
-			}
-
-			return 1
-		})
+		p.sortHand()
 	}
 
 	for _, p := range t.players {
@@ -282,6 +272,33 @@ func (t *Table) startPlay() {
 	var prompt = map[string]string{"ACTION": "YOURPLAY", "PLAYABLE": playableCards}
 	trumpPlayer.lastPrompt = prompt
 	trumpPlayer.client.writeJson(prompt)
+}
+
+func (p *Player) sortHand() {
+	slices.SortFunc(p.hand, func(i Card, j Card) int {
+		if i.suit < j.suit {
+			return -1
+		}
+
+		if i.suit == j.suit {
+			if i.value > j.value {
+				return -1
+			} else {
+				return 1
+			}
+		}
+
+		return 1
+	})
+}
+
+func (p *Player) recievePassedCards() {
+	var seat = p.seat
+	var cardsToRecieve = p.instance.table.roundPassedCards[seat]
+	p.hand = append(p.hand, cardsToRecieve...)
+	p.sortHand()
+	p.state = PlayerRecievedCards
+	p.client.writeJson(map[string]string{"ACTION": "DEAL", "CARDS": p.getHandString()})
 }
 
 func (p *Player) getPlayableCards() ([]Card, string) {

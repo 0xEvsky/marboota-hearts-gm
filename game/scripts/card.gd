@@ -9,6 +9,7 @@ var value: int
 var is_playable := false
 var hover_index: int
 var is_played := false
+var card_texture: Texture2D
 
 func set_card(cardStr: String) -> void:
 	if cardStr == "":
@@ -31,6 +32,7 @@ func set_card(cardStr: String) -> void:
 	# var texture = ImageTexture.create_from_image(image)
 	var texture := load(CardMap.card_dict[cardStr])
 	$"Sprite2D".texture = texture
+	card_texture = $"Sprite2D".texture
 	is_face_up = true
 	$"Sprite2DBack".hide()
 

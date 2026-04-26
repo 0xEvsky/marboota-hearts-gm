@@ -33,7 +33,7 @@ var heartsPenaltyConfig = PenaltyConfig{
 var HeartsMode = GameMode{
 	id:             HeartsModeID,
 	penaltyConfig:  &heartsPenaltyConfig,
-	onShuffleEnd:   startPlayNoTrump,
+	onShuffleEnd:   startCardsPassing,
 	calcRoundScore: calculatePlayScore,
 }
 
@@ -65,6 +65,16 @@ func startTrump(t *Table) {
 	var prompt = map[string]string{"ACTION": "YOURTRUMPCALL", "MINSCORE": "7", "MAXSCORE": "11"}
 	t.players[t.turn].lastPrompt = prompt
 	t.players[t.turn].client.writeJson(prompt)
+}
+
+func startCardsPassing(t *Table) {
+	t.state = TableCardsPassing
+	for _, p := range t.players {
+		p.state = PlayerPassingCards
+	}
+
+	t.roundPassedCards = make([][]Card, 4)
+	t.instance.Broadcast(map[string]string{"ACTION": "PASSCARDS"})
 }
 
 func startPlayNoTrump(t *Table) {

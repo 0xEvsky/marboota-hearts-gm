@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://dt1krqrueaayu" path="res://scripts/leave_button.gd" id="4_y4k8u"]
 [ext_resource type="PackedScene" uid="uid://d1bq52be6pou0" path="res://scenes/hand.tscn" id="6_605ca"]
 [ext_resource type="Script" uid="uid://c22evetbkpuhh" path="res://scripts/wist_button.gd" id="6_ov7a8"]
-[ext_resource type="Script" uid="uid://fisk36er7v7c" path="res://scenes/hearts_button.gd" id="7_docs3"]
+[ext_resource type="Script" uid="uid://fisk36er7v7c" path="res://scripts/hearts_button.gd" id="7_docs3"]
 
 [sub_resource type="Theme" id="Theme_67dwn"]
 

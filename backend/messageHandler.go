@@ -102,6 +102,21 @@ func msgHandler(c *Client, rawMsg []byte) {
 		c.writeOk()
 		clog.Debugf("(i:%s) (c:%s) TRUMPCALL request accepted", c.instance.id, c.id)
 
+	case "PASSCARDS":
+		err := passAndRecieveCards(c, msg["CARDS"])
+		if err != nil {
+			c.writeError(err.Error())
+			clog.Debugf("(i:%s) (c:%s) PASSCARDS request refused: %s\n", c.instance.id, c.id, err)
+		}
+
+		c.writeOk()
+		for _, p := range c.instance.table.players {
+			if p.state != PlayerRecievedCards {
+				return
+			}
+		}
+		startPlayNoTrump(&c.instance.table)
+
 	case "PLAY":
 		err := advancePlay(c, msg["CARD"])
 		if err != nil {
